@@ -107,6 +107,9 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
 export EDITOR=vim
 
 bindkey -v # make vi-mode plugin work properly
@@ -128,6 +131,3 @@ alias gl="git log --all --graph --decorate --oneline"
 
 # load local machine config
 source ~/.zshrc.local
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh

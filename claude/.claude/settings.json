@@ -1,4 +1,8 @@
 {
+  "statusLine": {
+    "type": "command",
+    "command": "bash \"/Users/nicholas/.claude/plugins/cache/caveman/caveman/84cc3c14fa1e/hooks/caveman-statusline.sh\""
+  },
   "enabledPlugins": {
     "frontend-design@claude-plugins-official": true,
     "context7@claude-plugins-official": true,
@@ -19,8 +23,5 @@
   },
   "effortLevel": "medium",
   "editorMode": "vim",
-  "statusLine": {
-    "type": "command",
-    "command": "bash \"/Users/nicholas/.claude/plugins/cache/caveman/caveman/84cc3c14fa1e/hooks/caveman-statusline.sh\""
-  }
+  "skipAutoPermissionPrompt": true
 }

@@ -1,18 +1,20 @@
 {
+  "env": {
+    "EDITOR": "cursor"
+  },
+  "model": "opusplan",
   "statusLine": {
     "type": "command",
-    "command": "bash \"/Users/nicholas/.claude/plugins/cache/caveman/caveman/84cc3c14fa1e/hooks/caveman-statusline.sh\""
+    "command": "/Users/nicholas/.claude/statusline.sh"
   },
   "enabledPlugins": {
-    "frontend-design@claude-plugins-official": true,
-    "context7@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true,
-    "code-simplifier@claude-plugins-official": true,
-    "terraform@claude-plugins-official": true,
-    "claude-md-management@claude-plugins-official": true,
     "caveman@caveman": true,
-    "github@claude-plugins-official": true
+    "claude-md-management@claude-plugins-official": true,
+    "code-simplifier@claude-plugins-official": true,
+    "context7@claude-plugins-official": true,
+    "frontend-design@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": true,
+    "typescript-lsp@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "caveman": {

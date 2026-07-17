@@ -47,6 +47,17 @@
       "Bash(rg *)",
       "LSP",
 
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git blame *)",
+      "Bash(git remote*)",
+      "Bash(git stash list*)",
+      "Bash(git tag*)",
+      "Bash(git describe*)",
+
       "Bash(gh pr view *)",
       "Bash(gh pr list *)",
       "Bash(gh pr diff *)",

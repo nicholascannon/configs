@@ -1,13 +1,15 @@
 {
+  "model": "sonnet",
+  "effortLevel": "medium",
+  "editorMode": "vim",
   "env": {
     "EDITOR": "cursor"
   },
-  "permissions": {
-    "allow": ["Bash(rg *)"]
-  },
+  "skipAutoPermissionPrompt": true,
+  "disableAgentView": true,
   "statusLine": {
     "type": "command",
-    "command": "/Users/nicholas/.claude/statusline.sh"
+    "command": "$HOME/.claude/statusline.sh"
   },
   "enabledPlugins": {
     "caveman@caveman": true,
@@ -16,7 +18,8 @@
     "context7@claude-plugins-official": true,
     "frontend-design@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
-    "typescript-lsp@claude-plugins-official": true
+    "typescript-lsp@claude-plugins-official": true,
+    "github@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "caveman": {
@@ -26,8 +29,42 @@
       }
     }
   },
-  "effortLevel": "high",
-  "editorMode": "vim",
-  "skipAutoPermissionPrompt": true,
-  "model": "sonnet"
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "permission_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/on_perm_prompt.sh"
+          }
+        ]
+      }
+    ]
+  },
+  "permissions": {
+    "allow": [
+      "Bash(rg *)",
+      "LSP",
+
+      "Bash(gh pr view *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh pr status*)",
+      "Bash(gh issue view *)",
+      "Bash(gh issue list *)",
+      "Bash(gh issue status*)",
+      "Bash(gh repo view *)",
+      "Bash(gh repo list *)",
+      "Bash(gh run list *)",
+      "Bash(gh run view *)",
+      "Bash(gh workflow list *)",
+      "Bash(gh workflow view *)",
+      "Bash(gh release list *)",
+      "Bash(gh release view *)",
+      "Bash(gh search *)",
+      "Bash(gh status*)"
+    ]
+  }
 }

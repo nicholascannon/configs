@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 input=$(cat)
 
-IFS='|' read -r ctx_str tok_str model_str < <(
+IFS='|' read -r ctx_str tok_str model_str effort_str < <(
   echo "$input" | jq -r '
     def fmtk:
       if . >= 1000000 then
@@ -20,7 +20,8 @@ IFS='|' read -r ctx_str tok_str model_str < <(
       | if $u == null or $t == null then "" else "\($u | fmtk)/\($t | fmtk)" end;
     [ (.context_window.used_percentage // null | pct),
       toks,
-      (.model.display_name // "") ] | join("|")
+      (.model.display_name // ""),
+      (.effort.level // "") ] | join("|")
   '
 )
 
@@ -32,6 +33,7 @@ parts=""
 [ -n "$tok_str" ] && parts="$tok_str "
 parts="$parts$ctx_str"
 [ -n "$model_str" ] && parts="$parts $model_str"
+[ -n "$effort_str" ] && parts="$parts ($effort_str)"
 [ -n "$caveman" ] && parts="$parts | $caveman"
 
 echo "$parts"

@@ -1,11 +1,85 @@
 {
-  "model": "sonnet",
-  "effortLevel": "medium",
-  "editorMode": "vim",
   "env": {
     "EDITOR": "cursor"
   },
-  "skipAutoPermissionPrompt": true,
+  "permissions": {
+    "allow": [
+      "Read(~/notes/**)",
+      "Bash(rg *)",
+      "LSP",
+      "Bash(git status*)",
+      "Bash(git log*)",
+      "Bash(git diff*)",
+      "Bash(git show*)",
+      "Bash(git branch*)",
+      "Bash(git blame *)",
+      "Bash(git remote*)",
+      "Bash(git stash list*)",
+      "Bash(git tag*)",
+      "Bash(git describe*)",
+      "Bash(gh pr view *)",
+      "Bash(gh pr list *)",
+      "Bash(gh pr diff *)",
+      "Bash(gh pr checks *)",
+      "Bash(gh pr status*)",
+      "Bash(gh issue view *)",
+      "Bash(gh issue list *)",
+      "Bash(gh issue status*)",
+      "Bash(gh repo view *)",
+      "Bash(gh repo list *)",
+      "Bash(gh run list *)",
+      "Bash(gh run view *)",
+      "Bash(gh workflow list *)",
+      "Bash(gh workflow view *)",
+      "Bash(gh release list *)",
+      "Bash(gh release view *)",
+      "Bash(gh search *)",
+      "Bash(gh status*)",
+      "mcp__plugin_github_github__get_me",
+      "mcp__plugin_github_github__get_file_contents",
+      "mcp__plugin_github_github__get_commit",
+      "mcp__plugin_github_github__get_tag",
+      "mcp__plugin_github_github__get_label",
+      "mcp__plugin_github_github__list_branches",
+      "mcp__plugin_github_github__list_commits",
+      "mcp__plugin_github_github__list_issue_fields",
+      "mcp__plugin_github_github__list_issue_types",
+      "mcp__plugin_github_github__list_issues",
+      "mcp__plugin_github_github__list_pull_requests",
+      "mcp__plugin_github_github__list_releases",
+      "mcp__plugin_github_github__list_repository_collaborators",
+      "mcp__plugin_github_github__list_tags",
+      "mcp__plugin_github_github__get_latest_release",
+      "mcp__plugin_github_github__get_release_by_tag",
+      "mcp__plugin_github_github__get_team_members",
+      "mcp__plugin_github_github__get_teams",
+      "mcp__plugin_github_github__issue_read",
+      "mcp__plugin_github_github__pull_request_read",
+      "mcp__plugin_github_github__search_code",
+      "mcp__plugin_github_github__search_commits",
+      "mcp__plugin_github_github__search_issues",
+      "mcp__plugin_github_github__search_pull_requests",
+      "mcp__plugin_github_github__search_repositories",
+      "mcp__plugin_github_github__search_users"
+    ],
+    "additionalDirectories": [
+      "~/notes"
+    ]
+  },
+  "model": "sonnet",
+  "hooks": {
+    "Notification": [
+      {
+        "matcher": "permission_prompt",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "$HOME/.claude/on_perm_prompt.sh"
+          }
+        ]
+      }
+    ]
+  },
   "disableAgentView": true,
   "statusLine": {
     "type": "command",
@@ -29,57 +103,7 @@
       }
     }
   },
-  "hooks": {
-    "Notification": [
-      {
-        "matcher": "permission_prompt",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/on_perm_prompt.sh"
-          }
-        ]
-      }
-    ]
-  },
-  "permissions": {
-    "additionalDirectories": [
-      "~/notes"
-    ],
-    "allow": [
-      "Read(~/notes/**)",
-      "Bash(rg *)",
-      "LSP",
-
-      "Bash(git status*)",
-      "Bash(git log*)",
-      "Bash(git diff*)",
-      "Bash(git show*)",
-      "Bash(git branch*)",
-      "Bash(git blame *)",
-      "Bash(git remote*)",
-      "Bash(git stash list*)",
-      "Bash(git tag*)",
-      "Bash(git describe*)",
-
-      "Bash(gh pr view *)",
-      "Bash(gh pr list *)",
-      "Bash(gh pr diff *)",
-      "Bash(gh pr checks *)",
-      "Bash(gh pr status*)",
-      "Bash(gh issue view *)",
-      "Bash(gh issue list *)",
-      "Bash(gh issue status*)",
-      "Bash(gh repo view *)",
-      "Bash(gh repo list *)",
-      "Bash(gh run list *)",
-      "Bash(gh run view *)",
-      "Bash(gh workflow list *)",
-      "Bash(gh workflow view *)",
-      "Bash(gh release list *)",
-      "Bash(gh release view *)",
-      "Bash(gh search *)",
-      "Bash(gh status*)"
-    ]
-  }
+  "effortLevel": "medium",
+  "editorMode": "vim",
+  "skipAutoPermissionPrompt": true
 }

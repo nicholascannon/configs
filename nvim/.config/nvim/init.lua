@@ -150,6 +150,23 @@ require("lazy").setup({
   -- Git commands (same as vim)
   "tpope/vim-fugitive",
 
+  -- GitHub PR diffs. Uses the authed gh CLI. Lazy-loads on :Octo / the keymaps.
+  {
+    "pwntester/octo.nvim",
+    cmd = "Octo",
+    dependencies = {
+      "nvim-lua/plenary.nvim",
+      "nvim-telescope/telescope.nvim",
+      "nvim-tree/nvim-web-devicons",
+    },
+    opts = { picker = "telescope", enable_builtin = true },
+    keys = {
+      -- <leader> is "\": \op lists PRs, \od opens the diff view of the open PR
+      { "<leader>op", "<cmd>Octo pr list<cr>", desc = "GitHub: list PRs" },
+      { "<leader>od", "<cmd>Octo pr diff<cr>", desc = "GitHub: PR diff view" },
+    },
+  },
+
   -- Tab-size detection (same as vim)
   "tpope/vim-sleuth",
 

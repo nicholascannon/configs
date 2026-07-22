@@ -14,7 +14,11 @@ if [ ! -f "$HOME/.vim/autoload/plug.vim" ]; then
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
 
-stow --target="$HOME" --verbose \
+# Remove drifted targets so this repo stays source of truth.
+# (e.g. aicodemetricsd rewrites ~/.claude/settings.json atomically, replacing the symlink with a real file)
+rm -f "$HOME/.claude/settings.json"
+
+stow --target="$HOME" --verbose --restow \
   claude \
   p10k \
   tmux \

@@ -9,6 +9,13 @@ vim.g.mapleader = "\\"
 vim.g.maplocalleader = "\\"
 
 --------------------------------------------------------------------
+-- Machine-local overrides (gitignored, per-machine — not committed).
+-- e.g. set `vim.g.enable_copilot = true` on machines with a Copilot seat.
+-- Absent file is a no-op.
+--------------------------------------------------------------------
+pcall(dofile, vim.fn.stdpath("config") .. "/local.lua")
+
+--------------------------------------------------------------------
 -- Editor settings (ported from .vimrc)
 --------------------------------------------------------------------
 local opt = vim.opt
@@ -150,6 +157,31 @@ require("lazy").setup({
   -- Git commands (same as vim)
   "tpope/vim-fugitive",
 
+  -- GitHub Copilot (inline ghost text). Gated on vim.g.enable_copilot, set in
+  -- the gitignored local.lua — so it only loads on machines with a seat.
+  -- <Tab> accepts the suggestion (cmp menu is on arrow keys). First use needs
+  -- `:Copilot auth` (device login; uses the Copilot seat, no API key).
+  {
+    "zbirenbaum/copilot.lua",
+    cond = function() return vim.g.enable_copilot == true end,
+    event = "InsertEnter",
+    cmd = "Copilot",
+    opts = {
+      suggestion = {
+        enabled = true,
+        auto_trigger = true,
+        keymap = {
+          accept = "<Tab>",
+          dismiss = "<C-]>",
+          next = "<M-]>",
+          prev = "<M-[>",
+        },
+      },
+      panel = { enabled = false },
+      filetypes = { ["*"] = true },
+    },
+  },
+
   -- GitHub PR diffs. Uses the authed gh CLI. Lazy-loads on :Octo / the keymaps.
   {
     "pwntester/octo.nvim",
@@ -260,18 +292,12 @@ require("lazy").setup({
         snippet = {
           expand = function(args) luasnip.lsp_expand(args.body) end,
         },
+        -- Navigate the LSP menu with arrows; <CR> confirms. <Tab> is left
+        -- unbound here so Copilot (when enabled) can use it to accept ghost text.
         mapping = cmp.mapping.preset.insert({
-          ["<Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then cmp.select_next_item()
-            elseif luasnip.expand_or_jumpable() then luasnip.expand_or_jump()
-            else fallback() end
-          end, { "i", "s" }),
-          ["<S-Tab>"] = cmp.mapping(function(fallback)
-            if cmp.visible() then cmp.select_prev_item()
-            elseif luasnip.jumpable(-1) then luasnip.jump(-1)
-            else fallback() end
-          end, { "i", "s" }),
-          ["<CR>"] = cmp.mapping.confirm({ select = true }),
+          ["<Down>"] = cmp.mapping.select_next_item(),
+          ["<Up>"] = cmp.mapping.select_prev_item(),
+          ["<CR>"] = cmp.mapping.confirm({ select = false }),
         }),
         sources = cmp.config.sources({
           { name = "nvim_lsp" },

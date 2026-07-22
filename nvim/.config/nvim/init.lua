@@ -116,10 +116,14 @@ require("lazy").setup({
     lazy = false,
     build = ":TSUpdate",
     config = function()
+      -- NOTE: markdown/markdown_inline are intentionally omitted — Neovim
+      -- bundles those parsers, and nvim-treesitter's installer currently
+      -- fails to fetch the markdown grammar (its archive uses a "split_parser"
+      -- branch dir but the installer expects "-master"). Bundled parser +
+      -- these queries highlight markdown fine without installing.
       require("nvim-treesitter").install({
         "typescript", "tsx", "javascript", "json", "yaml",
         "dockerfile", "html", "css", "lua", "bash",
-        "markdown", "markdown_inline",
       })
       -- Highlighting/indent are enabled per-buffer (main-branch model).
       -- Broad autocmd: start treesitter for any buffer whose language has a

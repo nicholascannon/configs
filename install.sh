@@ -9,6 +9,11 @@ if ! command -v terminal-notifier &> /dev/null; then
   brew install terminal-notifier
 fi
 
+if [ ! -f "$HOME/.vim/autoload/plug.vim" ]; then
+  curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
+    https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
+fi
+
 stow --target="$HOME" --verbose \
   claude \
   p10k \

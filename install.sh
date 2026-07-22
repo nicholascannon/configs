@@ -14,12 +14,20 @@ if [ ! -f "$HOME/.vim/autoload/plug.vim" ]; then
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
 
+# Bootstrap lazy.nvim (Neovim plugin manager). Plugins install on first launch.
+LAZY_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim"
+if [ ! -d "$LAZY_DIR" ]; then
+  git clone --filter=blob:none --branch=stable \
+    https://github.com/folke/lazy.nvim.git "$LAZY_DIR"
+fi
+
 # Remove drifted targets so this repo stays source of truth.
 # (e.g. aicodemetricsd rewrites ~/.claude/settings.json atomically, replacing the symlink with a real file)
 rm -f "$HOME/.claude/settings.json"
 
 stow --target="$HOME" --verbose --restow \
   claude \
+  nvim \
   p10k \
   tmux \
   vim \

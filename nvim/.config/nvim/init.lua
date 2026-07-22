@@ -173,7 +173,10 @@ require("lazy").setup({
   -- Fuzzy finder (replaces fzf.vim)
   {
     "nvim-telescope/telescope.nvim",
-    branch = "0.1.x",
+    -- Track master, not the 0.1.x tag: 0.1.x's previewer calls nvim-treesitter
+    -- master APIs (ft_to_lang) removed in the main-branch rewrite. master uses
+    -- native vim.treesitter instead.
+    branch = "master",
     dependencies = {
       "nvim-lua/plenary.nvim",
       { "nvim-telescope/telescope-fzf-native.nvim", build = "make" },

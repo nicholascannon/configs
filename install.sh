@@ -9,6 +9,15 @@ if ! command -v terminal-notifier &> /dev/null; then
   brew install terminal-notifier
 fi
 
+# Neovim + tree-sitter CLI (nvim-treesitter's main branch compiles parsers
+# from source via the tree-sitter CLI; it is not bundled).
+if ! command -v nvim &> /dev/null; then
+  brew install neovim
+fi
+if ! command -v tree-sitter &> /dev/null; then
+  brew install tree-sitter-cli
+fi
+
 if [ ! -f "$HOME/.vim/autoload/plug.vim" ]; then
   curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim

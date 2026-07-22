@@ -106,22 +106,32 @@ require("lazy").setup({
     end,
   },
 
-  -- Treesitter (replaces syntax on + polyglot)
+  -- Treesitter (replaces syntax on + polyglot).
+  -- Uses the `main` branch — the only branch compatible with Neovim 0.12.
+  -- (master is archived and crashes on 0.12: match[id] became a node list,
+  --  breaking its query_predicates -> "attempt to call method 'range'".)
   {
     "nvim-treesitter/nvim-treesitter",
-    branch = "master",
+    branch = "main",
+    lazy = false,
     build = ":TSUpdate",
-    main = "nvim-treesitter.configs",
-    opts = {
-      ensure_installed = {
+    config = function()
+      require("nvim-treesitter").install({
         "typescript", "tsx", "javascript", "json", "yaml",
-        "dockerfile", "html", "css", "lua",
-        "bash", "markdown",
-      },
-      auto_install = true,
-      highlight = { enable = true },
-      indent = { enable = true },
-    },
+        "dockerfile", "html", "css", "lua", "bash",
+        "markdown", "markdown_inline",
+      })
+      -- Highlighting/indent are enabled per-buffer (main-branch model).
+      -- Broad autocmd: start treesitter for any buffer whose language has a
+      -- parser installed; silently no-op otherwise.
+      vim.api.nvim_create_autocmd("FileType", {
+        callback = function()
+          if pcall(vim.treesitter.start) then
+            vim.bo.indentexpr = "v:lua.require'nvim-treesitter'.indentexpr()"
+          end
+        end,
+      })
+    end,
   },
 
   -- Statusline (replaces vim-airline)

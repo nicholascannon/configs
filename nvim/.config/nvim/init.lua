@@ -115,7 +115,7 @@ require("lazy").setup({
     opts = {
       ensure_installed = {
         "typescript", "tsx", "javascript", "json", "yaml",
-        "go", "gomod", "dockerfile", "html", "css", "lua",
+        "dockerfile", "html", "css", "lua",
         "bash", "markdown",
       },
       auto_install = true,
@@ -234,7 +234,6 @@ require("lazy").setup({
         html = { "prettier" },
         css = { "prettier" },
         markdown = { "prettier" },
-        go = { "gofmt" },
       },
     },
     config = function(_, opts)
@@ -262,7 +261,7 @@ require("lazy").setup({
       require("mason-lspconfig").setup({
         ensure_installed = {
           "ts_ls", "eslint", "jsonls", "yamlls",
-          "dockerls", "gopls", "emmet_ls",
+          "dockerls", "emmet_ls",
         },
       })
 

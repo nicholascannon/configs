@@ -162,7 +162,9 @@ require("lazy").setup({
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
       view = { width = 50 },
-      filters = { dotfiles = false }, -- show hidden, like NERDTreeShowHidden
+      -- Show everything: dotfiles + gitignored (so superpowers docs under a
+      -- gitignored docs/ are visible). git status icons stay on.
+      filters = { dotfiles = false, git_ignored = false },
     },
     config = function(_, opts)
       require("nvim-tree").setup(opts)
@@ -183,16 +185,44 @@ require("lazy").setup({
     },
     config = function()
       local telescope = require("telescope")
-      telescope.setup({})
+
+      -- Gitignored dirs that should still be searchable (superpowers plans/docs
+      -- live under gitignored paths). Everything else respects .gitignore, so
+      -- node_modules and generated build output stay out — important in big
+      -- monorepos where --no-ignore pulls in tens of thousands of artifacts.
+      local doc_dirs = { "docs", ".superpowers", "specs", "plans", ".claude" }
+
+      -- find_files backend: pass 1 lists the tree respecting .gitignore; pass 2
+      -- re-lists the doc dirs with --no-ignore; awk dedupes (order-preserving).
+      local find_command = {
+        "sh", "-c",
+        "{ rg --files --hidden --glob '!.git/**'; "
+          .. "for d in " .. table.concat(doc_dirs, " ") .. "; do "
+          .. "[ -d \"$d\" ] && rg --files --hidden --no-ignore --glob '!.git/**' -- \"$d\"; "
+          .. "done; } | awk '!seen[$0]++'",
+      }
+
+      telescope.setup({
+        pickers = {
+          find_files = { find_command = find_command },
+        },
+      })
       pcall(telescope.load_extension, "fzf")
       local builtin = require("telescope.builtin")
-      -- <C-p> git files (replaces fzf GFiles), falls back to find_files if not a repo
-      map("n", "<C-p>", function()
-        local ok = pcall(builtin.git_files, { show_untracked = true })
-        if not ok then builtin.find_files() end
+      -- <C-p> file finder (replaces fzf GFiles): gitignore-respecting + doc dirs.
+      map("n", "<C-p>", builtin.find_files, { silent = true })
+      -- <leader>s live grep (replaces :Ag). Whole tree respecting .gitignore,
+      -- plus the doc dirs so their content is searchable too.
+      map("n", "<leader>s", function()
+        local dirs = { "." }
+        for _, d in ipairs(doc_dirs) do
+          if vim.fn.isdirectory(d) == 1 then dirs[#dirs + 1] = d end
+        end
+        builtin.live_grep({
+          search_dirs = dirs,
+          additional_args = { "--hidden" },
+        })
       end, { silent = true })
-      -- <leader>s live grep (replaces :Ag)
-      map("n", "<leader>s", builtin.live_grep, { silent = true })
     end,
   },
 

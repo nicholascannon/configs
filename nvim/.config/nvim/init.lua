@@ -102,10 +102,11 @@ vim.opt.rtp:prepend(lazypath)
 require("lazy").setup({
   -- Theme
   {
-    "folke/tokyonight.nvim",
+    "marko-cerovac/material.nvim",
     priority = 1000,
     config = function()
-      vim.cmd.colorscheme("tokyonight-night")
+      vim.g.material_style = "darker"
+      vim.cmd.colorscheme("material")
       -- Transparent background to match old config's guibg=NONE
       vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
       vim.api.nvim_set_hl(0, "NonText", { bg = "none" })
@@ -148,7 +149,7 @@ require("lazy").setup({
   -- Statusline (replaces vim-airline)
   {
     "nvim-lualine/lualine.nvim",
-    opts = { options = { theme = "tokyonight", globalstatus = true } },
+    opts = { options = { theme = "material", globalstatus = true } },
   },
 
   -- Git signs (replaces vim-gitgutter)
@@ -363,7 +364,7 @@ require("lazy").setup({
   },
 }, {
   -- lazy.nvim options
-  install = { colorscheme = { "tokyonight-night" } },
+  install = { colorscheme = { "material" } },
   checker = { enabled = false },
 })
 

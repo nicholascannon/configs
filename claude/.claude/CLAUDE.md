@@ -12,3 +12,8 @@
 ## Superpowers
 
 Never commit superpower docs unless explicitly asked to in that message. This applies to all projects.
+
+## Coding
+
+- When writing code, prioritize ordering code using Robert C. Martin's Step-Down Rule. This means that code should read like a top-down narrative, where every function is followed by those at the next level of abstraction.
+

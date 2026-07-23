@@ -129,5 +129,8 @@ alias gcm="git checkout main"
 alias gpum="git pull upstream main"
 alias gl="git log --all --graph --decorate --oneline"
 
+# Open new Ghostty window in current directory
+gw() { open -na Ghostty.app --args --working-directory="$(pwd)"; }
+
 # load local machine config
 source ~/.zshrc.local

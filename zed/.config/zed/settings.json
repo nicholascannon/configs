@@ -1,0 +1,64 @@
+// Zed settings
+//
+// For information on how to configure Zed, see the Zed
+// documentation: https://zed.dev/docs/configuring-zed
+//
+// To see all of Zed's default settings without changing your
+// custom settings, run the `open default settings` command
+// from the command palette or from `Zed` application menu.
+{
+    "auto_install_extensions": {
+        "html": true,
+        "toml": true,
+        "fleet-themes": true,
+        "material-icon-theme": true,
+        "biome": true
+    },
+    "cli_default_open_behavior": "new_window",
+    "base_keymap": "Cursor",
+    "diff_view_style": "unified",
+    "buffer_font_family": ".ZedMono",
+    "ui_font_size": 15.0,
+    "buffer_font_size": 13.0,
+    "markdown_preview_font_size": 14.0,
+    "vim_mode": true,
+    "icon_theme": {
+        "mode": "light",
+        "light": "Material Icon Theme",
+        "dark": "Material Icon Theme"
+    },
+    "theme": {
+        "mode": "dark",
+        "light": "One Light",
+        "dark": "Fleet Dark"
+    },
+    "project_panel": {
+        "dock": "left",
+        "entry_spacing": "standard",
+        "indent_size": 12
+    },
+    "outline_panel": {
+        "dock": "left"
+    },
+    "collaboration_panel": {
+        "dock": "left",
+    },
+    "agent": {
+        "dock": "right",
+        "favorite_models": [],
+        "model_parameters": []
+    },
+    "git_panel": {
+        "group_by": "none",
+        "tree_view": true,
+        "dock": "left",
+        "entry_primary_click_action":  "file_diff",
+        "file_icons": true
+    },
+    "git": {
+        "hunk_style": "unstaged_hollow"
+    },
+    "terminal": {
+      "font_family": "MesloLGL Nerd Font",
+    },
+}

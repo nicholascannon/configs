@@ -40,6 +40,7 @@ stow --target="$HOME" --verbose --restow \
   p10k \
   tmux \
   vim \
+  zed \
   zsh
 
 ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.ghostty/config"

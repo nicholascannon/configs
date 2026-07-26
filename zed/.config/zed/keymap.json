@@ -10,7 +10,9 @@
       "cmd-6": ["pane::ActivateItem", 5],
       "cmd-7": ["pane::ActivateItem", 6],
       "cmd-8": ["pane::ActivateItem", 7],
-      "cmd-9": ["pane::ActivateItem", 8]
+      "cmd-9": ["pane::ActivateItem", 8],
+      // overrides default search::SelectNextMatch (unused, vim "n" covers it)
+      "cmd-g": "git_panel::ToggleFocus"
     }
   },
   {
@@ -20,7 +22,17 @@
       "ctrl-l": "workspace::ActivatePaneRight",
       "ctrl-k": "workspace::ActivatePaneUp",
       "ctrl-j": "workspace::ActivatePaneDown",
-      "alt-cmd-s": "workspace::ToggleLeftDock"
+      "alt-cmd-s": "workspace::ToggleLeftDock",
+      "cmd-g": "git_panel::ToggleFocus",
+      "cmd-e": "project_panel::ToggleFocus"
+    }
+  },
+  {
+    // default cmd-e is buffer_search::UseSelectionForFind; re-bound here too
+    // since Editor context wins over Workspace while focus is in a buffer
+    "context": "Editor && mode == full",
+    "bindings": {
+      "cmd-e": "project_panel::ToggleFocus"
     }
   },
   {

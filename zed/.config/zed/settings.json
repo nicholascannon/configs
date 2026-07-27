@@ -56,7 +56,6 @@
 
   // Git
   "git": {
-    "hunk_style": "unstaged_hollow",
     // Ships in v1.13.0-pre / future stable
     // "file_diff": {
     //     "show_full_file": true

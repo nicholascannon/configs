@@ -7,74 +7,75 @@
 // custom settings, run the `open default settings` command
 // from the command palette or from `Zed` application menu.
 {
-    // Editor / UI
-    "base_keymap": "Cursor",
-    "cli_default_open_behavior": "new_window",
-    "diff_view_style": "unified",
-    "vim_mode": true,
-    "theme": "Fleet Dark",
-    "icon_theme": "Material Icon Theme",
-    "buffer_font_family": ".ZedMono",
-    "ui_font_size": 15.0,
-    "buffer_font_size": 13.0,
-    "markdown_preview_font_size": 14.0,
+  // Editor / UI
+  "base_keymap": "Cursor",
+  "cli_default_open_behavior": "new_window",
+  "diff_view_style": "unified",
+  "vim_mode": true,
+  "theme": "Fleet Dark",
+  "icon_theme": "Material Icon Theme",
+  "buffer_font_family": ".ZedMono",
+  "ui_font_size": 15.0,
+  "buffer_font_size": 13.0,
+  "markdown_preview_font_size": 14.0,
+  "format_on_save": "on",
 
-    // Extensions
-    "auto_install_extensions": {
-        "html": true,
-        "toml": true,
-        "fleet-themes": true,
-        "material-icon-theme": true,
-        "biome": true
-    },
+  // Extensions
+  "auto_install_extensions": {
+    "html": true,
+    "toml": true,
+    "fleet-themes": true,
+    "material-icon-theme": true,
+    "biome": true,
+  },
 
-    // Panels
-    "project_panel": {
-        "dock": "left",
-        "entry_spacing": "standard",
-        "indent_size": 12
-    },
-    "git_panel": {
-        "group_by": "none",
-        "tree_view": true,
-        "dock": "left",
-        "entry_primary_click_action":  "file_diff",
-        "file_icons": true
-    },
-    "tabs": {
-      "file_icons": true,
-      "git_status": true,
-      "show_diagnostics": "errors",
-    },
+  // Panels
+  "project_panel": {
+    "dock": "left",
+    "entry_spacing": "standard",
+    "indent_size": 12,
+  },
+  "git_panel": {
+    "group_by": "none",
+    "tree_view": true,
+    "dock": "left",
+    "entry_primary_click_action": "file_diff",
+    "file_icons": true,
+  },
+  "tabs": {
+    "file_icons": true,
+    "git_status": true,
+    "show_diagnostics": "errors",
+  },
 
-    // Git
-    "git": {
-        "hunk_style": "unstaged_hollow",
-        // Ships in v1.13.0-pre / future stable
-        // "file_diff": {
-        //     "show_full_file": true
-        // }
-    },
+  // Git
+  "git": {
+    "hunk_style": "unstaged_hollow",
+    // Ships in v1.13.0-pre / future stable
+    // "file_diff": {
+    //     "show_full_file": true
+    // }
+  },
 
-    // Agent
-    "agent": {
-        "dock": "right",
-        "default_model": {
-          // personal machine
-          "provider": "openrouter",
-          "model": "deepseek/deepseek-v4-flash",
+  // Agent
+  "agent": {
+    "dock": "right",
+    "default_model": {
+      // personal machine
+      "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-flash",
 
-          // work machine
-          // "provider": "copilot_chat",
-          // "model": "gpt-4.1-mini"
-        }
+      // work machine
+      // "provider": "copilot_chat",
+      // "model": "gpt-4.1-mini"
     },
+  },
 
-    // Terminal
-    "terminal": {
-      "font_family": "MesloLGL Nerd Font",
-      "env": {
-        "EDITOR": "zed --wait",
-      },
+  // Terminal
+  "terminal": {
+    "font_family": "MesloLGL Nerd Font",
+    "env": {
+      "EDITOR": "zed --wait",
     },
+  },
 }

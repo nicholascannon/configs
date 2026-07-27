@@ -45,8 +45,15 @@
     },
     "agent": {
         "dock": "right",
-        "favorite_models": [],
-        "model_parameters": []
+        "default_model": {
+          // personal machine
+          "provider": "openrouter",
+          "model": "deepseek/deepseek-v4-flash",
+
+          // work machine
+          // "provider": "copilot_chat",
+          // "model": "gpt-4.1-mini"
+        }
     },
     "git_panel": {
         "group_by": "none",
@@ -54,6 +61,11 @@
         "dock": "left",
         "entry_primary_click_action":  "file_diff",
         "file_icons": true
+    },
+    "tabs": {
+      "file_icons": true,
+      "git_status": true,
+      "show_diagnostics": "errors",
     },
     "git": {
         "hunk_style": "unstaged_hollow",
@@ -64,5 +76,8 @@
     },
     "terminal": {
       "font_family": "MesloLGL Nerd Font",
+      "env": {
+        "EDITOR": "zed --wait",
+      },
     },
 }

@@ -1,6 +1,6 @@
 {
   "env": {
-    "EDITOR": "cursor"
+    "EDITOR": "zed --wait"
   },
   "permissions": {
     "allow": [

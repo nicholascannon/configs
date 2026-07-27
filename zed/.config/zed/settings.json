@@ -19,6 +19,12 @@
   "buffer_font_size": 13.0,
   "markdown_preview_font_size": 14.0,
   "format_on_save": "on",
+  "file_scan_inclusions": [
+    ".env",
+    ".env.*",
+    "docs/superpowers/*",
+    ".superpowers/*",
+  ],
 
   // Extensions
   "auto_install_extensions": {

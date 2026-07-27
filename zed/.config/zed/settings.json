@@ -71,6 +71,45 @@
     },
   },
 
+  // Languages
+  "languages": {
+    "JavaScript": {
+      "formatter": { "language_server": { "name": "biome" } },
+    },
+    "TypeScript": {
+      "formatter": { "language_server": { "name": "biome" } },
+    },
+    "TSX": {
+      "formatter": { "language_server": { "name": "biome" } },
+    },
+    "JSON": {
+      "formatter": { "language_server": { "name": "biome" } },
+    },
+  },
+
+  // For eslint projects, drop this in project .zed/settings.json instead
+  // (formatter: [] stops biome clobbering eslint's fixAll):
+  // "languages": {
+  //   "JavaScript": {
+  //     "formatter": [],
+  //     "code_actions_on_format": {
+  //       "source.fixAll.eslint": true
+  //     }
+  //   },
+  //   "TypeScript": {
+  //     "formatter": [],
+  //     "code_actions_on_format": {
+  //       "source.fixAll.eslint": true
+  //     }
+  //   },
+  //   "TSX": {
+  //     "formatter": [],
+  //     "code_actions_on_format": {
+  //       "source.fixAll.eslint": true
+  //     }
+  //   }
+  // },
+
   // Terminal
   "terminal": {
     "font_family": "MesloLGL Nerd Font",

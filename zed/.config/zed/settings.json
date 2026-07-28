@@ -68,6 +68,15 @@
     "default_model": {
       // personal machine
       "provider": "openrouter",
+      "model": "deepseek/deepseek-v4-pro",
+
+      // work machine
+      // "provider": "copilot_chat",
+      // "model": "gpt-5.5"
+    },
+    "commit_message_model": {
+      // personal machine
+      "provider": "openrouter",
       "model": "deepseek/deepseek-v4-flash",
 
       // work machine

@@ -8,23 +8,6 @@
 // from the command palette or from `Zed` application menu.
 {
   // Editor / UI
-  "lsp": {
-    "vtsls": {
-      "settings": {
-        "typescript": {
-          "updateImportsOnFileMove": {
-            "enabled": "always"
-          }
-        },
-        "javascript": {
-          "updateImportsOnFileMove": {
-            "enabled": "always"
-          }
-        }
-      },
-      "enable_lsp_tasks": true
-    }
-  },
   "base_keymap": "Cursor",
   "cli_default_open_behavior": "new_window",
   "diff_view_style": "unified",
@@ -137,6 +120,25 @@
     "font_family": "MesloLGL Nerd Font",
     "env": {
       "EDITOR": "zed --wait",
+    },
+  },
+
+  // LSP
+  "lsp": {
+    "vtsls": {
+      "settings": {
+        "typescript": {
+          "updateImportsOnFileMove": {
+            "enabled": "always",
+          },
+        },
+        "javascript": {
+          "updateImportsOnFileMove": {
+            "enabled": "always",
+          },
+        },
+      },
+      "enable_lsp_tasks": true,
     },
   },
 }

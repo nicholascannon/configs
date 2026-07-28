@@ -75,6 +75,8 @@
       // "model": "gpt-5.5"
     },
     "commit_message_model": {
+      "speed": "fast",
+
       // personal machine
       "provider": "openrouter",
       "model": "deepseek/deepseek-v4-flash",
@@ -83,6 +85,7 @@
       // "provider": "copilot_chat",
       // "model": "gpt-4.1-mini"
     },
+    "commit_message_instructions": "Use Conventional Commits format: <type>(<scope>): <subject>. Types: feat, fix, refactor, chore, docs, test, style, perf. Keep the subject line under 72 characters, lowercase, no trailing period. Add a body only if the change needs more explanation.",
   },
 
   // Languages

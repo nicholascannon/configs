@@ -91,7 +91,7 @@
   },
   "edit_predictions": {
     // personal machine
-    "provider": "open_ai_compatible_api", // TODO: figure out for local
+    "provider": "zed",
 
     // work machine
     // "provider": "copilot",

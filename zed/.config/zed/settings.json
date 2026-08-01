@@ -40,6 +40,7 @@
     "dock": "left",
     "entry_spacing": "standard",
     "indent_size": 12,
+    "auto_fold_dirs": false,
   },
   "git_panel": {
     "group_by": "none",

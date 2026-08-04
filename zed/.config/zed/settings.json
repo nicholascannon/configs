@@ -32,6 +32,11 @@
     "toml": true,
     "fleet-themes": true,
     "material-icon-theme": true,
+    "git-firefly": true,
+    "postgres-language-server": true,
+    "prisma": true,
+    "sql": true,
+    "terraform": true,
   },
 
   // Panels

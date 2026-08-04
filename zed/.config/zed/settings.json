@@ -32,7 +32,6 @@
     "toml": true,
     "fleet-themes": true,
     "material-icon-theme": true,
-    "biome": true,
   },
 
   // Panels

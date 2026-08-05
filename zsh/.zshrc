@@ -114,7 +114,7 @@ export EDITOR=vim
 
 bindkey -v # make vi-mode plugin work properly
 
-eval "$(fnm env --use-on-cd)"
+eval "$(fnm env --use-on-cd --log-level quiet)"
 
 # Aliases
 alias c="clear"

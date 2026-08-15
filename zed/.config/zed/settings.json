@@ -63,14 +63,6 @@
     "show_diagnostics": "errors",
   },
 
-  // Git
-  "git": {
-    // Ships in v1.13.0-pre / future stable
-    // "file_diff": {
-    //     "show_full_file": true
-    // }
-  },
-
   // Agent
   "agent": {
     "dock": "right",

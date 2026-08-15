@@ -19,6 +19,10 @@
   "buffer_font_size": 13.0,
   "markdown_preview_font_size": 14.0,
   "format_on_save": "on",
+  "autosave": "on_focus_change",
+  "ensure_final_newline_on_save": true,
+  "remove_trailing_whitespace_on_save": true,
+  "restore_on_startup": "last_session",
   "file_scan_inclusions": [
     ".env",
     ".env.*",
@@ -70,6 +74,13 @@
   // Agent
   "agent": {
     "dock": "right",
+    "notify_when_agent_waiting": "all_screens",
+    "play_sound_when_agent_done": "always",
+    "single_file_review": true,
+    "auto_compact": {
+      "enabled": true,
+      "threshold": "90%",
+    },
     "default_model": {
       "enable_thinking": true,
 
@@ -94,6 +105,67 @@
       // "model": "gpt-4.1-mini"
     },
     "commit_message_instructions": "Use Conventional Commits format: <type>(<scope>): <subject>. Types: feat, fix, refactor, chore, docs, test, style, perf. Keep the subject line under 72 characters, lowercase, no trailing period. Add a body only if the change needs more explanation.",
+    "tool_permissions": {
+      "default": "confirm",
+      "tools": {
+        "terminal": {
+          "default": "confirm",
+          "always_allow": [
+            { "pattern": "^rg(\\s|$)" },
+            {
+              "pattern": "^git\\s+(status|log|diff|show|branch|blame|remote|stash\\s+list|tag|describe)(\\s|$)",
+            },
+            {
+              "pattern": "^gh\\s+(pr|issue|repo|run|workflow|release|search|status)(\\s|$)",
+            },
+            { "pattern": "^(ls|cat|head|tail|pwd|which|echo|mkdir|touch)\\b" },
+            {
+              "pattern": "^(npm|pnpm|yarn|bun|cargo|make)\\s+(test|run|build|check|lint|fmt|typecheck)(\\s|$)",
+            },
+          ],
+          "always_confirm": [
+            { "pattern": "\\bgit\\s+push\\b" },
+            { "pattern": "\\bsudo\\b" },
+            { "pattern": "\\brm\\b" },
+            { "pattern": "\\bcurl\\b|\\bwget\\b" },
+            {
+              "pattern": "\\bnpx\\b|\\bnpm\\s+install\\b|\\bbrew\\s+install\\b",
+            },
+            {
+              "pattern": "gh\\s+(pr\\s+(merge|create|close|reopen)|repo\\s+(delete|create)|issue\\s+(create|close|reopen))\\b",
+            },
+          ],
+          "always_deny": [{ "pattern": "rm\\s+-rf\\s+(/|~|\\$HOME)" }],
+        },
+        "edit_file": {
+          "default": "allow",
+          "always_deny": [
+            { "pattern": "\\.env" },
+            { "pattern": "\\.(pem|key|p12)$" },
+            { "pattern": "secrets?/" },
+            { "pattern": "\\.ssh/" },
+          ],
+        },
+        "write_file": {
+          "default": "allow",
+          "always_deny": [
+            { "pattern": "\\.env" },
+            { "pattern": "\\.(pem|key|p12)$" },
+          ],
+        },
+        "delete_path": {
+          "default": "confirm",
+          "always_deny": [
+            { "pattern": "\\.git/?$" },
+            { "pattern": "node_modules/?$" },
+          ],
+        },
+        "fetch": { "default": "confirm" },
+        "move_path": { "default": "confirm" },
+        "copy_path": { "default": "confirm" },
+        "create_directory": { "default": "allow" },
+      },
+    },
   },
   "edit_predictions": {
     // personal machine
@@ -167,5 +239,10 @@
       },
       "enable_lsp_tasks": true,
     },
+  },
+
+  // Telemetry
+  "telemetry": {
+    "metrics": false,
   },
 }

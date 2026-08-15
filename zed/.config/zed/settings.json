@@ -71,13 +71,14 @@
   "agent": {
     "dock": "right",
     "default_model": {
+      "enable_thinking": true,
+
       // personal machine
       "provider": "openrouter",
       "model": "deepseek/deepseek-v4-pro",
 
       // work machine
       // "effort": "high",
-      // "enable_thinking": true,
       // "provider": "copilot_chat",
       // "model": "gpt-5.3-codex",
     },

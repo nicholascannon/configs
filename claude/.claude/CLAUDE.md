@@ -47,6 +47,24 @@ Applies to new files and to files you are already restructuring. Do not reorder
 an existing file purely to satisfy this rule when the diff would drown the
 actual change.
 
+## Function Interfaces
+
+Design deep modules: simple interfaces hiding rich functionality. Resist
+inventing narrow arg-object types when a domain entity already exists.
+
+- Accept the domain entity, not a bespoke subset of its fields. Every ad-hoc
+  `{ id: string; name: string; status: string }` arg type is a new concept
+  readers must learn; the domain entity is already understood.
+- A function that takes the whole entity can use additional fields later without
+  changing its signature — the interface stays stable as functionality deepens.
+- Callers shouldn't need to know which fields the function reads; that's an
+  implementation detail the interface should hide.
+
+Break this rule when: the function genuinely crosses domain boundaries and no
+single entity covers its inputs, or when you intentionally want a narrow
+contract to decouple from a large type (e.g., a pure utility that should not
+know about your ORM).
+
 ## Comments
 
 Write comments only where they carry information the code cannot.

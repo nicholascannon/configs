@@ -1,0 +1,17 @@
+{
+  "lastChangelogVersion": "0.84.2",
+  "theme": "winter-wisp",
+  "defaultProvider": "openrouter",
+  "defaultModel": "deepseek/deepseek-v4-flash",
+  "defaultThinkingLevel": "high",
+  "packages": [
+    "npm:pi-vim"
+  ],
+  "terminal": {
+    "showTerminalProgress": false
+  },
+  "hideThinkingBlock": true,
+  "enableInstallTelemetry": false,
+  "defaultProjectTrust": "ask",
+  "tuiMode": "regular"
+}

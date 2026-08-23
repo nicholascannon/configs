@@ -17,6 +17,7 @@ stow --target="$HOME" --verbose --restow \
   claude \
   nvim \
   p10k \
+  pi \
   tmux \
   vim \
   zed \

@@ -12,8 +12,8 @@
       "cmd-8": ["pane::ActivateItem", 7],
       "cmd-9": ["pane::ActivateItem", 8],
       // overrides default search::SelectNextMatch (unused, vim "n" covers it)
-      "cmd-g": "git_panel::ToggleFocus"
-    }
+      "cmd-g": "git_panel::ToggleFocus",
+    },
   },
   {
     "context": "Workspace",
@@ -24,22 +24,16 @@
       "ctrl-j": "workspace::ActivatePaneDown",
       "alt-cmd-s": "workspace::ToggleLeftDock",
       "cmd-g": "git_panel::ToggleFocus",
-      "cmd-e": "project_panel::ToggleFocus"
-    }
+      "cmd-e": "project_panel::ToggleFocus",
+    },
   },
   {
     // default cmd-e is buffer_search::UseSelectionForFind; re-bound here too
     // since Editor context wins over Workspace while focus is in a buffer
     "context": "Editor && mode == full",
     "bindings": {
-      "cmd-e": "project_panel::ToggleFocus"
-    }
-  },
-  {
-    "context": "Terminal",
-    "bindings": {
-      "shift-enter": ["workspace::SendKeystrokes", "escape enter"]
-    }
+      "cmd-e": "project_panel::ToggleFocus",
+    },
   },
   {
     "context": "Editor && vim_mode == normal && (vim_operator == none || vim_operator == n) && !VimWaiting",
@@ -47,7 +41,7 @@
       "g r": "editor::FindAllReferences",
       "\\ f enter": "editor::Format",
       "\\ a enter": "editor::ToggleCodeActions",
-      "\\ r n": "editor::Rename"
-    }
-  }
+      "\\ r n": "editor::Rename",
+    },
+  },
 ]

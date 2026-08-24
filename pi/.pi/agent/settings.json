@@ -1,6 +1,6 @@
 {
   "lastChangelogVersion": "0.84.3",
-  "theme": "winter-wisp",
+  "theme": "brogrammer",
   "defaultProvider": "openrouter",
   "defaultModel": "deepseek/deepseek-v4-flash",
   "defaultThinkingLevel": "high",

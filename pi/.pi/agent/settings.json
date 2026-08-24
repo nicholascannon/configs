@@ -6,7 +6,10 @@
   "defaultThinkingLevel": "high",
   "packages": [
     "npm:pi-vim",
-    "git:github.com/obra/superpowers"
+    "git:github.com/obra/superpowers",
+    "npm:pi-mcp-adapter",
+    "npm:pi-web-access",
+    "npm:pi-subagents"
   ],
   "terminal": {
     "showTerminalProgress": false

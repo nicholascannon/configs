@@ -9,7 +9,8 @@
     "git:github.com/obra/superpowers",
     "npm:pi-mcp-adapter",
     "npm:pi-web-access",
-    "npm:pi-subagents"
+    "npm:pi-subagents",
+    "npm:pi-lens"
   ],
   "terminal": {
     "showTerminalProgress": false

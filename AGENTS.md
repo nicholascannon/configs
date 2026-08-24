@@ -21,22 +21,24 @@ ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.gh
 
 ## Stow Packages
 
-| Package   | Target              | What it configures                              |
-|-----------|---------------------|-------------------------------------------------|
-| `claude`  | `~/.claude/`        | Claude Code settings, statusline, hooks, rules  |
-| `nvim`    | `~/.config/nvim/`   | Neovim (native LSP, Treesitter, lazy.nvim)      |
-| `zed`     | `~/.config/zed/`    | Zed editor (settings + keymap)                  |
-| `vim`     | `~/`                | Classic vim (.vimrc, .coc.vim — legacy)         |
-| `tmux`    | `~/`                | tmux config                                     |
-| `zsh`     | `~/`                | .zshrc (oh-my-zsh + p10k + fnm)                |
-| `p10k`    | `~/`                | Powerlevel10k prompt config                     |
-| `ghostty` | (manual symlink)    | Ghostty terminal theme                          |
+| Package   | Target            | What it configures                             |
+| --------- | ----------------- | ---------------------------------------------- |
+| `claude`  | `~/.claude/`      | Claude Code settings, statusline, hooks, rules |
+| `nvim`    | `~/.config/nvim/` | Neovim (native LSP, Treesitter, lazy.nvim)     |
+| `zed`     | `~/.config/zed/`  | Zed editor (settings + keymap)                 |
+| `vim`     | `~/`              | Classic vim (.vimrc, .coc.vim — legacy)        |
+| `tmux`    | `~/`              | tmux config                                    |
+| `zsh`     | `~/`              | .zshrc (oh-my-zsh + p10k + fnm)                |
+| `p10k`    | `~/`              | Powerlevel10k prompt config                    |
+| `pi`       | `~/.pi/`, `~/.pi-lens/` | Pi agent settings/themes/MCP + pi-lens config |
+| `ghostty` | (manual symlink)  | Ghostty terminal theme                         |
 
 ## Architecture Notes
 
 **Stow symlink drift:** `install.sh` force-removes `~/.claude/settings.json` before restowing because external tools (e.g. aicodemetricsd) atomically rewrite the file, replacing the symlink with a real file. This repo must stay source of truth.
 
 **Per-machine overrides:** Machine-specific config that shouldn't be committed:
+
 - `nvim/.config/nvim/local.lua` — gitignored; set `vim.g.enable_copilot = true` on machines with a Copilot seat
 - `~/.zshrc.local` — sourced at end of .zshrc for machine-local env/aliases
 - MCP servers in `~/.claude.json` — registered per-machine via `claude mcp add`

@@ -23,15 +23,6 @@
         "@modelcontextprotocol/server-sequential-thinking"
       ],
       "directTools": true
-    },
-    "filesystem": {
-      "command": "npx",
-      "args": [
-        "-y",
-        "@modelcontextprotocol/server-filesystem",
-        "/Users/nicholas"
-      ],
-      "directTools": true
     }
   }
 }

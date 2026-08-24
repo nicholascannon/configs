@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.84.2",
+  "lastChangelogVersion": "0.84.3",
   "theme": "winter-wisp",
   "defaultProvider": "openrouter",
   "defaultModel": "deepseek/deepseek-v4-flash",
@@ -19,5 +19,10 @@
   "hideThinkingBlock": true,
   "enableInstallTelemetry": false,
   "defaultProjectTrust": "ask",
-  "tuiMode": "regular"
+  "tuiMode": "regular",
+  "enabledModels": [
+    "openrouter/deepseek/deepseek-v4-flash",
+    "openrouter/deepseek/deepseek-v4-pro",
+    "openrouter/z-ai/glm-5.2"
+  ]
 }

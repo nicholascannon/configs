@@ -21,17 +21,17 @@ ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.gh
 
 ## Stow Packages
 
-| Package   | Target            | What it configures                             |
-| --------- | ----------------- | ---------------------------------------------- |
-| `claude`  | `~/.claude/`      | Claude Code settings, statusline, hooks, rules |
-| `nvim`    | `~/.config/nvim/` | Neovim (native LSP, Treesitter, lazy.nvim)     |
-| `zed`     | `~/.config/zed/`  | Zed editor (settings + keymap)                 |
-| `vim`     | `~/`              | Classic vim (.vimrc, .coc.vim — legacy)        |
-| `tmux`    | `~/`              | tmux config                                    |
-| `zsh`     | `~/`              | .zshrc (oh-my-zsh + p10k + fnm)                |
-| `p10k`    | `~/`              | Powerlevel10k prompt config                    |
-| `pi`       | `~/.pi/`, `~/.pi-lens/` | Pi agent settings/themes/MCP + pi-lens config |
-| `ghostty` | (manual symlink)  | Ghostty terminal theme                         |
+| Package   | Target                  | What it configures                             |
+| --------- | ----------------------- | ---------------------------------------------- |
+| `claude`  | `~/.claude/`            | Claude Code settings, statusline, hooks, rules |
+| `nvim`    | `~/.config/nvim/`       | Neovim (native LSP, Treesitter, lazy.nvim)     |
+| `zed`     | `~/.config/zed/`        | Zed editor (settings + keymap)                 |
+| `vim`     | `~/`                    | Classic vim (.vimrc, .coc.vim — legacy)        |
+| `tmux`    | `~/`                    | tmux config                                    |
+| `zsh`     | `~/`                    | .zshrc (oh-my-zsh + p10k + fnm)                |
+| `p10k`    | `~/`                    | Powerlevel10k prompt config                    |
+| `pi`      | `~/.pi/`, `~/.pi-lens/` | Pi agent settings/themes/MCP + pi-lens config  |
+| `ghostty` | (manual symlink)        | Ghostty terminal theme                         |
 
 ## Architecture Notes
 

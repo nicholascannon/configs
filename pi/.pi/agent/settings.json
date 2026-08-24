@@ -8,10 +8,10 @@
     "npm:pi-vim",
     "git:github.com/obra/superpowers",
     "npm:pi-mcp-adapter",
-    "npm:pi-web-access",
     "npm:pi-subagents",
     "npm:pi-lens",
-    "npm:pi-caveman"
+    "npm:pi-caveman",
+    "npm:@juicesharp/rpiv-todo"
   ],
   "terminal": {
     "showTerminalProgress": false

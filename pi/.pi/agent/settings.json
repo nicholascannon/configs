@@ -11,7 +11,8 @@
     "npm:pi-subagents",
     "npm:pi-lens",
     "npm:pi-caveman",
-    "npm:@juicesharp/rpiv-todo"
+    "npm:@juicesharp/rpiv-todo",
+    "npm:pi-cc-header"
   ],
   "terminal": {
     "showTerminalProgress": false
@@ -24,5 +25,19 @@
     "openrouter/deepseek/deepseek-v4-flash",
     "openrouter/deepseek/deepseek-v4-pro",
     "openrouter/z-ai/glm-5.2"
-  ]
+  ],
+  "quietStartup": true,
+  "clearOnStart": true,
+  "ccHeader": {
+    "color": "b",
+    "ver": 1,
+    "grad": true,
+    "lines": true,
+    "pkg": true,
+    "speed": 50,
+    "slogan": "Code something that makes you proud",
+    "sloganOn": true,
+    "sloganColor": true,
+    "disabled": false
+  }
 }

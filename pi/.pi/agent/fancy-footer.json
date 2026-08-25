@@ -1,0 +1,47 @@
+{
+  "refreshMs": 500,
+  "iconFamily": "nerd",
+  "gaugeStyle": "parallelograms",
+  "gaugeWidth": 20,
+  "defaultTextColor": "accent",
+  "defaultIconColor": "text",
+  "gaugeColors": {
+    "ok": "text",
+    "warning": "warning",
+    "error": "error"
+  },
+  "widgets": {
+    "provider": {
+      "enabled": false
+    },
+    "model": {
+      "icon": "hide"
+    },
+    "thinking": {
+      "icon": "hide"
+    },
+    "context-capacity": {
+      "enabled": true,
+      "icon": "hide",
+      "textColor": "muted"
+    },
+    "context-bar": {
+      "icon": "hide"
+    },
+    "cache-hit-rate": {
+      "icon": "hide"
+    },
+    "location": {
+      "icon": "hide"
+    },
+    "branch": {
+      "icon": "hide"
+    },
+    "provider-status": {
+      "enabled": false
+    },
+    "git-status": {
+      "enabled": false
+    }
+  }
+}

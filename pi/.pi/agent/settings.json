@@ -12,7 +12,8 @@
     "npm:pi-lens",
     "npm:pi-caveman",
     "npm:@juicesharp/rpiv-todo",
-    "npm:pi-cc-header"
+    "npm:pi-cc-header",
+    "npm:pi-fancy-footer"
   ],
   "terminal": {
     "showTerminalProgress": false

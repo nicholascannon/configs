@@ -2,7 +2,7 @@
   "refreshMs": 500,
   "iconFamily": "nerd",
   "gaugeStyle": "parallelograms",
-  "gaugeWidth": 20,
+  "gaugeWidth": 10,
   "defaultTextColor": "accent",
   "defaultIconColor": "text",
   "gaugeColors": {
@@ -27,6 +27,12 @@
     },
     "context-bar": {
       "icon": "hide"
+    },
+    "cache-read": {
+      "enabled": false
+    },
+    "cache-write": {
+      "enabled": false
     },
     "cache-hit-rate": {
       "icon": "hide"

@@ -51,7 +51,7 @@
     "auto_fold_dirs": false,
   },
   "git_panel": {
-    "group_by": "none",
+    "group_by": "staging",
     "tree_view": true,
     "dock": "left",
     "entry_primary_click_action": "file_diff",

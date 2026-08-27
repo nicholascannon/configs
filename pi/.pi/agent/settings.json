@@ -13,7 +13,8 @@
     "npm:pi-caveman",
     "npm:@juicesharp/rpiv-todo",
     "npm:pi-cc-header",
-    "npm:pi-fancy-footer"
+    "npm:pi-fancy-footer",
+    "npm:@juicesharp/rpiv-ask-user-question"
   ],
   "terminal": {
     "showTerminalProgress": false

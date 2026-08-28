@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.84.3",
+  "lastChangelogVersion": "0.84.4",
   "theme": "brogrammer",
   "defaultProvider": "openrouter",
   "defaultModel": "deepseek/deepseek-v4-flash",
@@ -14,7 +14,8 @@
     "npm:@juicesharp/rpiv-todo",
     "npm:pi-cc-header",
     "npm:pi-fancy-footer",
-    "npm:@juicesharp/rpiv-ask-user-question"
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:pi-web-access"
   ],
   "terminal": {
     "showTerminalProgress": false

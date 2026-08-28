@@ -78,7 +78,7 @@
 
       // personal machine
       "provider": "openrouter",
-      "model": "deepseek/deepseek-v4-pro",
+      "model": "deepseek/deepseek-v4-flash",
 
       // work machine
       // "effort": "high",

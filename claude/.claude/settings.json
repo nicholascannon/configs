@@ -64,11 +64,13 @@
       "mcp__context7__resolve-library-id",
       "mcp__context7__query-docs"
     ],
+    "defaultMode": "auto",
     "additionalDirectories": [
       "~/notes"
     ]
   },
   "model": "sonnet",
+  "outputStyle": "Concise",
   "hooks": {
     "Notification": [
       {

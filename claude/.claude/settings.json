@@ -68,7 +68,7 @@
       "~/notes"
     ]
   },
-  "model": "claude-opus-4-6[1m]",
+  "model": "sonnet",
   "hooks": {
     "Notification": [
       {
@@ -82,7 +82,6 @@
       }
     ]
   },
-  "disableAgentView": true,
   "statusLine": {
     "type": "command",
     "command": "$HOME/.claude/statusline.sh"
@@ -106,5 +105,6 @@
   },
   "effortLevel": "medium",
   "editorMode": "vim",
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "agentPushNotifEnabled": false
 }

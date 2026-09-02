@@ -24,6 +24,7 @@ ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.gh
 | Package   | Target                  | What it configures                             |
 | --------- | ----------------------- | ---------------------------------------------- |
 | `claude`  | `~/.claude/`            | Claude Code settings, statusline, hooks, rules |
+| `cursor`  | `~/Library/.../Cursor/` | Cursor editor (settings + keybindings)         |
 | `nvim`    | `~/.config/nvim/`       | Neovim (native LSP, Treesitter, lazy.nvim)     |
 | `zed`     | `~/.config/zed/`        | Zed editor (settings + keymap)                 |
 | `vim`     | `~/`                    | Classic vim (.vimrc, .coc.vim — legacy)        |
@@ -36,6 +37,8 @@ ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.gh
 ## Architecture Notes
 
 **Stow symlink drift:** `install.sh` force-removes `~/.claude/settings.json` before restowing because external tools (e.g. aicodemetricsd) atomically rewrite the file, replacing the symlink with a real file. This repo must stay source of truth.
+
+**Cursor package path:** `cursor/` mirrors `~/Library/Application Support/Cursor/User/`, so stow descends into the existing Cursor dir and links only `settings.json` and `keybindings.json` — `History/`, `globalStorage/`, and `workspaceStorage/` stay untracked. Extensions and `~/.cursor/mcp.json` are deliberately not tracked.
 
 **Per-machine overrides:** Machine-specific config that shouldn't be committed:
 

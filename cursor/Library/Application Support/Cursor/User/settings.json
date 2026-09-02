@@ -1,0 +1,80 @@
+{
+  "editor.formatOnSave": true,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.cursorSurroundingLines": 10,
+
+  "workbench.layoutControl.enabled": false,
+  "workbench.agentsWindowButton.enabled": false,
+
+  "terminal.integrated.fontFamily": "MesloLGL Nerd Font",
+  "terminal.integrated.showLinkHover": false,
+
+  "workbench.iconTheme": "material-icon-theme",
+  "material-icon-theme.hidesExplorerArrows": true,
+  "material-icon-theme.folders.color": "#fdd835",
+
+  "vim.hlsearch": true,
+  "vim.normalModeKeyBindingsNonRecursive": [
+    {
+      "before": ["K"],
+      "commands": [
+        {
+          "command": "editor.action.showHover"
+        }
+      ]
+    },
+    {
+      "before": ["<leader>", "f", "\n"],
+      "commands": [
+        {
+          "command": "editor.action.formatDocument"
+        }
+      ]
+    },
+    {
+      "before": ["<leader>", "a", "\n"],
+      "commands": [
+        {
+          "command": "editor.action.quickFix",
+          "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
+        }
+      ]
+    },
+    {
+      "before": ["<leader>", "r", "n"],
+      "commands": [
+        {
+          "command": "editor.action.rename"
+        }
+      ]
+    },
+    {
+      "before": ["g", "r"],
+      "commands": [
+        {
+          "command": "editor.action.goToReferences"
+        }
+      ]
+    },
+    {
+      "before": ["g", "i"],
+      "commands": [
+        {
+          "command": "editor.action.goToImplementation"
+        }
+      ]
+    },
+    {
+      "before": ["g", "p"],
+      "commands": [
+        {
+          "command": "editor.action.peekDefinition"
+        }
+      ]
+    }
+  ],
+
+  "redhat.telemetry.enabled": false,
+  "git.confirmSync": false,
+  "diffEditor.renderSideBySide": false
+}

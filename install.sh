@@ -17,6 +17,7 @@ mkdir -p "$HOME/.pi-lens"
 
 stow --target="$HOME" --verbose --restow \
   claude \
+  cursor \
   nvim \
   p10k \
   pi \

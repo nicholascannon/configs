@@ -2,6 +2,7 @@
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.cursorSurroundingLines": 10,
+  "files.autoSave": "onFocusChange",
 
   "workbench.layoutControl.enabled": false,
   "workbench.agentsWindowButton.enabled": false,
@@ -74,7 +75,7 @@
     }
   ],
 
-  "redhat.telemetry.enabled": false,
+  "telemetry.telemetryLevel": "off",
   "git.confirmSync": false,
   "diffEditor.renderSideBySide": false
 }

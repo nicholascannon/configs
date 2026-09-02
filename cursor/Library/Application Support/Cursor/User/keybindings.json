@@ -59,6 +59,17 @@
     "when": "!isAuxiliaryWindowFocusedContext",
   },
 
+  {
+    "key": "cmd+n",
+    "command": "workbench.action.terminal.new",
+    "when": "terminalFocus && !terminalEditorFocus",
+  },
+  {
+    "key": "cmd+n",
+    "command": "workbench.action.createTerminalEditor",
+    "when": "terminalEditorFocus",
+  },
+
   // claude code
   {
     "key": "shift+enter",

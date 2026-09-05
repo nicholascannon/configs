@@ -10,7 +10,7 @@
   // Editor / UI
   "autosave": "on_focus_change",
   "base_keymap": "Cursor",
-  "buffer_font_family": ".ZedMono",
+  "buffer_font_family": "Menlo",
   "buffer_font_size": 12.0,
   "cli_default_open_behavior": "new_window",
   "diff_view_style": "unified",

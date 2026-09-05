@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.84.4",
+  "lastChangelogVersion": "0.85.1",
   "theme": "brogrammer",
   "defaultProvider": "openrouter",
   "defaultModel": "deepseek/deepseek-v4-flash",
@@ -17,18 +17,10 @@
     "npm:@juicesharp/rpiv-ask-user-question",
     "npm:pi-web-access"
   ],
-  "terminal": {
-    "showTerminalProgress": false
-  },
   "hideThinkingBlock": true,
   "enableInstallTelemetry": false,
   "defaultProjectTrust": "ask",
   "tuiMode": "regular",
-  "enabledModels": [
-    "openrouter/deepseek/deepseek-v4-flash",
-    "openrouter/deepseek/deepseek-v4-pro",
-    "openrouter/z-ai/glm-5.2"
-  ],
   "quietStartup": true,
   "clearOnStart": true,
   "ccHeader": {

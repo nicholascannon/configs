@@ -44,7 +44,12 @@ ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.gh
 
 - `nvim/.config/nvim/local.lua` — gitignored; set `vim.g.enable_copilot = true` on machines with a Copilot seat
 - `~/.zshrc.local` — sourced at end of .zshrc for machine-local env/aliases
-- MCP servers in `~/.claude.json` — registered per-machine via `claude mcp add`
+- MCP servers in `~/.claude.json` — registered per-machine via `claude mcp add`.
+  `~/.claude.json` is runtime state (caches, counters, oauth, absolute paths) and
+  is deliberately not stowed, so servers must be re-added on a fresh machine.
+  Expected user-scope servers: `context7`
+  (`claude mcp add context7 --scope user -- npx -y @upstash/context7-mcp --api-key <key>`;
+  key from the password manager, never committed). Verify with `claude mcp get context7`.
 
 **Zed personal/work toggle:** `zed/.config/zed/settings.json` has commented-out blocks for work machine (copilot_chat provider) vs personal machine (openrouter provider). Swap by uncommenting the relevant block.
 

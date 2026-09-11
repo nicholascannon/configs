@@ -43,9 +43,10 @@ ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.gh
 Levers to revisit if the style degrades:
 
 - **Style silently reverts.** The `/config` picker writes `outputStyle` into `.claude/settings.local.json` (gitignored), which outranks the stowed `claude/.claude/settings.json`. Delete the key there instead of re-picking from the menu.
-- **Context cost or worse tool use.** The whole style ships with every request. The ~42-row vocabulary table is the largest block and the first thing to trim.
-- **Output feels over-constrained.** Cut calibration examples before cutting rules — examples narrow the response space more than rules do.
-- **Requirements block noise.** The block renders only when a response contains a keyword. Flip that rule in the style file to always render it.
+- **Responses run long.** The `Response scope` section carries the length control, and it comes first in the file for that reason. Grammar rules alone do not shorten a response — an earlier draft had only grammar rules and produced 40-sentence answers.
+- **Context cost.** The whole style ships with every request. It is deliberately 81 lines. A 213-line draft with a 42-row vocabulary table and calibration examples scored no better on the same test questions, and neither did replacing its enumerated filler and adjective lists with principles — so prefer principles when trimming further.
+- **Requirements block noise.** The block renders only when a response uses 2 or more RFC-2119 keywords. Change the threshold in the style file.
+- **Answers too shallow.** Raise the 5-sentence default in `Response scope`. Validated against `bighit-serverless` on a lookup question, a two-part cleanup question, and an "explain how X works" question.
 - **Full revert.** Set `outputStyle` back to `Concise` in `claude/.claude/settings.json`.
 
 **Cursor package path:** `cursor/` mirrors `~/Library/Application Support/Cursor/User/`, so stow descends into the existing Cursor dir and links only `settings.json` and `keybindings.json` — `History/`, `globalStorage/`, and `workspaceStorage/` stay untracked. Extensions and `~/.cursor/mcp.json` are deliberately not tracked.

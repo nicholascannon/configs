@@ -38,7 +38,7 @@ ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.gh
 
 **Stow symlink drift:** `install.sh` force-removes `~/.claude/settings.json` before restowing because external tools (e.g. aicodemetricsd) atomically rewrite the file, replacing the symlink with a real file. This repo must stay source of truth.
 
-**Claude output style:** `claude/.claude/output-styles/simplified-technical-english.md` sets the default response register to ASD-STE100 Simplified Technical English, with RFC-2119 keywords for requirements. `keep-coding-instructions: true` retains Claude Code's built-in software engineering instructions; without that field the style replaces them. The `caveman` plugin is disabled in `settings.json` because its `SessionStart`/`UserPromptSubmit` hooks injected a competing register on every prompt — re-enabling it recreates that conflict.
+**Claude output style:** `claude/.claude/output-styles/simplified-technical-english.md` sets the default response register to ASD-STE100 Simplified Technical English, with RFC-2119 keywords for requirements. `keep-coding-instructions: true` retains Claude Code's built-in software engineering instructions; without that field the style replaces them. The `caveman` plugin is disabled in `settings.json` because its `SessionStart`/`UserPromptSubmit` hooks injected a competing register on every prompt — re-enabling it recreates that conflict. Its statusline badge in `claude/.claude/statusline.sh` is commented out rather than deleted, so restoring it is an uncomment.
 
 Levers to revisit if the style degrades:
 

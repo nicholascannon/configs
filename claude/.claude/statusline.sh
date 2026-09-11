@@ -25,15 +25,17 @@ IFS='|' read -r ctx_str tok_str model_str effort_str < <(
   '
 )
 
+# Caveman plugin is disabled. To restore the [CAVEMAN] badge, uncomment the
+# two assignments below and the parts= line that uses $caveman.
 # glob picks last alphabetically — not guaranteed latest on multi-version, but usually fine
-hooks=(~/.claude/plugins/cache/caveman/caveman/*/hooks/caveman-statusline.sh)
-caveman=$(bash "${hooks[${#hooks[@]}-1]}" <<< "$input" 2>/dev/null)
+# hooks=(~/.claude/plugins/cache/caveman/caveman/*/hooks/caveman-statusline.sh)
+# caveman=$(bash "${hooks[${#hooks[@]}-1]}" <<< "$input" 2>/dev/null)
 
 parts=""
 [ -n "$tok_str" ] && parts="$tok_str "
 parts="$parts$ctx_str"
 [ -n "$model_str" ] && parts="$parts $model_str"
 [ -n "$effort_str" ] && parts="$parts ($effort_str)"
-[ -n "$caveman" ] && parts="$parts | $caveman"
+# [ -n "$caveman" ] && parts="$parts | $caveman"
 
 echo "$parts"

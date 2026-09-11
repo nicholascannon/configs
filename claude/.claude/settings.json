@@ -90,7 +90,7 @@
     "command": "$HOME/.claude/statusline.sh"
   },
   "enabledPlugins": {
-    "caveman@caveman": true,
+    "caveman@caveman": false,
     "claude-md-management@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
@@ -104,7 +104,12 @@
       }
     }
   },
-  "outputStyle": "Concise",
+  "modelSettings": {
+    "claude-opus-5": {
+      "effortLevel": "high"
+    }
+  },
+  "outputStyle": "Simplified Technical English",
   "effortLevel": "medium",
   "editorMode": "vim",
   "agentPushNotifEnabled": false,

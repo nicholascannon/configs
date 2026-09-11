@@ -21,22 +21,32 @@ ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.gh
 
 ## Stow Packages
 
-| Package   | Target                  | What it configures                             |
-| --------- | ----------------------- | ---------------------------------------------- |
-| `claude`  | `~/.claude/`            | Claude Code settings, statusline, hooks, rules |
-| `cursor`  | `~/Library/.../Cursor/` | Cursor editor (settings + keybindings)         |
-| `nvim`    | `~/.config/nvim/`       | Neovim (native LSP, Treesitter, lazy.nvim)     |
-| `zed`     | `~/.config/zed/`        | Zed editor (settings + keymap)                 |
-| `vim`     | `~/`                    | Classic vim (.vimrc, .coc.vim — legacy)        |
-| `tmux`    | `~/`                    | tmux config                                    |
-| `zsh`     | `~/`                    | .zshrc (oh-my-zsh + p10k + fnm)                |
-| `p10k`    | `~/`                    | Powerlevel10k prompt config                    |
-| `pi`      | `~/.pi/`, `~/.pi-lens/` | Pi agent settings/themes/MCP + pi-lens config  |
-| `ghostty` | (manual symlink)        | Ghostty terminal theme                         |
+| Package   | Target                  | What it configures                                            |
+| --------- | ----------------------- | ------------------------------------------------------------- |
+| `claude`  | `~/.claude/`            | Claude Code settings, statusline, hooks, rules, output styles |
+| `cursor`  | `~/Library/.../Cursor/` | Cursor editor (settings + keybindings)                        |
+| `nvim`    | `~/.config/nvim/`       | Neovim (native LSP, Treesitter, lazy.nvim)                    |
+| `zed`     | `~/.config/zed/`        | Zed editor (settings + keymap)                                |
+| `vim`     | `~/`                    | Classic vim (.vimrc, .coc.vim — legacy)                       |
+| `tmux`    | `~/`                    | tmux config                                                   |
+| `zsh`     | `~/`                    | .zshrc (oh-my-zsh + p10k + fnm)                               |
+| `p10k`    | `~/`                    | Powerlevel10k prompt config                                   |
+| `pi`      | `~/.pi/`, `~/.pi-lens/` | Pi agent settings/themes/MCP + pi-lens config                 |
+| `ghostty` | (manual symlink)        | Ghostty terminal theme                                        |
 
 ## Architecture Notes
 
 **Stow symlink drift:** `install.sh` force-removes `~/.claude/settings.json` before restowing because external tools (e.g. aicodemetricsd) atomically rewrite the file, replacing the symlink with a real file. This repo must stay source of truth.
+
+**Claude output style:** `claude/.claude/output-styles/simplified-technical-english.md` sets the default response register to ASD-STE100 Simplified Technical English, with RFC-2119 keywords for requirements. `keep-coding-instructions: true` retains Claude Code's built-in software engineering instructions; without that field the style replaces them. The `caveman` plugin is disabled in `settings.json` because its `SessionStart`/`UserPromptSubmit` hooks injected a competing register on every prompt — re-enabling it recreates that conflict.
+
+Levers to revisit if the style degrades:
+
+- **Style silently reverts.** The `/config` picker writes `outputStyle` into `.claude/settings.local.json` (gitignored), which outranks the stowed `claude/.claude/settings.json`. Delete the key there instead of re-picking from the menu.
+- **Context cost or worse tool use.** The whole style ships with every request. The ~42-row vocabulary table is the largest block and the first thing to trim.
+- **Output feels over-constrained.** Cut calibration examples before cutting rules — examples narrow the response space more than rules do.
+- **Requirements block noise.** The block renders only when a response contains a keyword. Flip that rule in the style file to always render it.
+- **Full revert.** Set `outputStyle` back to `Concise` in `claude/.claude/settings.json`.
 
 **Cursor package path:** `cursor/` mirrors `~/Library/Application Support/Cursor/User/`, so stow descends into the existing Cursor dir and links only `settings.json` and `keybindings.json` — `History/`, `globalStorage/`, and `workspaceStorage/` stay untracked. Extensions and `~/.cursor/mcp.json` are deliberately not tracked.
 

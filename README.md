@@ -29,9 +29,9 @@ The package also wires omp into the existing shared config:
 - `~/.omp/agent/AGENTS.md` symlinks to `claude/.claude/CLAUDE.md` (repo-internal
   symlink, same chain as the pi package) — omp loads it as its native user-level
   context file, so the global instructions already apply to every omp session.
-- Superpowers skills install through omp's plugin manager
-  (`omp plugin install git:github.com/obra/superpowers` into `~/.omp/plugins/`,
-  bun bootstrapped by `install.sh`); the `pi` package is not involved.
+- The omp plugin manifest (`~/.omp/plugins/package.json`, tracked) declares
+  superpowers; `install.sh` materializes it with `bun install` when
+  `node_modules` is missing. The `pi` package is not involved.
 - `~/.omp/agent/mcp.json` is omp's user MCP config (context7, sequential-thinking),
   migrated from the pi package; omp's built-in `github` tool makes the pi github
   MCP server redundant.

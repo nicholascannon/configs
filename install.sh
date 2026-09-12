@@ -15,6 +15,14 @@ rm -f "$HOME/.claude/settings.json"
 # omp's config.yml lives inside its runtime dir (~/.omp/agent) next to databases; same drift-repair pattern
 rm -f "$HOME/.omp/agent/config.yml"
 
+# superpowers skills for omp via its plugin manager (needs bun)
+if ! command -v bun &>/dev/null; then
+  brew install bun
+fi
+if ! omp plugin list 2>/dev/null | grep -q superpowers; then
+  omp plugin install git:github.com/obra/superpowers
+fi
+
 mkdir -p "$HOME/.pi-lens"
 
 stow --target="$HOME" --verbose --restow \

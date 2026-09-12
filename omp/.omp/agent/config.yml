@@ -14,11 +14,6 @@ github:
   enabled: true
 commands:
   enableClaudeUser: false
-skills:
-  # obra/superpowers skill collection, installed and kept current by the pi
-  # package; format matches omp's customDirectories layout (*/SKILL.md)
-  customDirectories:
-    - ~/.pi/agent/git/github.com/obra/superpowers/skills
 startup:
   # Setup already complete; don't re-run the wizard on version bumps
   setupWizard: false

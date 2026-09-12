@@ -14,8 +14,6 @@ fi
 rm -f "$HOME/.claude/settings.json"
 # omp's config.yml lives inside its runtime dir (~/.omp/agent) next to databases; same drift-repair pattern
 rm -f "$HOME/.omp/agent/config.yml"
-# omp plugin commands can rewrite the tracked manifest in place, breaking the symlink
-rm -f "$HOME/.omp/plugins/package.json"
 
 mkdir -p "$HOME/.pi-lens"
 
@@ -31,12 +29,10 @@ stow --target="$HOME" --verbose --restow \
   zed \
   zsh
 
-# omp plugins are declared in the tracked plugins/package.json and materialized by bun
-if ! command -v bun &>/dev/null; then
-  brew install bun
-fi
-if [ ! -d "$HOME/.omp/plugins/node_modules" ]; then
-  (cd "$HOME/.omp/plugins" && bun install)
+# superpowers skills from the official obra marketplace (no bun required)
+if [ ! -d "$HOME/.omp/plugins/node_modules/superpowers" ]; then
+  omp plugin marketplace add obra/superpowers-marketplace
+  omp plugin install superpowers@superpowers-marketplace
 fi
 
 ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.ghostty/config"

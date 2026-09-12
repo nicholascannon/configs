@@ -20,9 +20,10 @@ brew install stow
 
 The `omp` package stows `~/.omp/agent/config.yml` (the Oh My Pi agent config).
 Everything else under `~/.omp/` — databases, sessions, logs, caches, `natives/`,
-`run/` — is runtime state and deliberately untracked. The instance-run configs
-live inside the agent runtime dir, so `install.sh` removes `config.yml` before
-restowing, mirroring the Claude drift-repair pattern.
+`run/`, `plugins/`, `marketplaces.json` — is runtime state and deliberately
+untracked. The instance-run configs live inside the agent runtime dir, so
+`install.sh` removes `config.yml` before restowing, mirroring the Claude
+drift-repair pattern.
 
 The package also wires omp into the existing shared config:
 

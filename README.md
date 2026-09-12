@@ -14,7 +14,15 @@ brew install stow
 ./install.sh
 ```
 
-`install.sh` stows `claude`, `tmux`, `vim`, and `zsh` into `$HOME`, and symlinks `./ghostty/config` to `~/Library/Application Support/com.mitchellh.ghostty/config`.
+`install.sh` stows `claude`, `cursor`, `nvim`, `omp`, `p10k`, `pi`, `tmux`, `vim`, `zed`, and `zsh` into `$HOME`, and symlinks `./ghostty/config` to `~/Library/Application Support/com.mitchellh.ghostty/config`.
+
+## omp
+
+The `omp` package stows `~/.omp/agent/config.yml` (the Oh My Pi agent config).
+Everything else under `~/.omp/` — databases, sessions, logs, caches, `natives/`,
+`run/` — is runtime state and deliberately untracked. The instance-run configs
+live inside the agent runtime dir, so `install.sh` removes `config.yml` before
+restowing, mirroring the Claude drift-repair pattern.
 
 ## Per-machine setup (not stowed)
 

@@ -32,11 +32,14 @@ ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.gh
 | `zsh`     | `~/`                    | .zshrc (oh-my-zsh + p10k + fnm)                               |
 | `p10k`    | `~/`                    | Powerlevel10k prompt config                                   |
 | `pi`      | `~/.pi/`, `~/.pi-lens/` | Pi agent settings/themes/MCP + pi-lens config                 |
+| `omp`     | `~/.omp/`               | Oh My Pi agent config (`~/.omp/agent/config.yml`)             |
 | `ghostty` | (manual symlink)        | Ghostty terminal theme                                        |
 
 ## Architecture Notes
 
 **Stow symlink drift:** `install.sh` force-removes `~/.claude/settings.json` before restowing because external tools (e.g. aicodemetricsd) atomically rewrite the file, replacing the symlink with a real file. This repo must stay source of truth.
+
+**omp config drift:** omp reads its config from `~/.omp/agent/config.yml`, which lives inside its runtime dir next to the session databases. `install.sh` removes it before restowing (same drift-repair pattern as Claude). Everything else under `~/.omp/` — `agent.db*`, `sessions/`, `logs/`, `natives/`, `run/`, `cache/`, `terminal-sessions/` — is machine-local runtime state and must never be stowed. omp also inherits rules, skills, commands, and MCP servers from `.claude/` on first run (toggle with `skills.enableClaudeUser` / `commands.enableClaudeUser` in `~/.omp/agent/config.yml`), so the `claude` package feeds it too.
 
 **Claude output style:** `claude/.claude/output-styles/simplified-technical-english.md` sets the default response register to ASD-STE100 Simplified Technical English, with RFC-2119 keywords for requirements. `keep-coding-instructions: true` retains Claude Code's built-in software engineering instructions; without that field the style replaces them. The `caveman` plugin is disabled in `settings.json` because its `SessionStart`/`UserPromptSubmit` hooks injected a competing register on every prompt — re-enabling it recreates that conflict. Its statusline badge in `claude/.claude/statusline.sh` is commented out rather than deleted, so restoring it is an uncomment.
 

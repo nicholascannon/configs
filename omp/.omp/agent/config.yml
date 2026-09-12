@@ -1,0 +1,16 @@
+modelRoles:
+  default: openrouter/deepseek/deepseek-v4-flash-0731:high
+symbolPreset: nerd
+theme:
+  dark: titanium
+setupVersion: 2
+hideThinkingBlock: true
+composer:
+  shape: claude
+tui:
+  vimMode: true
+  vimModeDisplay: text
+github:
+  enabled: true
+commands:
+  enableClaudeUser: false

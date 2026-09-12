@@ -14,3 +14,9 @@ github:
   enabled: true
 commands:
   enableClaudeUser: false
+startup:
+  # Setup already complete; don't re-run the wizard on version bumps
+  setupWizard: false
+display:
+  # Surface token cost per turn for budget awareness
+  showTokenUsage: true

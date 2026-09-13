@@ -8,8 +8,8 @@ modelRoles:
 task:
   enableEffort: true
   agentModelOverrides:
-    scout: "@smol"
-    sonic: "@smol"
+    scout: '@smol'
+    sonic: '@smol'
 symbolPreset: nerd
 theme:
   dark: titanium
@@ -25,11 +25,11 @@ github:
 commands:
   enableClaudeUser: false
 startup:
-  # Setup already complete; don't re-run the wizard on version bumps
   setupWizard: false
 marketplace:
-  # Auto-install newer catalog plugin versions on startup (superpowers etc.)
   autoUpdate: auto
 display:
-  # Surface token cost per turn for budget awareness
   showTokenUsage: true
+statusLine:
+  sessionAccent: true
+  separator: powerline-thin

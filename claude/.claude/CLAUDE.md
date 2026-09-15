@@ -5,9 +5,6 @@
 Never attribute yourself in commits (no `Co-Authored-By`, no "Generated with"
 footers) unless I explicitly ask in that message.
 
-Never commit superpowers docs (`docs/superpowers/`) unless I explicitly ask in
-that message. This directory is gitignored; do not stage it with `git add -f`.
-
 Always use Conventional Commits: `<type>(<optional scope>): <description>`
 
 - Types: `feat`, `fix`, `refactor`, `docs`, `chore`, `style`, `test`, `perf`

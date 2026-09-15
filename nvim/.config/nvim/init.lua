@@ -31,6 +31,10 @@ opt.expandtab = true
 opt.swapfile = false
 opt.wrap = true
 opt.mouse = "a"
+-- Mouse-drag enters Visual mode (not the terminal's native selection), so
+-- macOS Cmd+C has nothing to copy. Use `y` after selecting instead — this
+-- routes yanks/deletes to the system clipboard so `y` acts like a copy.
+opt.clipboard = "unnamedplus"
 opt.signcolumn = "yes"
 opt.updatetime = 300
 opt.hlsearch = true

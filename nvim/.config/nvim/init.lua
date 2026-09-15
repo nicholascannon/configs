@@ -98,6 +98,55 @@ map("n", "mm", toggle_mouse)
 map("n", "<ScrollWheelUp>", "<C-y>")
 map("n", "<ScrollWheelDown>", "<C-e>")
 
+-- Command-line spinner shown while waiting on the LLM. Returns a closer.
+local function start_spinner(text)
+  local frames = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
+  local frame = 0
+  local timer = (vim.uv or vim.loop).new_timer()
+  timer:start(0, 80, vim.schedule_wrap(function()
+    frame = (frame % #frames) + 1
+    vim.api.nvim_echo({ { frames[frame] .. " " .. text } }, false, {})
+  end))
+  return function()
+    timer:stop()
+    timer:close()
+    vim.api.nvim_echo({ { "" } }, false, {})
+  end
+end
+
+-- Generate a commit message from the staged diff (Copilot's "Commit" prompt)
+-- and, after a manual confirm, commit with it. Requires staged changes.
+local function copilot_commit()
+  local close_spinner = start_spinner("Generating commit message...")
+  local prompt = require("CopilotChat.config.prompts").Commit
+  require("CopilotChat").ask(prompt.prompt, vim.tbl_extend("force", prompt, {
+    headless = true,
+    -- Fixed to a fast/cheap model regardless of whatever the interactive
+    -- chat is set to — see `:CopilotChatModels` for the full name list.
+    model = "gemini-3.8-flash",
+    callback = function(response)
+      vim.schedule(function()
+        close_spinner()
+        local content = response.content
+        local message = vim.trim(content:match("```gitcommit\n(.-)\n```") or content)
+        if message == "" then
+          vim.notify("copilot_commit: no commit message generated", vim.log.levels.ERROR)
+          return
+        end
+        if vim.fn.confirm("Commit with this message?\n\n" .. message, "&Yes\n&No", 2) ~= 1 then
+          return
+        end
+        local result = vim.system({ "git", "commit", "-F", "-" }, { stdin = message }):wait()
+        if result.code == 0 then
+          vim.notify("Committed")
+        else
+          vim.notify("git commit failed: " .. result.stderr, vim.log.levels.ERROR)
+        end
+      end)
+    end,
+  }))
+end
+
 -- Diffview: 3-dot diff of the current branch against the repo's default
 -- branch (origin/HEAD, falling back to origin/main / origin/master).
 local function diff_vs_base()
@@ -238,6 +287,21 @@ require("lazy").setup({
       panel = { enabled = false },
       filetypes = { ["*"] = true },
     },
+  },
+
+  -- Copilot Chat: same seat as copilot.lua above. \gc generates a commit
+  -- message from the staged diff (see copilot_commit above) and, after a
+  -- manual confirm, commits with it — same UX as Zed's commit-message button.
+  {
+    "CopilotC-Nvim/CopilotChat.nvim",
+    cond = function() return vim.g.enable_copilot == true end,
+    branch = "main",
+    dependencies = { "zbirenbaum/copilot.lua", "nvim-lua/plenary.nvim" },
+    cmd = "CopilotChat",
+    keys = {
+      { "<leader>gc", copilot_commit, desc = "Copilot: generate + confirm commit" },
+    },
+    opts = {},
   },
 
   -- GitHub PR diffs. Uses the authed gh CLI. Lazy-loads on :Octo / the keymaps.

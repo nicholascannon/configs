@@ -210,6 +210,9 @@ require("lazy").setup({
     -- directly). No auto-refresh: refreshing rebuilds the diff buffers and
     -- collapses any folds you've opened. Press `R` in the file panel
     -- (diffview's own default keymap) to refresh manually instead.
+    opts = {
+      file_panel = { win_config = { width = 45 } }, -- default 35
+    },
   },
 
   -- GitHub Copilot (inline ghost text). Gated on vim.g.enable_copilot, set in

@@ -152,7 +152,7 @@ require("lazy").setup({
       -- these queries highlight markdown fine without installing.
       require("nvim-treesitter").install({
         "typescript", "tsx", "javascript", "json", "yaml",
-        "dockerfile", "html", "css", "lua", "bash",
+        "dockerfile", "html", "css", "lua", "bash", "prisma",
       })
       -- Highlighting/indent are enabled per-buffer (main-branch model).
       -- Broad autocmd: start treesitter for any buffer whose language has a
@@ -386,7 +386,7 @@ require("lazy").setup({
       require("mason-lspconfig").setup({
         ensure_installed = {
           "ts_ls", "eslint", "jsonls", "yamlls",
-          "dockerls", "emmet_ls",
+          "dockerls", "emmet_ls", "prismals",
         },
       })
 

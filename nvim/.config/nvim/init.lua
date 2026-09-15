@@ -37,6 +37,14 @@ opt.hlsearch = true
 opt.incsearch = true
 opt.backup = false
 opt.writebackup = false
+opt.autoread = true
+
+-- Files can change on disk outside nvim (e.g. Claude Code editing them
+-- directly). Check on refocus rather than nvim's own write events. (Not
+-- CursorHold: it refires on every idle pause and was resetting the cursor.)
+vim.api.nvim_create_autocmd("FocusGained", {
+  command = "checktime",
+})
 
 --------------------------------------------------------------------
 -- Editing keymaps (ported verbatim from .vimrc)
@@ -82,6 +90,13 @@ local function toggle_mouse()
   end
 end
 map("n", "mm", toggle_mouse)
+
+-- Mouse wheel bypasses 'scrollbind' (only keyboard scroll commands trigger
+-- it), so diff/scrollbound windows (e.g. diffview) drift apart when
+-- scrolling with the wheel. Route the wheel through <C-e>/<C-y>, which do
+-- respect scrollbind, 1 line per notch.
+map("n", "<ScrollWheelUp>", "<C-y>")
+map("n", "<ScrollWheelDown>", "<C-e>")
 
 -- Diffview: 3-dot diff of the current branch against the repo's default
 -- branch (origin/HEAD, falling back to origin/main / origin/master).
@@ -191,6 +206,10 @@ require("lazy").setup({
       { "<leader>dh", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview: file history" },
       { "<leader>dq", "<cmd>DiffviewClose<cr>", desc = "Diffview: close" },
     },
+    -- Files can change on disk outside nvim (e.g. Claude Code editing them
+    -- directly). No auto-refresh: refreshing rebuilds the diff buffers and
+    -- collapses any folds you've opened. Press `R` in the file panel
+    -- (diffview's own default keymap) to refresh manually instead.
   },
 
   -- GitHub Copilot (inline ghost text). Gated on vim.g.enable_copilot, set in

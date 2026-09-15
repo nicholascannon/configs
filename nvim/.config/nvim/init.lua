@@ -83,6 +83,27 @@ local function toggle_mouse()
 end
 map("n", "mm", toggle_mouse)
 
+-- Diffview: 3-dot diff of the current branch against the repo's default
+-- branch (origin/HEAD, falling back to origin/main / origin/master).
+local function diff_vs_base()
+  local base = vim.fn.system(
+    "git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null")
+    :gsub("%s+", ""):gsub("^origin/", "")
+  if base == "" then
+    for _, b in ipairs({ "main", "master" }) do
+      if vim.fn.system("git rev-parse --quiet --verify origin/" .. b .. " 2>/dev/null") ~= "" then
+        base = b
+        break
+      end
+    end
+  end
+  if base == "" then
+    vim.notify("diff_vs_base: no origin/HEAD or origin/{main,master}", vim.log.levels.ERROR)
+    return
+  end
+  vim.cmd("DiffviewOpen " .. base .. "...HEAD")
+end
+
 --------------------------------------------------------------------
 -- Bootstrap lazy.nvim
 --------------------------------------------------------------------
@@ -155,8 +176,21 @@ require("lazy").setup({
   -- Git signs (replaces vim-gitgutter)
   { "lewis6991/gitsigns.nvim", opts = {} },
 
-  -- Git commands (same as vim)
+-- Git commands (same as vim)
   "tpope/vim-fugitive",
+
+  -- Whole-branch diff review: all changed files for a rev in one tabpage.
+  -- \dv any rev (no arg = working tree vs index), \db current branch vs its
+  -- default-branch base, \dh per-file commit history.
+  {
+    "sindrets/diffview.nvim",
+    cmd = { "DiffviewOpen", "DiffviewFileHistory" },
+    keys = {
+      { "<leader>dv", "<cmd>DiffviewOpen<cr>", desc = "Diffview: open diff" },
+      { "<leader>db", diff_vs_base, desc = "Diffview: branch vs base" },
+      { "<leader>dh", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview: file history" },
+    },
+  },
 
   -- GitHub Copilot (inline ghost text). Gated on vim.g.enable_copilot, set in
   -- the gitignored local.lua — so it only loads on machines with a seat.

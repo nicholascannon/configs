@@ -189,7 +189,7 @@ require("lazy").setup({
   },
 
   -- Git signs (replaces vim-gitgutter)
-  { "lewis6991/gitsigns.nvim", opts = {} },
+  { "lewis6991/gitsigns.nvim", opts = { current_line_blame = true } },
 
 -- Git commands (same as vim)
   "tpope/vim-fugitive",

@@ -189,6 +189,7 @@ require("lazy").setup({
       { "<leader>dv", "<cmd>DiffviewOpen<cr>", desc = "Diffview: open diff" },
       { "<leader>db", diff_vs_base, desc = "Diffview: branch vs base" },
       { "<leader>dh", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview: file history" },
+      { "<leader>dq", "<cmd>DiffviewClose<cr>", desc = "Diffview: close" },
     },
   },
 

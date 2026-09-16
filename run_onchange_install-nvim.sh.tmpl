@@ -18,7 +18,4 @@ if [ ! -d "$LAZY_DIR" ]; then
     https://github.com/folke/lazy.nvim.git "$LAZY_DIR"
 fi
 
-cd "$(dirname "${BASH_SOURCE[0]}")"
-stow --target="$HOME" --verbose --restow nvim
-
 echo "✅ nvim done"

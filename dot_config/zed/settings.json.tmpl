@@ -60,26 +60,24 @@
     "commit_message_instructions": "Use Conventional Commits format: <type>(<scope>): <subject>. Types: feat, fix, refactor, chore, docs, test, style, perf. Keep the subject line under 72 characters, lowercase, no trailing period. Add a body only if the change needs more explanation.",
     "commit_message_model": {
       "speed": "fast",
-
-      // personal machine
+{{- if .work }}
+      "provider": "copilot_chat",
+      "model": "gpt-4.1-mini",
+{{- else }}
       "provider": "openrouter",
       "model": "deepseek/deepseek-v4-flash",
-
-      // work machine
-      // "provider": "copilot_chat",
-      // "model": "gpt-4.1-mini"
+{{- end }}
     },
     "default_model": {
       "enable_thinking": true,
-
-      // personal machine
+{{- if .work }}
+      "effort": "high",
+      "provider": "copilot_chat",
+      "model": "gpt-5.3-codex",
+{{- else }}
       "provider": "openrouter",
       "model": "deepseek/deepseek-v4-flash",
-
-      // work machine
-      // "effort": "high",
-      // "provider": "copilot_chat",
-      // "model": "gpt-5.3-codex",
+{{- end }}
     },
     "dock": "right",
     "play_sound_when_agent_done": "always",
@@ -96,11 +94,11 @@
   },
 
   "edit_predictions": {
-    // personal machine
+{{- if .work }}
+    "provider": "copilot",
+{{- else }}
     "provider": "zed",
-
-    // work machine
-    // "provider": "copilot",
+{{- end }}
   },
 
   // Languages

@@ -82,7 +82,6 @@
       // "model": "gpt-5.3-codex",
     },
     "dock": "right",
-    "notify_when_agent_waiting": "all_screens",
     "play_sound_when_agent_done": "always",
     "single_file_review": true,
     "thinking_display": "preview",

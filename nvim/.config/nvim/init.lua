@@ -151,9 +151,9 @@ local function copilot_commit()
   }))
 end
 
--- Diffview: 3-dot diff of the current branch against the repo's default
--- branch (origin/HEAD, falling back to origin/main / origin/master).
-local function diff_vs_base()
+-- The repo's default branch: origin/HEAD, falling back to origin/main /
+-- origin/master. Returns nil (after notifying) when none resolves.
+local function default_branch()
   local base = vim.fn.system(
     "git symbolic-ref --quiet --short refs/remotes/origin/HEAD 2>/dev/null")
     :gsub("%s+", ""):gsub("^origin/", "")
@@ -166,10 +166,56 @@ local function diff_vs_base()
     end
   end
   if base == "" then
-    vim.notify("diff_vs_base: no origin/HEAD or origin/{main,master}", vim.log.levels.ERROR)
+    vim.notify("default_branch: no origin/HEAD or origin/{main,master}", vim.log.levels.ERROR)
+    return nil
+  end
+  return base
+end
+
+-- Diffview: 3-dot diff of the current branch against the default branch.
+local function diffview_vs_base()
+  local base = default_branch()
+  if base then
+    vim.cmd("DiffviewOpen " .. base .. "...HEAD")
+  end
+end
+
+-- unified.nvim takes a single ref, so resolve the merge-base ourselves to show
+-- the same 3-dot diff as diffview_vs_base.
+local function unified_vs_base()
+  local base = default_branch()
+  if not base then return end
+  local merge_base = vim.trim(vim.fn.system("git merge-base " .. base .. " HEAD"))
+  if vim.v.shell_error ~= 0 then
+    vim.notify("unified_vs_base: " .. merge_base, vim.log.levels.ERROR)
     return
   end
-  vim.cmd("DiffviewOpen " .. base .. "...HEAD")
+  vim.cmd("Unified " .. merge_base)
+end
+
+-- unified.nvim's own tree `q` closes only the tree window: diff extmarks stay in
+-- the file buffers (visible in every tab showing them) and the tab opened by
+-- `tab = true` stays open. reset clears the extmarks but not the tab, so close
+-- the tab that holds the tree as well.
+local function close_unified()
+  local tree_win = require("unified.state").file_tree_win
+  local tab = tree_win and vim.api.nvim_win_is_valid(tree_win)
+    and vim.api.nvim_win_get_tabpage(tree_win)
+  require("unified.command").reset()
+  if tab and #vim.api.nvim_list_tabpages() > 1 and vim.api.nvim_tabpage_is_valid(tab) then
+    vim.cmd.tabclose(vim.api.nvim_tabpage_get_number(tab))
+  end
+end
+
+-- \dq closes whichever diff view is open. unified.state is only in
+-- package.loaded once unified.nvim has loaded, so this never loads it.
+local function close_diff_view()
+  local unified = package.loaded["unified.state"]
+  if unified and unified.is_active() then
+    close_unified()
+  else
+    vim.cmd("DiffviewClose")
+  end
 end
 
 --------------------------------------------------------------------
@@ -259,17 +305,17 @@ require("lazy").setup({
 -- Git commands (same as vim)
   "tpope/vim-fugitive",
 
-  -- Whole-branch diff review: all changed files for a rev in one tabpage.
-  -- \dv any rev (no arg = working tree vs index), \db current branch vs its
+  -- Whole-branch diff review in split view: all changed files for a rev in one
+  -- tabpage. \dV working tree vs index, \dB current branch vs its
   -- default-branch base, \dh per-file commit history.
   {
     "sindrets/diffview.nvim",
     cmd = { "DiffviewOpen", "DiffviewFileHistory" },
     keys = {
-      { "<leader>dv", "<cmd>DiffviewOpen<cr>", desc = "Diffview: open diff" },
-      { "<leader>db", diff_vs_base, desc = "Diffview: branch vs base" },
+      { "<leader>dV", "<cmd>DiffviewOpen<cr>", desc = "Diffview: open diff" },
+      { "<leader>dB", diffview_vs_base, desc = "Diffview: branch vs base" },
       { "<leader>dh", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview: file history" },
-      { "<leader>dq", "<cmd>DiffviewClose<cr>", desc = "Diffview: close" },
+      { "<leader>dq", close_diff_view, desc = "Close diff view" },
     },
     -- Files can change on disk outside nvim (e.g. Claude Code editing them
     -- directly). No auto-refresh: refreshing rebuilds the diff buffers and
@@ -282,6 +328,33 @@ require("lazy").setup({
       -- "red on the left, green on the right" holds.
       enhanced_diff_hl = true,
     },
+  },
+
+  -- Unified (GitHub-style) diff review, the default lens. \dv uncommitted
+  -- changes vs HEAD, \db current branch vs its default-branch base.
+  {
+    "axkirillov/unified.nvim",
+    keys = {
+      { "<leader>dv", "<cmd>Unified HEAD<cr>", desc = "Unified: uncommitted" },
+      { "<leader>db", unified_vs_base, desc = "Unified: branch vs base" },
+    },
+    opts = {
+      tab = true,
+      file_tree = { focus = true, width = 45 }, -- width default 30
+    },
+    init = function()
+      -- The file tree only opens files with `l`; Enter falls through to the
+      -- default cursor-down and leaves the file window empty.
+      vim.api.nvim_create_autocmd("FileType", {
+        pattern = "unified_tree",
+        callback = function(args)
+          map("n", "<CR>", function()
+            require("unified.file_tree.actions").toggle_node()
+          end, { buffer = args.buf, silent = true })
+          map("n", "q", close_unified, { buffer = args.buf, silent = true, nowait = true })
+        end,
+      })
+    end,
   },
 
   -- GitHub Copilot (inline ghost text). Gated on vim.g.enable_copilot, set in

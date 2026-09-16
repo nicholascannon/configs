@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 echo "🔄 Installing nvim configs..."
 
 # Neovim + tree-sitter CLI (nvim-treesitter's main branch compiles parsers
@@ -16,5 +17,8 @@ if [ ! -d "$LAZY_DIR" ]; then
   git clone --filter=blob:none --branch=stable \
     https://github.com/folke/lazy.nvim.git "$LAZY_DIR"
 fi
+
+cd "$(dirname "${BASH_SOURCE[0]}")"
+stow --target="$HOME" --verbose --restow nvim
 
 echo "✅ nvim done"

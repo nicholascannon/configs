@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail
 echo "🔄 Installing configs..."
 
 if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]; then
@@ -19,18 +20,15 @@ mkdir -p "$HOME/.pi-lens"
 
 stow --target="$HOME" --verbose --restow \
   claude \
-  cursor \
-  nvim \
   omp \
   p10k \
   pi \
   tmux \
-  vim \
   zed \
   zsh
 
 # superpowers skills from the official obra marketplace (no bun required)
-if [ ! -d "$HOME/.omp/plugins/node_modules/superpowers" ]; then
+if command -v omp &>/dev/null && [ ! -d "$HOME/.omp/plugins/node_modules/superpowers" ]; then
   omp plugin marketplace add obra/superpowers-marketplace
   omp plugin install superpowers@superpowers-marketplace
 fi

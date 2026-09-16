@@ -1,9 +1,13 @@
 #!/bin/bash
+set -euo pipefail
 echo "🔄 Installing vim configs..."
 
 if [ ! -f "$HOME/.vim/autoload/plug.vim" ]; then
   curl -fLo ~/.vim/autoload/plug.vim --create-dirs \
     https://raw.githubusercontent.com/junegunn/vim-plug/master/plug.vim
 fi
+
+cd "$(dirname "${BASH_SOURCE[0]}")"
+stow --target="$HOME" --verbose --restow vim
 
 echo "✅ vim done"

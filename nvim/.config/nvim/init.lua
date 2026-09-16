@@ -306,14 +306,14 @@ require("lazy").setup({
   "tpope/vim-fugitive",
 
   -- Whole-branch diff review in split view: all changed files for a rev in one
-  -- tabpage. \dV working tree vs index, \dB current branch vs its
+  -- tabpage. \dv working tree vs index, \db current branch vs its
   -- default-branch base, \dh per-file commit history.
   {
     "sindrets/diffview.nvim",
     cmd = { "DiffviewOpen", "DiffviewFileHistory" },
     keys = {
-      { "<leader>dV", "<cmd>DiffviewOpen<cr>", desc = "Diffview: open diff" },
-      { "<leader>dB", diffview_vs_base, desc = "Diffview: branch vs base" },
+      { "<leader>dv", "<cmd>DiffviewOpen<cr>", desc = "Diffview: open diff" },
+      { "<leader>db", diffview_vs_base, desc = "Diffview: branch vs base" },
       { "<leader>dh", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview: file history" },
       { "<leader>dq", close_diff_view, desc = "Close diff view" },
     },
@@ -330,13 +330,13 @@ require("lazy").setup({
     },
   },
 
-  -- Unified (GitHub-style) diff review, the default lens. \dv uncommitted
-  -- changes vs HEAD, \db current branch vs its default-branch base.
+  -- Unified (GitHub-style) diff review. \dV uncommitted changes vs HEAD,
+  -- \dB current branch vs its default-branch base.
   {
     "axkirillov/unified.nvim",
     keys = {
-      { "<leader>dv", "<cmd>Unified HEAD<cr>", desc = "Unified: uncommitted" },
-      { "<leader>db", unified_vs_base, desc = "Unified: branch vs base" },
+      { "<leader>dV", "<cmd>Unified HEAD<cr>", desc = "Unified: uncommitted" },
+      { "<leader>dB", unified_vs_base, desc = "Unified: branch vs base" },
     },
     opts = {
       tab = true,

@@ -1,0 +1,21 @@
+#!/bin/bash
+set -euo pipefail
+echo "🔄 Running chezmoi post-apply setup..."
+
+if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]; then
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
+fi
+
+if ! command -v terminal-notifier &>/dev/null; then
+  brew install terminal-notifier
+fi
+
+mkdir -p "$HOME/.pi-lens"
+
+# superpowers skills from the official obra marketplace (no bun required)
+if command -v omp &>/dev/null && [ ! -d "$HOME/.omp/plugins/node_modules/superpowers" ]; then
+  omp plugin marketplace add obra/superpowers-marketplace
+  omp plugin install superpowers@superpowers-marketplace
+fi
+
+echo "✅ done"

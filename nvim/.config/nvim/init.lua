@@ -200,6 +200,18 @@ require("lazy").setup({
       vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
       vim.api.nvim_set_hl(0, "NonText", { bg = "none" })
       vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+
+      -- material darker's Diff* palette is near-black and barely saturated
+      -- (add #414937, delete #4a3132, change #343c4d), so over a transparent
+      -- background added/removed/unchanged lines differ by a few luminance
+      -- points. Its DiffText is `reverse`, which paints a solid blue block
+      -- over the intra-line change and hides the syntax colours underneath.
+      -- Override with saturated backgrounds and no reverse. Every diff tool
+      -- here — diffview, fugitive — renders through these.
+      vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#14432a" })
+      vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#4d2226" })
+      vim.api.nvim_set_hl(0, "DiffChange", { bg = "#2e3c52" })
+      vim.api.nvim_set_hl(0, "DiffText", { bg = "#36537a" })
     end,
   },
 
@@ -265,6 +277,10 @@ require("lazy").setup({
     -- (diffview's own default keymap) to refresh manually instead.
     opts = {
       file_panel = { win_config = { width = 45 } }, -- default 35
+      -- Left pane renders removals with DiffDelete colours instead of
+      -- DiffAdd's, and dims the filler lines to Comment — so in a 2-way diff
+      -- "red on the left, green on the right" holds.
+      enhanced_diff_hl = true,
     },
   },
 

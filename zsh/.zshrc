@@ -132,5 +132,8 @@ alias gl="git log --all --graph --decorate --oneline"
 # Open new Ghostty window in current directory
 gw() { open -na Ghostty.app --args --working-directory="$(pwd)"; }
 
+# Export every var in a .env-style file into the current shell
+dotenv() { set -a; source "$1"; set +a; }
+
 # load local machine config
 source ~/.zshrc.local

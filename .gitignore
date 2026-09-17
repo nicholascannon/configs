@@ -4,3 +4,6 @@ docs/
 # Per-machine Neovim overrides (e.g. enabling Copilot where a seat exists)
 nvim/.config/nvim/local.lua
 
+# Work-org-synced Claude skills (machine-local, not dotfiles)
+claude/.claude/skills/synced/
+

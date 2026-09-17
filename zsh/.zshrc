@@ -66,7 +66,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # You can set one of the optional three formats:
 # "mm/dd/yyyy"|"dd.mm.yyyy"|"yyyy-mm-dd"
 # or set a custom format using the strftime function format specifications,
-# see 'man strftime' for details.                                                                    
+# see 'man strftime' for details.
 # HIST_STAMPS="mm/dd/yyyy"
 
 # Would you like to use another custom folder than $ZSH/custom?
@@ -110,7 +110,7 @@ source $ZSH/oh-my-zsh.sh
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-export EDITOR=vim
+export EDITOR=zed --wait
 
 bindkey -v # make vi-mode plugin work properly
 

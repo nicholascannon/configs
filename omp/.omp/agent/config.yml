@@ -14,7 +14,7 @@ symbolPreset: nerd
 theme:
   dark: titanium
 setupVersion: 2
-hideThinkingBlock: true
+hideThinkingBlock: false
 composer:
   shape: claude
 tui:

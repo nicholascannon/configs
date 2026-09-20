@@ -118,6 +118,7 @@ eval "$(fnm env --use-on-cd --log-level quiet)"
 alias c="clear"
 alias tmux="tmux -2"
 alias sonnet="claude --model sonnet"
+alias opus="claude --model opus"
 
 # Git aliases
 alias gaa="git add ."

@@ -172,16 +172,8 @@ local function default_branch()
   return base
 end
 
--- Diffview: 3-dot diff of the current branch against the default branch.
-local function diffview_vs_base()
-  local base = default_branch()
-  if base then
-    vim.cmd("DiffviewOpen " .. base .. "...HEAD")
-  end
-end
-
 -- unified.nvim takes a single ref, so resolve the merge-base ourselves to show
--- the same 3-dot diff as diffview_vs_base.
+-- a 3-dot diff (current branch vs where it forked from the default branch).
 local function unified_vs_base()
   local base = default_branch()
   if not base then return end
@@ -204,17 +196,6 @@ local function close_unified()
   require("unified.command").reset()
   if tab and #vim.api.nvim_list_tabpages() > 1 and vim.api.nvim_tabpage_is_valid(tab) then
     vim.cmd.tabclose(vim.api.nvim_tabpage_get_number(tab))
-  end
-end
-
--- \dq closes whichever diff view is open. unified.state is only in
--- package.loaded once unified.nvim has loaded, so this never loads it.
-local function close_diff_view()
-  local unified = package.loaded["unified.state"]
-  if unified and unified.is_active() then
-    close_unified()
-  else
-    vim.cmd("DiffviewClose")
   end
 end
 
@@ -305,38 +286,17 @@ require("lazy").setup({
 -- Git commands (same as vim)
   "tpope/vim-fugitive",
 
-  -- Whole-branch diff review in split view: all changed files for a rev in one
-  -- tabpage. \dv working tree vs index, \db current branch vs its
-  -- default-branch base, \dh per-file commit history.
-  {
-    "sindrets/diffview.nvim",
-    cmd = { "DiffviewOpen", "DiffviewFileHistory" },
-    keys = {
-      { "<leader>dv", "<cmd>DiffviewOpen<cr>", desc = "Diffview: open diff" },
-      { "<leader>db", diffview_vs_base, desc = "Diffview: branch vs base" },
-      { "<leader>dh", "<cmd>DiffviewFileHistory<cr>", desc = "Diffview: file history" },
-      { "<leader>dq", close_diff_view, desc = "Close diff view" },
-    },
-    -- Files can change on disk outside nvim (e.g. Claude Code editing them
-    -- directly). No auto-refresh: refreshing rebuilds the diff buffers and
-    -- collapses any folds you've opened. Press `R` in the file panel
-    -- (diffview's own default keymap) to refresh manually instead.
-    opts = {
-      file_panel = { win_config = { width = 45 } }, -- default 35
-      -- Left pane renders removals with DiffDelete colours instead of
-      -- DiffAdd's, and dims the filler lines to Comment — so in a 2-way diff
-      -- "red on the left, green on the right" holds.
-      enhanced_diff_hl = true,
-    },
-  },
-
-  -- Unified (GitHub-style) diff review. \dV uncommitted changes vs HEAD,
-  -- \dB current branch vs its default-branch base.
+  -- Unified (GitHub-style) diff review. \dv uncommitted changes vs HEAD,
+  -- \db current branch vs its default-branch base, \dh commit picker (pick a
+  -- base commit and diff against it — not per-file history, unified.nvim has
+  -- no equivalent to diffview's FileHistory).
   {
     "axkirillov/unified.nvim",
     keys = {
-      { "<leader>dV", "<cmd>Unified HEAD<cr>", desc = "Unified: uncommitted" },
-      { "<leader>dB", unified_vs_base, desc = "Unified: branch vs base" },
+      { "<leader>dv", "<cmd>Unified HEAD<cr>", desc = "Unified: uncommitted" },
+      { "<leader>db", unified_vs_base, desc = "Unified: branch vs base" },
+      { "<leader>dh", "<cmd>Unified<cr>", desc = "Unified: commit picker" },
+      { "<leader>dq", close_unified, desc = "Close diff view" },
     },
     opts = {
       tab = true,

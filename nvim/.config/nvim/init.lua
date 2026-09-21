@@ -271,6 +271,11 @@ require("lazy").setup({
       -- on every cursor move, which reads as jank while scrolling. Keep
       -- everything rendered, including the current line.
       anti_conceal = { enabled = false },
+      -- Default excludes visual modes ("n", "c", "t" only), so click-and-drag
+      -- selection dropped the whole buffer to raw markdown mid-drag. Keep
+      -- rendering through visual/visual-line/visual-block; still raw in
+      -- insert, since editing needs the actual markdown syntax.
+      render_modes = { "n", "c", "t", "v", "V", "\22" },
     },
   },
 

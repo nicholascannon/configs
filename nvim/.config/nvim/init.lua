@@ -257,6 +257,18 @@ require("lazy").setup({
     end,
   },
 
+  -- In-buffer markdown rendering (headers, bold, lists, code blocks) — no
+  -- browser needed. \mr toggles it on the current buffer.
+  {
+    "MeanderingProgrammer/render-markdown.nvim",
+    ft = { "markdown" },
+    dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
+    keys = {
+      { "<leader>mr", "<cmd>RenderMarkdown toggle<cr>", desc = "Toggle markdown render" },
+    },
+    opts = {},
+  },
+
   -- Statusline (replaces vim-airline)
   {
     "nvim-lualine/lualine.nvim",

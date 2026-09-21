@@ -266,7 +266,12 @@ require("lazy").setup({
     keys = {
       { "<leader>mr", "<cmd>RenderMarkdown toggle<cr>", desc = "Toggle markdown render" },
     },
-    opts = {},
+    opts = {
+      -- Default reveals raw markdown on the cursor's line and re-renders it
+      -- on every cursor move, which reads as jank while scrolling. Keep
+      -- everything rendered, including the current line.
+      anti_conceal = { enabled = false },
+    },
   },
 
   -- Statusline (replaces vim-airline)

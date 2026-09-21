@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 input=$(cat)
 
+cwd=$(echo "$input" | jq -r '.workspace.current_dir // .cwd // "."')
+branch=$(git -C "$cwd" branch --show-current 2>/dev/null)
+
 IFS='|' read -r ctx_str tok_str model_str effort_str < <(
   echo "$input" | jq -r '
     def fmtk:
@@ -36,6 +39,7 @@ parts=""
 parts="$parts$ctx_str"
 [ -n "$model_str" ] && parts="$parts $model_str"
 [ -n "$effort_str" ] && parts="$parts ($effort_str)"
+[ -n "$branch" ] && parts="$parts  $branch"
 # [ -n "$caveman" ] && parts="$parts | $caveman"
 
 echo "$parts"

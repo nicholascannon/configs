@@ -25,7 +25,6 @@ local c = {
   comment = "#666672",
   comment_doc = "#75758a",
   string = "#5cc191",
-  string_escape = "#4cc2bc",
   constant = "#e0ab4f",
   keyword = "#b483e8",
   func = "#3898e0",
@@ -106,8 +105,8 @@ hl(0, "Type", { fg = c.func })
 hl(0, "StorageClass", { fg = c.keyword })
 hl(0, "Structure", { fg = c.keyword })
 hl(0, "Typedef", { fg = c.func })
-hl(0, "Special", { fg = c.string_escape })
-hl(0, "SpecialChar", { fg = c.string_escape })
+hl(0, "Special", { fg = c.string })
+hl(0, "SpecialChar", { fg = c.string })
 hl(0, "Tag", { fg = c.tag })
 hl(0, "Delimiter", { fg = c.punctuation })
 hl(0, "SpecialComment", { fg = c.comment_doc })
@@ -119,14 +118,13 @@ hl(0, "Todo", { fg = c.bg, bg = c.constant, bold = true })
 hl(0, "@comment", { link = "Comment" })
 hl(0, "@comment.documentation", { fg = c.comment_doc })
 hl(0, "@string", { link = "String" })
-hl(0, "@string.escape", { fg = c.string_escape })
-hl(0, "@string.regexp", { fg = c.string_escape })
+hl(0, "@string.escape", { fg = c.string })
+hl(0, "@string.regexp", { fg = c.string })
 hl(0, "@string.special", { fg = c.string })
 
 -- Markdown inline/block code. Neovim's built-in default links @markup.raw
--- to Special (the string_escape teal above), which is wrong here — that
--- teal is meant for actual escape sequences/regex, not every code span.
--- Use a plain chip instead: fg on element.background (c.border), no new hue.
+-- to Special. Use a plain chip instead: fg on element.background (c.border),
+-- so code spans read as UI chrome rather than syntax-colored text.
 hl(0, "@markup.raw", { fg = c.fg, bg = c.border })
 hl(0, "@markup.raw.block", { fg = c.fg, bg = c.border })
 hl(0, "@constant", { link = "Constant" })

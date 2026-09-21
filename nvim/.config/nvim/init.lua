@@ -215,33 +215,16 @@ vim.opt.rtp:prepend(lazypath)
 --------------------------------------------------------------------
 -- Plugins
 --------------------------------------------------------------------
+-- Theme — native colorscheme (colors/aero.lua), not a plugin. Ported from
+-- the Zed theme at zed/.config/zed/themes/Aero.json; keep both in sync
+-- manually. Set before lazy.setup so lualine's "auto" theme (below) reads it.
+vim.cmd.colorscheme("aero")
+-- Transparent background to match old config's guibg=NONE
+vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
+vim.api.nvim_set_hl(0, "NonText", { bg = "none" })
+vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
+
 require("lazy").setup({
-  -- Theme
-  {
-    "marko-cerovac/material.nvim",
-    priority = 1000,
-    config = function()
-      vim.g.material_style = "darker"
-      vim.cmd.colorscheme("material")
-      -- Transparent background to match old config's guibg=NONE
-      vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-      vim.api.nvim_set_hl(0, "NonText", { bg = "none" })
-      vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
-
-      -- material darker's Diff* palette is near-black and barely saturated
-      -- (add #414937, delete #4a3132, change #343c4d), so over a transparent
-      -- background added/removed/unchanged lines differ by a few luminance
-      -- points. Its DiffText is `reverse`, which paints a solid blue block
-      -- over the intra-line change and hides the syntax colours underneath.
-      -- Override with saturated backgrounds and no reverse. Every diff tool
-      -- here — diffview, fugitive — renders through these.
-      vim.api.nvim_set_hl(0, "DiffAdd", { bg = "#14432a" })
-      vim.api.nvim_set_hl(0, "DiffDelete", { bg = "#4d2226" })
-      vim.api.nvim_set_hl(0, "DiffChange", { bg = "#2e3c52" })
-      vim.api.nvim_set_hl(0, "DiffText", { bg = "#36537a" })
-    end,
-  },
-
   -- Treesitter (replaces syntax on + polyglot).
   -- Uses the `main` branch — the only branch compatible with Neovim 0.12.
   -- (master is archived and crashes on 0.12: match[id] became a node list,
@@ -277,7 +260,7 @@ require("lazy").setup({
   -- Statusline (replaces vim-airline)
   {
     "nvim-lualine/lualine.nvim",
-    opts = { options = { theme = "material", globalstatus = true } },
+    opts = { options = { theme = "auto", globalstatus = true } },
   },
 
   -- Git signs (replaces vim-gitgutter)
@@ -538,7 +521,7 @@ require("lazy").setup({
   },
 }, {
   -- lazy.nvim options
-  install = { colorscheme = { "material" } },
+  install = { colorscheme = { "aero" } },
   checker = { enabled = false },
 })
 

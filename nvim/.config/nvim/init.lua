@@ -219,10 +219,6 @@ vim.opt.rtp:prepend(lazypath)
 -- the Zed theme at zed/.config/zed/themes/Aero.json; keep both in sync
 -- manually. Set before lazy.setup so lualine's "auto" theme (below) reads it.
 vim.cmd.colorscheme("aero")
--- Transparent background to match old config's guibg=NONE
-vim.api.nvim_set_hl(0, "Normal", { bg = "none" })
-vim.api.nvim_set_hl(0, "NonText", { bg = "none" })
-vim.api.nvim_set_hl(0, "SignColumn", { bg = "none" })
 
 require("lazy").setup({
   -- Treesitter (replaces syntax on + polyglot).

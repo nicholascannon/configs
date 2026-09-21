@@ -197,6 +197,9 @@ hl(0, "DiffText", { bg = "#36537a" })
 hl(0, "GitSignsAdd", { fg = c.created })
 hl(0, "GitSignsChange", { fg = c.modified })
 hl(0, "GitSignsDelete", { fg = c.deleted })
+-- Default links to NonText (fg_disabled, near-bg — meant for tildes/eol
+-- markers, too dark to read here). Use the same muted gray as StatusLineNC.
+hl(0, "GitSignsCurrentLineBlame", { fg = c.fg_muted })
 
 -- Terminal ANSI colors (ported verbatim from Aero.json's terminal.ansi.*,
 -- including its bright_black == white quirk)

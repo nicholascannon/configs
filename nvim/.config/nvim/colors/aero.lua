@@ -122,6 +122,13 @@ hl(0, "@string", { link = "String" })
 hl(0, "@string.escape", { fg = c.string_escape })
 hl(0, "@string.regexp", { fg = c.string_escape })
 hl(0, "@string.special", { fg = c.string })
+
+-- Markdown inline/block code. Neovim's built-in default links @markup.raw
+-- to Special (the string_escape teal above), which is wrong here — that
+-- teal is meant for actual escape sequences/regex, not every code span.
+-- Use a plain chip instead: fg on element.background (c.border), no new hue.
+hl(0, "@markup.raw", { fg = c.fg, bg = c.border })
+hl(0, "@markup.raw.block", { fg = c.fg, bg = c.border })
 hl(0, "@constant", { link = "Constant" })
 hl(0, "@constant.builtin", { fg = c.constant })
 hl(0, "@number", { fg = c.constant })

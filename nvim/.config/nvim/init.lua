@@ -327,6 +327,9 @@ require("lazy").setup({
           map("n", "<CR>", function()
             require("unified.file_tree.actions").toggle_node()
           end, { buffer = args.buf, silent = true })
+          map("n", "<2-LeftMouse>", function()
+            require("unified.file_tree.actions").toggle_node()
+          end, { buffer = args.buf, silent = true })
           map("n", "q", close_unified, { buffer = args.buf, silent = true, nowait = true })
         end,
       })

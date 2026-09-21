@@ -167,6 +167,14 @@ hl(0, "@lsp.typemod.variable.defaultLibrary", { fg = c.variable_special })
 hl(0, "@lsp.typemod.property.defaultLibrary", { fg = c.variable_special })
 hl(0, "@lsp.typemod.function.defaultLibrary", { fg = c.variable_special })
 
+-- @lsp.type.variable links to @variable (plain fg) by default. Semantic
+-- tokens render above Treesitter, so once the LSP attaches it repaints
+-- every variable — including all-caps consts Treesitter colors as @constant
+-- — back to plain fg, undoing that highlight a second or two after the
+-- file opens. Clear it so it contributes no color and Treesitter's own
+-- capture (@constant or @variable) shows through underneath.
+hl(0, "@lsp.type.variable", {})
+
 -- Diagnostics
 hl(0, "DiagnosticError", { fg = c.error })
 hl(0, "DiagnosticWarn", { fg = c.warning })

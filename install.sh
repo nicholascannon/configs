@@ -18,7 +18,7 @@ rm -f "$HOME/.omp/agent/config.yml"
 
 mkdir -p "$HOME/.pi-lens"
 
-stow --target="$HOME" --verbose --restow \
+stow --target="$HOME" -v --restow \
   claude \
   omp \
   p10k \

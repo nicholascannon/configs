@@ -117,6 +117,8 @@ eval "$(fnm env --use-on-cd --log-level quiet)"
 # Aliases
 alias c="clear"
 alias tmux="tmux -2"
+alias z="zed"
+
 alias sonnet="claude --model sonnet"
 alias opus="claude --model opus"
 

@@ -404,7 +404,7 @@ require("lazy").setup({
     "nvim-tree/nvim-tree.lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
-      view = { width = 50 },
+      -- view = { width = 50 },
       -- Show everything: dotfiles + gitignored (so superpowers docs under a
       -- gitignored docs/ are visible). git status icons stay on.
       filters = { dotfiles = false, git_ignored = false },

@@ -1,15 +1,13 @@
 modelRoles:
-  default: openrouter/deepseek/deepseek-v4-flash-0731:high
-  slow: openrouter/deepseek/deepseek-v4-pro-0813:max
+  default: openrouter/z-ai/glm-5.3-flash:high
+  slow: openrouter/z-ai/glm-5.3:high
   smol: openrouter/deepseek/deepseek-v4-flash-0731:low
-  tiny: openrouter/deepseek/deepseek-v4-flash-0731:low
-  commit: openrouter/deepseek/deepseek-v4-flash-0731:low
   vision: openrouter/z-ai/glm-5.3-flash:low
 task:
   enableEffort: true
   agentModelOverrides:
-    scout: '@smol'
-    sonic: '@smol'
+    reviewer: "@slow"
+    security-reviewer: "@slow"
 symbolPreset: nerd
 theme:
   dark: titanium

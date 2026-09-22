@@ -132,7 +132,21 @@ alias gpum="git pull upstream main"
 alias gl="git log --all --graph --decorate --oneline"
 
 # Open new Ghostty window in current directory
-gw() { open -na Ghostty.app --args --working-directory="$(pwd)"; }
+gw() {
+  local dir="$(pwd)"
+  if ps -ax -o comm= | grep -qx '/Applications/Ghostty.app/Contents/MacOS/ghostty'; then
+    osascript <<EOF
+tell application "Ghostty"
+    set cfg to new surface configuration
+    set initial working directory of cfg to "$dir"
+    new window with configuration cfg
+    activate
+end tell
+EOF
+  else
+    open -a Ghostty.app --args --working-directory="$dir"
+  fi
+}
 
 # Export every var in a .env-style file into the current shell
 dotenv() { set -a; source "$1"; set +a; }

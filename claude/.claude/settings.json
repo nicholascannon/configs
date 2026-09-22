@@ -105,10 +105,10 @@
     }
   },
   "modelSettings": {
-    "claude-opus-5": {
+    "opus": {
       "effortLevel": "high"
     },
-    "claude-sonnet-5": {
+    "sonnet": {
       "effortLevel": "medium"
     }
   },

@@ -112,7 +112,7 @@
       "effortLevel": "medium"
     }
   },
-  "outputStyle": "Simplified Technical English",
+  "outputStyle": "Concise",
   "effortLevel": "medium",
   "editorMode": "vim",
   "agentPushNotifEnabled": false,

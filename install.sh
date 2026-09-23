@@ -14,7 +14,9 @@ fi
 # (e.g. aicodemetricsd rewrites ~/.claude/settings.json atomically, replacing the symlink with a real file)
 rm -f "$HOME/.claude/settings.json"
 # omp's config.yml lives inside its runtime dir (~/.omp/agent) next to databases; same drift-repair pattern
-rm -f "$HOME/.omp/agent/config.yml"
+if command -v omp &>/dev/null; then
+  rm -f "$HOME/.omp/agent/config.yml"
+fi
 
 mkdir -p "$HOME/.pi-lens"
 

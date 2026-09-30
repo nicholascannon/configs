@@ -176,31 +176,12 @@ local function default_branch()
   return base
 end
 
--- unified.nvim takes a single ref, so resolve the merge-base ourselves to show
--- a 3-dot diff (current branch vs where it forked from the default branch).
-local function unified_vs_base()
+-- Everything the branch changes, committed or not: merge-base with the origin
+-- default branch vs the working tree. Ending at the working tree keeps the
+-- real file buffer in the diff, so LSP and edits work while reviewing.
+local function codediff_vs_base()
   local base = default_branch()
-  if not base then return end
-  local merge_base = vim.trim(vim.fn.system("git merge-base origin/" .. base .. " HEAD"))
-  if vim.v.shell_error ~= 0 then
-    vim.notify("unified_vs_base: " .. merge_base, vim.log.levels.ERROR)
-    return
-  end
-  vim.cmd("Unified " .. merge_base)
-end
-
--- unified.nvim's own tree `q` closes only the tree window: diff extmarks stay in
--- the file buffers (visible in every tab showing them) and the tab opened by
--- `tab = true` stays open. reset clears the extmarks but not the tab, so close
--- the tab that holds the tree as well.
-local function close_unified()
-  local tree_win = require("unified.state").file_tree_win
-  local tab = tree_win and vim.api.nvim_win_is_valid(tree_win)
-    and vim.api.nvim_win_get_tabpage(tree_win)
-  require("unified.command").reset()
-  if tab and #vim.api.nvim_list_tabpages() > 1 and vim.api.nvim_tabpage_is_valid(tab) then
-    vim.cmd.tabclose(vim.api.nvim_tabpage_get_number(tab))
-  end
+  if base then vim.cmd("CodeDiff origin/" .. base .. "...") end
 end
 
 --------------------------------------------------------------------
@@ -311,35 +292,61 @@ require("lazy").setup({
 -- Git commands (same as vim)
   "tpope/vim-fugitive",
 
-  -- Unified (GitHub-style) diff review. \dv uncommitted changes vs HEAD,
-  -- \db current branch vs its default-branch base, \dh commit picker (pick a
-  -- base commit and diff against it — not per-file history, unified.nvim has
-  -- no equivalent to diffview's FileHistory).
+  -- VSCode-style diff review in its own tab, live-refreshing as an agent
+  -- edits. \db branch + uncommitted vs origin default branch, \dv uncommitted
+  -- vs HEAD, \dl latest commit only (read-only snapshots, no LSP), \dh commit
+  -- history. In the view: t toggles inline/split, ]c/[c hunks, ]f/[f files,
+  -- gf opens the file in the previous tab, q closes, g? lists keymaps.
   {
-    "axkirillov/unified.nvim",
+    "esmuellert/codediff.nvim",
+    cmd = "CodeDiff",
     keys = {
-      { "<leader>dv", "<cmd>Unified HEAD<cr>", desc = "Unified: uncommitted" },
-      { "<leader>db", unified_vs_base, desc = "Unified: branch vs base" },
-      { "<leader>dh", "<cmd>Unified<cr>", desc = "Unified: commit picker" },
-      { "<leader>dq", close_unified, desc = "Close diff view" },
+      { "<leader>db", codediff_vs_base, desc = "CodeDiff: branch vs base" },
+      { "<leader>dv", "<cmd>CodeDiff<cr>", desc = "CodeDiff: uncommitted" },
+      { "<leader>dl", "<cmd>CodeDiff HEAD~1 HEAD<cr>", desc = "CodeDiff: latest commit" },
+      { "<leader>dh", "<cmd>CodeDiff history<cr>", desc = "CodeDiff: commit history" },
     },
     opts = {
-      tab = true,
-      file_tree = { focus = true, width = 45 }, -- width default 30
+      highlights = { char_insert = "DiffTextAdd", char_delete = "DiffTextDelete" },
+      diff = {
+        layout = "inline",
+        highlight_added_deleted_files = true,
+        -- Split view only: the inline renderer clears gutter signs.
+        gutter_signs = { insert_text = "▎", delete_text = "▎" },
+      },
+      explorer = { view_mode = "tree", width = 45 },
     },
-    init = function()
-      -- The file tree only opens files with `l`; Enter falls through to the
-      -- default cursor-down and leaves the file window empty.
-      vim.api.nvim_create_autocmd("FileType", {
-        pattern = "unified_tree",
+    config = function(_, opts)
+      require("codediff").setup(opts)
+      -- nvim-tree's tab.sync.open re-opens the tree on every TabEnter, which
+      -- crowds out the CodeDiff explorer. These autocmds are created after
+      -- nvim-tree's, so their scheduled callbacks run after its scheduled open.
+      local codediff_tabs = {}
+      local function hide_nvim_tree(tab)
+        if not vim.api.nvim_tabpage_is_valid(tab) then return end
+        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
+          if vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "NvimTree" then
+            vim.api.nvim_win_close(win, false)
+          end
+        end
+      end
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "CodeDiffOpen",
         callback = function(args)
-          map("n", "<CR>", function()
-            require("unified.file_tree.actions").toggle_node()
-          end, { buffer = args.buf, silent = true })
-          map("n", "<2-LeftMouse>", function()
-            require("unified.file_tree.actions").toggle_node()
-          end, { buffer = args.buf, silent = true })
-          map("n", "q", close_unified, { buffer = args.buf, silent = true, nowait = true })
+          codediff_tabs[args.data.tabpage] = true
+          vim.schedule(function() hide_nvim_tree(args.data.tabpage) end)
+        end,
+      })
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "CodeDiffClose",
+        callback = function(args) codediff_tabs[args.data.tabpage] = nil end,
+      })
+      vim.api.nvim_create_autocmd("TabEnter", {
+        callback = function()
+          local tab = vim.api.nvim_get_current_tabpage()
+          if codediff_tabs[tab] then
+            vim.schedule(function() hide_nvim_tree(tab) end)
+          end
         end,
       })
     end,

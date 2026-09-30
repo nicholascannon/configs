@@ -412,6 +412,10 @@ require("lazy").setup({
       -- Show everything: dotfiles + gitignored (so superpowers docs under a
       -- gitignored docs/ are visible). git status icons stay on.
       filters = { dotfiles = false, git_ignored = false },
+      update_focused_file = { enable = true },
+      -- Tree persists across tabs like a VSCode/Zed sidebar instead of being
+      -- scoped to the tab it was opened in.
+      tab = { sync = { open = true, close = true } },
     },
     config = function(_, opts)
       require("nvim-tree").setup(opts)

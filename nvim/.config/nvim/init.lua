@@ -181,7 +181,7 @@ end
 local function unified_vs_base()
   local base = default_branch()
   if not base then return end
-  local merge_base = vim.trim(vim.fn.system("git merge-base " .. base .. " HEAD"))
+  local merge_base = vim.trim(vim.fn.system("git merge-base origin/" .. base .. " HEAD"))
   if vim.v.shell_error ~= 0 then
     vim.notify("unified_vs_base: " .. merge_base, vim.log.levels.ERROR)
     return

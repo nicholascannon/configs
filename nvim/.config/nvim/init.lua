@@ -151,6 +151,10 @@ local function copilot_commit()
   }))
 end
 
+vim.api.nvim_create_user_command("GenCommit", copilot_commit, {
+  desc = "Copilot: generate + confirm commit",
+})
+
 -- The repo's default branch: origin/HEAD, falling back to origin/main /
 -- origin/master. Returns nil (after notifying) when none resolves.
 local function default_branch()

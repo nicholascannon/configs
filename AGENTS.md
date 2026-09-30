@@ -23,7 +23,7 @@ ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.gh
 
 | Package   | Target                  | What it configures                                            |
 | --------- | ----------------------- | ------------------------------------------------------------- |
-| `claude`  | `~/.claude/`            | Claude Code settings, statusline, hooks, rules, output styles |
+| `claude`  | `~/.claude/`            | Claude Code settings, statusline, output styles |
 | `cursor`  | `~/Library/.../Cursor/` | Cursor editor (settings + keybindings)                        |
 | `nvim`    | `~/.config/nvim/`       | Neovim (native LSP, Treesitter, lazy.nvim)                    |
 | `zed`     | `~/.config/zed/`        | Zed editor (settings + keymap)                                |
@@ -43,7 +43,7 @@ ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.gh
 
 **omp shared context, skills, and MCP:** `omp/.omp/agent/AGENTS.md` is a repo-internal symlink to `claude/.claude/CLAUDE.md` — the same chain the `pi` package uses — so one tracked file feeds Claude Code, pi, and omp (omp loads it as the native user-level context file, highest priority). `omp/.omp/agent/mcp.json` owns omp's user MCP servers (context7, sequential-thinking), migrated from pi's config; the github MCP server from `pi/.pi/agent/mcp.json` is deliberately not carried over because omp ships a built-in `github` tool. Superpowers installs from the official obra marketplace: install.sh runs `omp plugin marketplace add obra/superpowers-marketplace` + `omp plugin install superpowers@superpowers-marketplace` (guarded by `node_modules/superpowers` presence). The marketplace registry and cache (`~/.omp/marketplaces.json`, `~/.omp/plugins/installed_plugins.json`, `cache/`) are runtime state, untracked. Upgrade with `omp plugin upgrade superpowers@superpowers-marketplace`; `marketplace.autoUpdate` in `config.yml` can auto-refresh. No dependency on the pi package and no bun requirement.
 
-**Claude output style:** `claude/.claude/output-styles/simplified-technical-english.md` sets the default response register to ASD-STE100 Simplified Technical English, with RFC-2119 keywords for requirements. `keep-coding-instructions: true` retains Claude Code's built-in software engineering instructions; without that field the style replaces them. The `caveman` plugin is disabled in `settings.json` because its `SessionStart`/`UserPromptSubmit` hooks injected a competing register on every prompt — re-enabling it recreates that conflict. Its statusline badge in `claude/.claude/statusline.sh` is commented out rather than deleted, so restoring it is an uncomment.
+**Claude output style:** `outputStyle` is currently `Concise`. `claude/.claude/output-styles/simplified-technical-english.md` is kept as an optional style (not active) that sets the response register to ASD-STE100 Simplified Technical English, with RFC-2119 keywords for requirements. `keep-coding-instructions: true` retains Claude Code's built-in software engineering instructions; without that field the style replaces them. The `caveman` plugin was uninstalled because its `SessionStart`/`UserPromptSubmit` hooks injected a competing register on every prompt.
 
 Levers to revisit if the style degrades:
 
@@ -53,6 +53,8 @@ Levers to revisit if the style degrades:
 - **Requirements block noise.** The block renders only when a response uses 2 or more RFC-2119 keywords. Change the threshold in the style file.
 - **Answers too shallow.** Raise the 5-sentence default in `Response scope`. Validated against `bighit-serverless` on a lookup question, a two-part cleanup question, and an "explain how X works" question.
 - **Full revert.** Set `outputStyle` back to `Concise` in `claude/.claude/settings.json`.
+
+**Notifications:** Claude Code's built-in `preferredNotifChannel` (auto → Ghostty) handles them; there are no global hooks. Formatting hooks are per-repo, since tooling differs between repos.
 
 **Cursor package path:** `cursor/` mirrors `~/Library/Application Support/Cursor/User/`, so stow descends into the existing Cursor dir and links only `settings.json` and `keybindings.json` — `History/`, `globalStorage/`, and `workspaceStorage/` stay untracked. Extensions and `~/.cursor/mcp.json` are deliberately not tracked.
 

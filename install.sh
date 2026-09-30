@@ -20,7 +20,7 @@ fi
 
 mkdir -p "$HOME/.pi-lens"
 
-stow --target="$HOME" -v --restow \
+stow --target="$HOME" --restow \
   claude \
   omp \
   p10k \

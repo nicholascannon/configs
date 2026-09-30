@@ -352,6 +352,49 @@ require("lazy").setup({
     end,
   },
 
+  -- Minimap of the whole buffer with a viewport indicator. Open by default
+  -- (it follows the focused window, including CodeDiff panes); \mm toggles it.
+  {
+    "echasnovski/mini.map",
+    version = false,
+    event = "VeryLazy",
+    keys = {
+      { "<leader>mm", function() require("mini.map").toggle() end, desc = "Toggle minimap" },
+    },
+    init = function()
+      vim.api.nvim_create_autocmd("User", {
+        pattern = "CodeDiffOpen",
+        callback = function()
+          vim.schedule(function() require("mini.map").open() end)
+        end,
+      })
+    end,
+    config = function()
+      local map = require("mini.map")
+      map.setup({
+        integrations = { map.gen_integration.gitsigns() },
+        symbols = {
+          encode = map.gen_encode_symbols.dot("4x2"),
+          scroll_line = "▐",
+          scroll_view = "┃",
+        },
+        window = { width = 10, winblend = 35, show_integration_count = false },
+      })
+
+      local function style_minimap()
+        local function fg(group) return vim.api.nvim_get_hl(0, { name = group, link = false }).fg end
+        local bg = vim.api.nvim_get_hl(0, { name = "Normal", link = false }).bg
+        vim.api.nvim_set_hl(0, "MiniMapNormal", { fg = fg("LineNr"), bg = bg })
+        vim.api.nvim_set_hl(0, "MiniMapSymbolView", { fg = fg("Comment"), bg = bg })
+        vim.api.nvim_set_hl(0, "MiniMapSymbolLine", { fg = fg("Function"), bg = bg })
+        vim.api.nvim_set_hl(0, "MiniMapSymbolCount", { fg = fg("Comment"), bg = bg })
+      end
+      style_minimap()
+      vim.api.nvim_create_autocmd("ColorScheme", { callback = style_minimap })
+      map.open()
+    end,
+  },
+
   -- GitHub Copilot (inline ghost text). Gated on vim.g.enable_copilot, set in
   -- the gitignored local.lua — so it only loads on machines with a seat.
   -- <Tab> accepts the suggestion (cmp menu is on arrow keys). First use needs

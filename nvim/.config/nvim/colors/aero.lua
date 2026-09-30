@@ -175,6 +175,12 @@ hl(0, "@lsp.typemod.function.defaultLibrary", { fg = c.variable_special })
 -- capture (@constant or @variable) shows through underneath.
 hl(0, "@lsp.type.variable", {})
 
+-- LSP document highlight — distinct from CursorLine/Visual/Search so
+-- same-symbol references stand out even when they overlap those.
+hl(0, "LspReferenceText", { bg = c.border_focused })
+hl(0, "LspReferenceRead", { bg = c.border_focused })
+hl(0, "LspReferenceWrite", { bg = c.border_focused, bold = true })
+
 -- Diagnostics
 hl(0, "DiagnosticError", { fg = c.error })
 hl(0, "DiagnosticWarn", { fg = c.warning })

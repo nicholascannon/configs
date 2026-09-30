@@ -1,26 +1,25 @@
 {
+  "env": {
+    "EDITOR": "zed --wait"
+  },
   "attribution": {
     "commit": "",
     "pr": "",
     "sessionUrl": false
   },
-  "env": {
-    "EDITOR": "zed --wait"
-  },
   "permissions": {
     "allow": [
-      "Read(~/notes/**)",
       "Bash(rg *)",
       "LSP",
       "Bash(git status*)",
       "Bash(git log*)",
       "Bash(git diff*)",
       "Bash(git show*)",
-      "Bash(git branch*)",
+      "Bash(git branch --list*)",
       "Bash(git blame *)",
-      "Bash(git remote*)",
+      "Bash(git remote -v*)",
       "Bash(git stash list*)",
-      "Bash(git tag*)",
+      "Bash(git tag --list*)",
       "Bash(git describe*)",
       "Bash(gh pr view *)",
       "Bash(gh pr list *)",
@@ -40,70 +39,23 @@
       "Bash(gh release view *)",
       "Bash(gh search *)",
       "Bash(gh status*)",
-      "mcp__plugin_github_github__get_me",
-      "mcp__plugin_github_github__get_file_contents",
-      "mcp__plugin_github_github__get_commit",
-      "mcp__plugin_github_github__get_tag",
-      "mcp__plugin_github_github__get_label",
-      "mcp__plugin_github_github__list_branches",
-      "mcp__plugin_github_github__list_commits",
-      "mcp__plugin_github_github__list_issue_fields",
-      "mcp__plugin_github_github__list_issue_types",
-      "mcp__plugin_github_github__list_issues",
-      "mcp__plugin_github_github__list_pull_requests",
-      "mcp__plugin_github_github__list_releases",
-      "mcp__plugin_github_github__list_repository_collaborators",
-      "mcp__plugin_github_github__list_tags",
-      "mcp__plugin_github_github__get_latest_release",
-      "mcp__plugin_github_github__get_release_by_tag",
-      "mcp__plugin_github_github__get_team_members",
-      "mcp__plugin_github_github__get_teams",
-      "mcp__plugin_github_github__issue_read",
-      "mcp__plugin_github_github__pull_request_read",
-      "mcp__plugin_github_github__search_code",
-      "mcp__plugin_github_github__search_commits",
-      "mcp__plugin_github_github__search_issues",
-      "mcp__plugin_github_github__search_pull_requests",
-      "mcp__plugin_github_github__search_repositories",
-      "mcp__plugin_github_github__search_users",
       "mcp__context7__resolve-library-id",
-      "mcp__context7__query-docs"
+      "mcp__context7__query-docs",
+      "Bash(git remote get-url *)"
     ],
     "defaultMode": "auto"
   },
   "model": "opus",
-  "hooks": {
-    "Notification": [
-      {
-        "matcher": "permission_prompt",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "$HOME/.claude/on_perm_prompt.sh"
-          }
-        ]
-      }
-    ]
-  },
   "statusLine": {
     "type": "command",
     "command": "$HOME/.claude/statusline.sh"
   },
   "enabledPlugins": {
-    "caveman@caveman": false,
     "claude-md-management@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,
-    "github@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true
   },
-  "extraKnownMarketplaces": {
-    "caveman": {
-      "source": {
-        "source": "github",
-        "repo": "JuliusBrussee/caveman"
-      }
-    }
-  },
+  "outputStyle": "Concise",
   "modelSettings": {
     "opus": {
       "effortLevel": "high"
@@ -112,8 +64,6 @@
       "effortLevel": "medium"
     }
   },
-  "outputStyle": "Concise",
-  "effortLevel": "medium",
   "editorMode": "vim",
   "agentPushNotifEnabled": false,
   "skipAutoPermissionPrompt": true

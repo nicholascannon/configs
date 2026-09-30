@@ -6,8 +6,8 @@ modelRoles:
 task:
   enableEffort: true
   agentModelOverrides:
-    reviewer: "@slow"
-    security-reviewer: "@slow"
+    reviewer: '@slow'
+    security-reviewer: '@slow'
 symbolPreset: nerd
 theme:
   dark: titanium
@@ -31,3 +31,5 @@ display:
 statusLine:
   sessionAccent: true
   separator: powerline-thin
+skills:
+  enableClaudeUser: true

@@ -296,7 +296,12 @@ require("lazy").setup({
         theme.visual.a.bg = hex
         theme.visual.b.fg = hex
       end
-      require("lualine").setup({ options = { theme = theme, globalstatus = true } })
+      require("lualine").setup({
+        options = { theme = theme, globalstatus = true },
+        -- path = 1: relative to cwd, so the statusline shows where a file
+        -- lives without the full absolute path eating the whole bar.
+        sections = { lualine_c = { { "filename", path = 1 } } },
+      })
     end,
   },
 

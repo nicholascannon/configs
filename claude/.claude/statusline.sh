@@ -3,6 +3,11 @@ input=$(cat)
 
 cwd=$(echo "$input" | jq -r '.workspace.current_dir // .cwd // "."')
 branch=$(git -C "$cwd" branch --show-current 2>/dev/null)
+dir_name=$(basename "$cwd")
+usage=$(echo "$input" | jq -r '
+  [ (.rate_limits.five_hour.used_percentage // empty | "5h \(. + 0.5 | floor)%"),
+    (.rate_limits.seven_day.used_percentage // empty | "7d \(. + 0.5 | floor)%") ]
+  | join(" · ")')
 
 IFS='|' read -r ctx_str tok_str model_str effort_str < <(
   echo "$input" | jq -r '
@@ -28,18 +33,19 @@ IFS='|' read -r ctx_str tok_str model_str effort_str < <(
   '
 )
 
-# Caveman plugin is disabled. To restore the [CAVEMAN] badge, uncomment the
-# two assignments below and the parts= line that uses $caveman.
-# glob picks last alphabetically — not guaranteed latest on multi-version, but usually fine
-# hooks=(~/.claude/plugins/cache/caveman/caveman/*/hooks/caveman-statusline.sh)
-# caveman=$(bash "${hooks[${#hooks[@]}-1]}" <<< "$input" 2>/dev/null)
+left=""
+[ -n "$tok_str" ] && left="$tok_str "
+left="$left$ctx_str"
+[ -n "$model_str" ] && left="$left $model_str"
+[ -n "$effort_str" ] && left="$left ($effort_str)"
+left="$left   $dir_name"
+[ -n "$branch" ] && left="$left   $branch"
 
-parts=""
-[ -n "$tok_str" ] && parts="$tok_str "
-parts="$parts$ctx_str"
-[ -n "$model_str" ] && parts="$parts $model_str"
-[ -n "$effort_str" ] && parts="$parts ($effort_str)"
-[ -n "$branch" ] && parts="$parts  $branch"
-# [ -n "$caveman" ] && parts="$parts | $caveman"
-
-echo "$parts"
+# COLUMNS is set by Claude Code; tput cannot see the terminal from here.
+# Nerd Font glyphs may render double-width, hence the slack of 4.
+pad=$(( ${COLUMNS:-0} - ${#left} - ${#usage} - 4 ))
+if [ -n "$usage" ] && [ "$pad" -gt 1 ]; then
+  printf '%s%*s%s\n' "$left" "$pad" "" "$usage"
+else
+  echo "$left${usage:+  $usage}"
+fi

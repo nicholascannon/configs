@@ -191,13 +191,25 @@ hl(0, "DiagnosticUnderlineWarn", { undercurl = true, sp = c.warning })
 hl(0, "DiagnosticUnderlineInfo", { undercurl = true, sp = c.info })
 hl(0, "DiagnosticUnderlineHint", { undercurl = true, sp = c.hint })
 
--- Diff — same treatment as the material.nvim override in init.lua: saturated
--- backgrounds and no `reverse`, so diffview/fugitive/unified.nvim stay readable
--- on a low-saturation dark background.
-hl(0, "DiffAdd", { bg = "#14432a" })
-hl(0, "DiffDelete", { bg = "#4d2226" })
+-- Diff — no `reverse`, so fugitive/vimdiff stay readable. Add/delete are
+-- c.created / c.deleted pre-blended over bg: 6% for the line, 14% for
+-- changed characters. Tinted backgrounds shift how syntax colors read (glyph
+-- edges anti-alias into the tint), so the fill stays faint and the gutter
+-- bar below carries the add/delete signal.
+hl(0, "DiffAdd", { bg = "#181e1c" })
+hl(0, "DiffDelete", { bg = "#221a1b" })
+hl(0, "DiffTextAdd", { bg = "#1c2a23" })
+-- Not a built-in group; codediff's highlights.char_delete reads it.
+hl(0, "DiffTextDelete", { bg = "#321f22" })
 hl(0, "DiffChange", { bg = "#2e3c52" })
 hl(0, "DiffText", { bg = "#36537a" })
+
+-- codediff gutter bars and line numbers. Its defaults derive these from the
+-- faint fills above, which would make them near-invisible.
+hl(0, "CodeDiffGutterInsert", { fg = c.created })
+hl(0, "CodeDiffGutterDelete", { fg = c.deleted })
+hl(0, "CodeDiffGutterInsertNumber", { fg = c.created })
+hl(0, "CodeDiffGutterDeleteNumber", { fg = c.deleted })
 
 -- GitSigns
 hl(0, "GitSignsAdd", { fg = c.created })

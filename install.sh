@@ -6,13 +6,26 @@ if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]; then
   git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
 fi
 
-# Remove drifted targets so this repo stays source of truth.
-# (e.g. aicodemetricsd rewrites ~/.claude/settings.json atomically, replacing the symlink with a real file)
-rm -f "$HOME/.claude/settings.json"
-# omp's config.yml lives inside its runtime dir (~/.omp/agent) next to databases; same drift-repair pattern
-if command -v omp &>/dev/null; then
-  rm -f "$HOME/.omp/agent/config.yml"
-fi
+PACKAGES=(claude cursor nvim omp p10k pi tmux zed zsh)
+
+# Stow refuses to link over real files, and tools rewrite configs atomically
+# (e.g. aicodemetricsd replaces ~/.claude/settings.json symlink with a file).
+# The repo is the source of truth, so delete anything at a target that isn't
+# the repo file. `-ef` skips files reached through a stow-folded directory
+# symlink, where the target path is the repo file itself.
+remove_drifted_targets() {
+  local pkg src target
+  for pkg in "${PACKAGES[@]}"; do
+    while IFS= read -r -d '' src; do
+      target="$HOME/${src#packages/$pkg/}"
+      if { [ -e "$target" ] || [ -L "$target" ]; } && [ ! "$target" -ef "$src" ]; then
+        echo "removing drifted $target"
+        rm -f "$target"
+      fi
+    done < <(find "packages/$pkg" -type f -print0)
+  done
+}
+remove_drifted_targets
 
 # Neovim + tree-sitter CLI (nvim-treesitter's main branch compiles parsers
 # from source via the tree-sitter CLI; it is not bundled).
@@ -30,17 +43,7 @@ if [ ! -d "$LAZY_DIR" ]; then
     https://github.com/folke/lazy.nvim.git "$LAZY_DIR"
 fi
 
-mkdir -p "$HOME/.pi-lens"
-
-stow --dir=packages --target="$HOME" --restow \
-  claude \
-  nvim \
-  omp \
-  p10k \
-  pi \
-  tmux \
-  zed \
-  zsh
+stow --no-folding --dir=packages --target="$HOME" --restow "${PACKAGES[@]}"
 
 # superpowers skills from the official obra marketplace (no bun required)
 if command -v omp &>/dev/null && [ ! -d "$HOME/.omp/plugins/node_modules/superpowers" ]; then

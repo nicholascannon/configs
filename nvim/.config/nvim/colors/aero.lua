@@ -13,6 +13,8 @@ local c = {
   bg = "#161616",
   bg_dark = "#101010",
   bg_elevated = "#1e1e1e",
+  -- Lighter than bg_elevated so LSP hover/diagnostic floats stand out from code.
+  bg_float = "#262626",
   bg_active_line = "#1d1d1d",
   fg = "#e2e2e2",
   fg_muted = "#888888",
@@ -51,8 +53,8 @@ local hl = vim.api.nvim_set_hl
 
 -- Editor
 hl(0, "Normal", { fg = c.fg, bg = c.bg })
-hl(0, "NormalFloat", { fg = c.fg, bg = c.bg_elevated })
-hl(0, "FloatBorder", { fg = c.border_focused, bg = c.bg_elevated })
+hl(0, "NormalFloat", { fg = c.fg, bg = c.bg_float })
+hl(0, "FloatBorder", { fg = c.border_focused, bg = c.bg_float })
 hl(0, "EndOfBuffer", { fg = c.bg })
 hl(0, "Cursor", { fg = c.bg, bg = c.fg })
 hl(0, "CursorLine", { bg = c.bg_active_line })
@@ -122,11 +124,13 @@ hl(0, "@string.escape", { fg = c.string })
 hl(0, "@string.regexp", { fg = c.string })
 hl(0, "@string.special", { fg = c.string })
 
--- Markdown inline/block code. Neovim's built-in default links @markup.raw
--- to Special. Use a plain chip instead: fg on element.background (c.border),
--- so code spans read as UI chrome rather than syntax-colored text.
+-- Markdown inline code. Neovim's built-in default links @markup.raw to
+-- Special. Use a plain chip instead: fg on element.background (c.border),
+-- so code spans read as UI chrome rather than syntax-colored text. Blocks get
+-- no bg: render-markdown paints their background, and in LSP hover floats a
+-- bg here would shade the text rows differently from the float padding.
 hl(0, "@markup.raw", { fg = c.fg, bg = c.border })
-hl(0, "@markup.raw.block", { fg = c.fg, bg = c.border })
+hl(0, "@markup.raw.block", { fg = c.fg })
 hl(0, "@constant", { link = "Constant" })
 hl(0, "@constant.builtin", { fg = c.constant })
 hl(0, "@number", { fg = c.constant })

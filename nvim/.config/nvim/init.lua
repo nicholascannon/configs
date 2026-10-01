@@ -1,6 +1,6 @@
 -- Neovim config — native LSP, Treesitter, modern stack.
 -- Independent of the classic vim setup (~/.vimrc, ~/.coc.vim).
--- Migrated from coc.nvim. See docs/superpowers/specs/2026-07-22-neovim-native-lsp-design.md
+-- Migrated from coc.nvim.
 
 --------------------------------------------------------------------
 -- Leader (set before plugins so mappings register correctly)
@@ -19,17 +19,14 @@ pcall(dofile, vim.fn.stdpath("config") .. "/local.lua")
 -- Editor settings (ported from .vimrc)
 --------------------------------------------------------------------
 local opt = vim.opt
-opt.background = "dark"
 opt.termguicolors = true
 opt.number = true
 opt.relativenumber = true
 opt.cursorline = true
--- opt.scrolloff = 20
 opt.tabstop = 2
 opt.shiftwidth = 2
 opt.expandtab = true
 opt.swapfile = false
-opt.wrap = true
 opt.mouse = "a"
 -- Mouse-drag enters Visual mode (not the terminal's native selection), so
 -- macOS Cmd+C has nothing to copy. Use `y` after selecting instead — this
@@ -37,11 +34,7 @@ opt.mouse = "a"
 opt.clipboard = "unnamedplus"
 opt.signcolumn = "yes"
 opt.updatetime = 300
-opt.hlsearch = true
-opt.incsearch = true
-opt.backup = false
 opt.writebackup = false
-opt.autoread = true
 
 -- Files can change on disk outside nvim (e.g. Claude Code editing them
 -- directly). Check on refocus rather than nvim's own write events. (Not
@@ -61,9 +54,6 @@ map("n", "<C-j>", "<C-w>j")
 map("n", "<C-k>", "<C-w>k")
 map("n", "<C-l>", "<C-w>l")
 
--- Make Y behave like D and C
-map("n", "Y", "y$")
-
 -- Keep cursor centered
 map("n", "n", "nzzzv")
 map("n", "N", "Nzzzv")
@@ -80,7 +70,7 @@ map("v", "J", ":m '>+1<CR>gv=gv", { silent = true })
 map("v", "K", ":m '<-2<CR>gv=gv", { silent = true })
 map("i", "<C-k>", "<esc>:m .-2<CR>==", { silent = true })
 map("i", "<C-j>", "<esc>:m .+1<CR>==", { silent = true })
-map("n", "<leader>j", ":m .+2<CR>==", { silent = true })
+map("n", "<leader>j", ":m .+1<CR>==", { silent = true })
 map("n", "<leader>k", ":m .-2<CR>==", { silent = true })
 
 -- Toggle mouse (click/scroll vs terminal select)
@@ -121,7 +111,7 @@ opt.mousescroll = "ver:1,hor:1"
 local function start_spinner(text)
   local frames = { "⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏" }
   local frame = 0
-  local timer = (vim.uv or vim.loop).new_timer()
+  local timer = vim.uv.new_timer()
   timer:start(0, 80, vim.schedule_wrap(function()
     frame = (frame % #frames) + 1
     vim.api.nvim_echo({ { frames[frame] .. " " .. text } }, false, {})
@@ -203,7 +193,7 @@ end
 -- Bootstrap lazy.nvim
 --------------------------------------------------------------------
 local lazypath = vim.fn.stdpath("data") .. "/lazy/lazy.nvim"
-if not (vim.uv or vim.loop).fs_stat(lazypath) then
+if not vim.uv.fs_stat(lazypath) then
   vim.fn.system({
     "git", "clone", "--filter=blob:none",
     "https://github.com/folke/lazy.nvim.git",
@@ -272,6 +262,12 @@ require("lazy").setup({
       -- rendering through visual/visual-line/visual-block; still raw in
       -- insert, since editing needs the actual markdown syntax.
       render_modes = { "n", "c", "t", "v", "V", "\22" },
+      -- LSP hover/diagnostic floats are nofile markdown buffers, usually one
+      -- big code block. Its darker code background and language header row
+      -- clash with NormalFloat; with no header, the fences are concealed.
+      overrides = {
+        buftype = { nofile = { code = { disable_background = true, language = false } } },
+      },
     },
   },
 
@@ -304,7 +300,7 @@ require("lazy").setup({
   -- Git signs (replaces vim-gitgutter)
   { "lewis6991/gitsigns.nvim", opts = { current_line_blame = true } },
 
--- Git commands (same as vim)
+  -- Git commands (same as vim)
   "tpope/vim-fugitive",
 
   -- VSCode-style diff review in its own tab, live-refreshing as an agent
@@ -329,7 +325,7 @@ require("lazy").setup({
         -- Split view only: the inline renderer clears gutter signs.
         gutter_signs = { insert_text = "▎", delete_text = "▎" },
       },
-      explorer = { view_mode = "tree", width = 45 },
+      explorer = { view_mode = "tree", width = 30 },
     },
     config = function(_, opts)
       require("codediff").setup(opts)
@@ -385,11 +381,11 @@ require("lazy").setup({
       })
     end,
     config = function()
-      local map = require("mini.map")
-      map.setup({
-        integrations = { map.gen_integration.gitsigns() },
+      local minimap = require("mini.map")
+      minimap.setup({
+        integrations = { minimap.gen_integration.gitsigns() },
         symbols = {
-          encode = map.gen_encode_symbols.dot("4x2"),
+          encode = minimap.gen_encode_symbols.dot("4x2"),
           scroll_line = "▐",
           scroll_view = "┃",
         },
@@ -406,7 +402,7 @@ require("lazy").setup({
       end
       style_minimap()
       vim.api.nvim_create_autocmd("ColorScheme", { callback = style_minimap })
-      map.open()
+      minimap.open()
     end,
   },
 
@@ -423,6 +419,9 @@ require("lazy").setup({
       suggestion = {
         enabled = true,
         auto_trigger = true,
+        -- Default true: <Tab> with no suggestion showing requests one instead
+        -- of inserting a tab, so <Tab> is swallowed whenever Copilot is idle.
+        trigger_on_accept = false,
         keymap = {
           accept = "<Tab>",
           dismiss = "<C-]>",
@@ -450,35 +449,14 @@ require("lazy").setup({
     opts = {},
   },
 
-  -- GitHub PR diffs. Uses the authed gh CLI. Lazy-loads on :Octo / the keymaps.
-  {
-    "pwntester/octo.nvim",
-    cmd = "Octo",
-    dependencies = {
-      "nvim-lua/plenary.nvim",
-      "nvim-telescope/telescope.nvim",
-      "nvim-tree/nvim-web-devicons",
-    },
-    opts = { picker = "telescope", enable_builtin = true },
-    keys = {
-      -- <leader> is "\": \op lists PRs, \od opens the diff view of the open PR
-      { "<leader>op", "<cmd>Octo pr list<cr>", desc = "GitHub: list PRs" },
-      { "<leader>od", "<cmd>Octo pr diff<cr>", desc = "GitHub: PR diff view" },
-    },
-  },
-
   -- Tab-size detection (same as vim)
   "tpope/vim-sleuth",
-
-  -- Comments (replaces vim-commentary; gc/gcc)
-  { "numToStr/Comment.nvim", opts = {} },
 
   -- File explorer (replaces NERDTree)
   {
     "nvim-tree/nvim-tree.lua",
     dependencies = { "nvim-tree/nvim-web-devicons" },
     opts = {
-      -- view = { width = 50 },
       -- Show everything: dotfiles + gitignored (so superpowers docs under a
       -- gitignored docs/ are visible). git status icons stay on.
       filters = { dotfiles = false, git_ignored = false },
@@ -547,39 +525,30 @@ require("lazy").setup({
     end,
   },
 
-  -- Completion (replaces coc pum)
+  -- Completion (replaces coc pum). Pinned to v1: v2 is pre-release with
+  -- breaking changes. v1 releases ship a prebuilt fuzzy-matcher binary, so no
+  -- Rust toolchain is needed.
   {
-    "hrsh7th/nvim-cmp",
-    dependencies = {
-      "hrsh7th/cmp-nvim-lsp",
-      "hrsh7th/cmp-buffer",
-      "hrsh7th/cmp-path",
-      "L3MON4D3/LuaSnip",
-      "saadparwaiz1/cmp_luasnip",
+    "saghen/blink.cmp",
+    version = "1.*",
+    opts = {
+      -- Navigate the LSP menu with arrows; <CR> confirms only an explicitly
+      -- selected item. <Tab> is left unbound so Copilot (when enabled) can use
+      -- it to accept ghost text.
+      keymap = {
+        preset = "none",
+        ["<Down>"] = { "select_next", "fallback" },
+        ["<Up>"] = { "select_prev", "fallback" },
+        ["<C-n>"] = { "select_next", "fallback" },
+        ["<C-p>"] = { "select_prev", "fallback" },
+        ["<C-y>"] = { "select_and_accept", "fallback" },
+        ["<C-e>"] = { "cancel", "fallback" },
+        ["<CR>"] = { "accept", "fallback" },
+      },
+      completion = { list = { selection = { preselect = false } } },
+      sources = { default = { "lsp", "path", "buffer" } },
+      cmdline = { enabled = false },
     },
-    config = function()
-      local cmp = require("cmp")
-      local luasnip = require("luasnip")
-      cmp.setup({
-        snippet = {
-          expand = function(args) luasnip.lsp_expand(args.body) end,
-        },
-        -- Navigate the LSP menu with arrows; <CR> confirms. <Tab> is left
-        -- unbound here so Copilot (when enabled) can use it to accept ghost text.
-        mapping = cmp.mapping.preset.insert({
-          ["<Down>"] = cmp.mapping.select_next_item(),
-          ["<Up>"] = cmp.mapping.select_prev_item(),
-          ["<CR>"] = cmp.mapping.confirm({ select = false }),
-        }),
-        sources = cmp.config.sources({
-          { name = "nvim_lsp" },
-          { name = "luasnip" },
-        }, {
-          { name = "buffer" },
-          { name = "path" },
-        }),
-      })
-    end,
   },
 
   -- Formatting (replaces coc-prettier)
@@ -602,41 +571,34 @@ require("lazy").setup({
       require("conform").setup(opts)
       -- <leader>f formats buffer (replaces coc :Format)
       map({ "n", "v" }, "<leader>f", function()
-        require("conform").format({ async = true, lsp_fallback = true })
+        require("conform").format({ async = true, lsp_format = "fallback" })
       end, { silent = true })
     end,
   },
 
   -- LSP: installer + config
   {
-    "williamboman/mason.nvim",
+    "mason-org/mason.nvim",
     opts = {},
   },
   {
-    "williamboman/mason-lspconfig.nvim",
+    "mason-org/mason-lspconfig.nvim",
     dependencies = {
-      "williamboman/mason.nvim",
+      "mason-org/mason.nvim",
       "neovim/nvim-lspconfig",
-      "hrsh7th/cmp-nvim-lsp",
     },
-    config = function()
-      require("mason-lspconfig").setup({
-        ensure_installed = {
-          "ts_ls", "eslint", "jsonls", "yamlls",
-          "dockerls", "emmet_ls", "prismals",
-        },
-      })
-
-      -- Shared capabilities (completion) for all servers
-      local caps = require("cmp_nvim_lsp").default_capabilities()
-      vim.lsp.config("*", { capabilities = caps })
-      -- mason-lspconfig auto-enables installed servers on nvim 0.11+
-    end,
+    -- mason-lspconfig auto-enables installed servers on nvim 0.11+, and
+    -- blink.cmp registers its completion capabilities via vim.lsp.config("*").
+    opts = {
+      ensure_installed = {
+        "ts_ls", "eslint", "jsonls", "yamlls",
+        "dockerls", "emmet_ls", "prismals",
+      },
+    },
   },
 }, {
   -- lazy.nvim options
   install = { colorscheme = { "aero" } },
-  checker = { enabled = false },
 })
 
 --------------------------------------------------------------------
@@ -647,10 +609,12 @@ vim.api.nvim_create_autocmd("LspAttach", {
     local bufnr = args.buf
     local o = function(desc) return { buffer = bufnr, silent = true, desc = desc } end
     map("n", "gd", vim.lsp.buf.definition, o("goto definition"))
+    map("n", "K", function() vim.lsp.buf.hover({ border = "solid" }) end, o("hover"))
     map("n", "gy", vim.lsp.buf.type_definition, o("goto type definition"))
     map("n", "gi", vim.lsp.buf.implementation, o("goto implementation"))
-    map("n", "gr", vim.lsp.buf.references, o("references"))
-    map("n", "K", vim.lsp.buf.hover, o("hover"))
+    -- nowait: Neovim's global grr/grn/gra/gri/grt defaults share the "gr"
+    -- prefix, so without it this waits out timeoutlen before firing.
+    map("n", "gr", vim.lsp.buf.references, vim.tbl_extend("force", o("references"), { nowait = true }))
     map("n", "<leader>rn", vim.lsp.buf.rename, o("rename"))
     map("n", "<leader>ac", vim.lsp.buf.code_action, o("code action"))
     map("n", "<leader>qf", function()
@@ -679,9 +643,14 @@ vim.api.nvim_create_autocmd("LspAttach", {
 map("n", "[g", function() vim.diagnostic.jump({ count = -1, float = true }) end, { silent = true })
 map("n", "]g", function() vim.diagnostic.jump({ count = 1, float = true }) end, { silent = true })
 
-vim.diagnostic.config({
-  virtual_text = true,
-  signs = true,
-  underline = true,
-  update_in_insert = false,
-})
+-- <Esc> closes the hover/diagnostic float without moving the cursor. Targets
+-- only that float (vim.lsp.util tracks it per buffer), so other floats like
+-- the minimap stay open.
+map("n", "<Esc>", function()
+  local win = vim.b.lsp_floating_preview
+  if win and vim.api.nvim_win_is_valid(win) then
+    vim.api.nvim_win_close(win, true)
+  end
+end, { desc = "Close hover float" })
+
+vim.diagnostic.config({ virtual_text = true, float = { border = "solid" } })

@@ -1,56 +1,136 @@
 #!/bin/bash
+# Idempotent: safe to re-run on every machine whenever configs change.
 set -euo pipefail
-echo "🔄 Installing configs..."
 
-if [ ! -d "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" ]; then
-  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k"
-fi
+REPO_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+cd "$REPO_DIR"
 
-PACKAGES=(claude cursor nvim omp p10k pi tmux zed zsh)
+# Packages under packages/ that get symlinked into $HOME. ghostty lives outside
+# $HOME and is linked separately; vim is legacy (see scripts/vim-install.sh).
+STOW_PACKAGES=(claude cursor nvim omp p10k pi tmux zed zsh)
 
-# Stow refuses to link over real files, and tools rewrite configs atomically
-# (e.g. aicodemetricsd replaces ~/.claude/settings.json symlink with a file).
-# The repo is the source of truth, so delete anything at a target that isn't
-# the repo file. `-ef` skips files reached through a stow-folded directory
-# symlink, where the target path is the repo file itself.
+# Homebrew formulae the configs depend on.
+BREW_PACKAGES=(
+  stow            # symlinks packages/ into $HOME
+  neovim
+  tree-sitter-cli # nvim-treesitter's main branch compiles parsers with it
+)
+
+# Run in order; the label shown is the function name.
+STEPS=(
+  install_brew_packages
+  clone_dependencies
+  link_configs
+  link_ghostty_config
+  install_omp_plugins
+)
+
+main() {
+  local total=${#STEPS[@]} n=0 step
+  for step in "${STEPS[@]}"; do
+    n=$((n + 1))
+    run_step "$n" "$total" "$step"
+  done
+}
+
+install_brew_packages() {
+  local pkg
+  for pkg in "${BREW_PACKAGES[@]}"; do
+    brew list --formula "$pkg" &>/dev/null || brew install "$pkg"
+  done
+}
+
+clone_dependencies() {
+  # Powerlevel10k theme, loaded by .zshrc.
+  clone_if_missing "${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/themes/powerlevel10k" \
+    --depth=1 https://github.com/romkatv/powerlevel10k.git
+
+  # lazy.nvim plugin manager; nvim installs the plugins themselves on first launch.
+  clone_if_missing "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim" \
+    --filter=blob:none --branch=stable https://github.com/folke/lazy.nvim.git
+}
+
+link_configs() {
+  remove_drifted_targets
+  # --no-folding links files individually instead of linking whole directories,
+  # so tools writing runtime state next to a config (logs, caches) don't write
+  # into this repo.
+  stow --no-folding --dir=packages --target="$HOME" --restow "${STOW_PACKAGES[@]}"
+}
+
+link_ghostty_config() {
+  local dir="$HOME/Library/Application Support/com.mitchellh.ghostty"
+  mkdir -p "$dir"
+  ln -sf "$REPO_DIR/packages/ghostty/config" "$dir/config"
+}
+
+install_omp_plugins() {
+  command -v omp &>/dev/null || return 0
+  [ -d "$HOME/.omp/plugins/node_modules/superpowers" ] && return 0
+
+  omp plugin marketplace add obra/superpowers-marketplace
+  omp plugin install superpowers@superpowers-marketplace
+}
+
+# Stow aborts if a real file sits where it wants a symlink. Tools do this to us:
+# aicodemetricsd rewrites ~/.claude/settings.json atomically, replacing the
+# symlink with a plain file. The repo is the source of truth, so delete such
+# files. Only paths tracked in packages/ are touched, never untracked files.
+# `-ef` (same inode) protects the repo file itself if the target path happens to
+# resolve to it, e.g. through a leftover directory symlink from an older stow.
 remove_drifted_targets() {
   local pkg src target
-  for pkg in "${PACKAGES[@]}"; do
+  for pkg in "${STOW_PACKAGES[@]}"; do
     while IFS= read -r -d '' src; do
       target="$HOME/${src#packages/$pkg/}"
       if { [ -e "$target" ] || [ -L "$target" ]; } && [ ! "$target" -ef "$src" ]; then
-        echo "removing drifted $target"
+        echo "removed drifted $target"
         rm -f "$target"
       fi
     done < <(find "packages/$pkg" -type f -print0)
   done
 }
-remove_drifted_targets
 
-# Neovim + tree-sitter CLI (nvim-treesitter's main branch compiles parsers
-# from source via the tree-sitter CLI; it is not bundled).
-if ! command -v nvim &> /dev/null; then
-  brew install neovim
-fi
-if ! command -v tree-sitter &> /dev/null; then
-  brew install tree-sitter-cli
-fi
+clone_if_missing() {
+  local dest=$1; shift
+  [ -d "$dest" ] || git clone "$@" "$dest"
+}
 
-# Bootstrap lazy.nvim (Neovim plugin manager). Plugins install on first launch.
-LAZY_DIR="${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim"
-if [ ! -d "$LAZY_DIR" ]; then
-  git clone --filter=blob:none --branch=stable \
-    https://github.com/folke/lazy.nvim.git "$LAZY_DIR"
-fi
+# Shows a live progress line, hides the step's output when it succeeds quietly,
+# and dumps it when the step fails or has something to report.
+run_step() {
+  local n=$1 total=$2 step=$3
+  local label="${step//_/ }" log status
 
-stow --no-folding --dir=packages --target="$HOME" --restow "${PACKAGES[@]}"
+  log=$(mktemp)
+  printf '%s %d/%d %s...' "$(progress_bar "$((n - 1))" "$total")" "$n" "$total" "$label"
 
-# superpowers skills from the official obra marketplace (no bun required)
-if command -v omp &>/dev/null && [ ! -d "$HOME/.omp/plugins/node_modules/superpowers" ]; then
-  omp plugin marketplace add obra/superpowers-marketplace
-  omp plugin install superpowers@superpowers-marketplace
-fi
+  # `set -e` is ignored inside functions called from conditions, so the step
+  # runs in a subshell that re-enables it and we read its status explicitly.
+  set +e
+  ( set -e; "$step" ) >"$log" 2>&1
+  status=$?
+  set -e
 
-ln -sf $(pwd)/packages/ghostty/config "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
+  printf '\r\033[K'
+  if [ "$status" -eq 0 ]; then
+    printf '%s %d/%d %s ✓\n' "$(progress_bar "$n" "$total")" "$n" "$total" "$label"
+    [ -s "$log" ] && sed 's/^/    /' "$log"
+  else
+    printf '%s %d/%d %s ✗\n' "$(progress_bar "$n" "$total")" "$n" "$total" "$label"
+    sed 's/^/    /' "$log"
+    rm -f "$log"
+    exit "$status"
+  fi
+  rm -f "$log"
+}
 
-echo "✅ done"
+progress_bar() {
+  local done=$1 total=$2 i bar=""
+  for ((i = 1; i <= total; i++)); do
+    if ((i <= done)); then bar+="█"; else bar+="░"; fi
+  done
+  printf '%s' "$bar"
+}
+
+main

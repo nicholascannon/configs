@@ -664,6 +664,8 @@ vim.api.nvim_create_autocmd("LspAttach", {
       vim.api.nvim_create_autocmd("BufWritePre", { buffer = bufnr, command = "LspEslintFixAll" })
     end
 
+    -- Highlights other occurrences of the symbol under the cursor while
+    -- idle; clears on cursor move.
     if client and client:supports_method("textDocument/documentHighlight") then
       local group = vim.api.nvim_create_augroup("lsp-document-highlight", { clear = false })
       vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })

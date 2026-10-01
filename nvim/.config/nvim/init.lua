@@ -602,6 +602,11 @@ require("lazy").setup({
 })
 
 --------------------------------------------------------------------
+-- Startup splash (lua/splash.lua) — set vim.g.splash_disabled to skip
+--------------------------------------------------------------------
+require("splash").setup()
+
+--------------------------------------------------------------------
 -- LSP keymaps + diagnostics (attach-time, native API)
 --------------------------------------------------------------------
 vim.api.nvim_create_autocmd("LspAttach", {

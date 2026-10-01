@@ -196,15 +196,15 @@ hl(0, "DiagnosticUnderlineInfo", { undercurl = true, sp = c.info })
 hl(0, "DiagnosticUnderlineHint", { undercurl = true, sp = c.hint })
 
 -- Diff — no `reverse`, so fugitive/vimdiff stay readable. Add/delete are
--- c.created / c.deleted pre-blended over bg: 6% for the line, 14% for
+-- c.created / c.deleted pre-blended over bg: 10% for the line, 22% for
 -- changed characters. Tinted backgrounds shift how syntax colors read (glyph
 -- edges anti-alias into the tint), so the fill stays faint and the gutter
 -- bar below carries the add/delete signal.
-hl(0, "DiffAdd", { bg = "#181e1c" })
-hl(0, "DiffDelete", { bg = "#221a1b" })
-hl(0, "DiffTextAdd", { bg = "#1c2a23" })
+hl(0, "DiffAdd", { bg = "#1a241f" })
+hl(0, "DiffDelete", { bg = "#2a1c1f" })
+hl(0, "DiffTextAdd", { bg = "#1f352a" })
 -- Not a built-in group; codediff's highlights.char_delete reads it.
-hl(0, "DiffTextDelete", { bg = "#321f22" })
+hl(0, "DiffTextDelete", { bg = "#422429" })
 hl(0, "DiffChange", { bg = "#2e3c52" })
 hl(0, "DiffText", { bg = "#36537a" })
 

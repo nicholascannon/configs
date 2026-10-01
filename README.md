@@ -14,7 +14,7 @@ brew install stow
 ./install.sh
 ```
 
-`install.sh` stows `claude`, `cursor`, `nvim`, `omp`, `p10k`, `pi`, `tmux`, `vim`, `zed`, and `zsh` into `$HOME`, and symlinks `./ghostty/config` to `~/Library/Application Support/com.mitchellh.ghostty/config`.
+`install.sh` stows `claude`, `cursor`, `nvim`, `omp`, `p10k`, `pi`, `tmux`, `vim`, `zed`, and `zsh` into `$HOME`, and symlinks `./packages/ghostty/config` to `~/Library/Application Support/com.mitchellh.ghostty/config`.
 
 ## omp
 
@@ -27,7 +27,7 @@ drift-repair pattern.
 
 The package also wires omp into the existing shared config:
 
-- `~/.omp/agent/AGENTS.md` symlinks to `claude/.claude/CLAUDE.md` (repo-internal
+- `~/.omp/agent/AGENTS.md` symlinks to `packages/claude/.claude/CLAUDE.md` (repo-internal
   symlink, same chain as the pi package) — omp loads it as its native user-level
   context file, so the global instructions already apply to every omp session.
 - Superpowers installs from the official obra marketplace (`omp plugin
@@ -50,7 +50,7 @@ claude mcp add -s user context7 -- npx -y @upstash/context7-mcp --api-key <your-
 ```
 
 Get a key at [context7.com](https://context7.com). The allow-rules for its tools
-(`mcp__context7__*`) are in `claude/.claude/settings.json` and do carry across machines.
+(`mcp__context7__*`) are in `packages/claude/.claude/settings.json` and do carry across machines.
 
 ## Fonts
 

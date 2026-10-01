@@ -8,6 +8,6 @@ if [ ! -f "$HOME/.vim/autoload/plug.vim" ]; then
 fi
 
 cd "$(dirname "${BASH_SOURCE[0]}")"
-stow --target="$HOME" --verbose --restow vim
+stow --dir=packages --target="$HOME" --verbose --restow vim
 
 echo "✅ vim done"

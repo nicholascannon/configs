@@ -32,7 +32,7 @@ fi
 
 mkdir -p "$HOME/.pi-lens"
 
-stow --target="$HOME" --restow \
+stow --dir=packages --target="$HOME" --restow \
   claude \
   nvim \
   omp \
@@ -48,6 +48,6 @@ if command -v omp &>/dev/null && [ ! -d "$HOME/.omp/plugins/node_modules/superpo
   omp plugin install superpowers@superpowers-marketplace
 fi
 
-ln -sf $(pwd)/ghostty/config "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
+ln -sf $(pwd)/packages/ghostty/config "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
 
 echo "✅ done"

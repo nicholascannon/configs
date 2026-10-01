@@ -35,6 +35,8 @@ opt.clipboard = "unnamedplus"
 opt.signcolumn = "yes"
 opt.updatetime = 300
 opt.writebackup = false
+opt.title = true
+opt.titlestring = "nvim %{fnamemodify(getcwd(), ':t')}"
 
 -- Files can change on disk outside nvim (e.g. Claude Code editing them
 -- directly). Check on refocus rather than nvim's own write events. (Not

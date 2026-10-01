@@ -98,9 +98,24 @@ map("n", "mm", toggle_mouse)
 -- Mouse wheel bypasses 'scrollbind' (only keyboard scroll commands trigger
 -- it), so diff/scrollbound windows (e.g. diffview) drift apart when
 -- scrolling with the wheel. Route the wheel through <C-e>/<C-y>, which do
--- respect scrollbind, 1 line per notch.
-map("n", "<ScrollWheelUp>", "<C-y>")
-map("n", "<ScrollWheelDown>", "<C-e>")
+-- respect scrollbind, 1 line per notch. Run in the window under the pointer
+-- (not the focused one) to match the default wheel behaviour.
+local function wheel_scroll(key)
+  return function()
+    local winid = vim.fn.getmousepos().winid
+    if winid == 0 or not vim.api.nvim_win_is_valid(winid) then
+      winid = vim.api.nvim_get_current_win()
+    end
+    vim.api.nvim_win_call(winid, function()
+      vim.cmd("normal! " .. vim.keycode(key))
+    end)
+  end
+end
+map("n", "<ScrollWheelUp>", wheel_scroll("<C-y>"))
+map("n", "<ScrollWheelDown>", wheel_scroll("<C-e>"))
+
+-- Default is hor:6, which is far too fast for trackpad horizontal scrolling.
+opt.mousescroll = "ver:1,hor:1"
 
 -- Command-line spinner shown while waiting on the LLM. Returns a closer.
 local function start_spinner(text)

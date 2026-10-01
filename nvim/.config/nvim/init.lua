@@ -189,6 +189,44 @@ local function codediff_vs_base()
   if base then vim.cmd("CodeDiff origin/" .. base .. "...") end
 end
 
+-- mini.map integration for CodeDiff buffers, which gitsigns never attaches to.
+-- Reads CodeDiff's own extmarks: inserted lines are green, removed lines red,
+-- and lines carrying both yellow.
+local function codediff_minimap_lines()
+  local buf = require("mini.map").current.buf_data.source
+  if not vim.api.nvim_buf_is_valid(buf) then return {} end
+
+  local kinds = {}
+  local function mark(line, kind)
+    kinds[line] = kinds[line] and kinds[line] ~= kind and "change" or kind
+  end
+
+  for _, name in ipairs({ "codediff-highlight", "codediff-inline" }) do
+    local ns = vim.api.nvim_get_namespaces()[name]
+    if ns then
+      local marks = vim.api.nvim_buf_get_extmarks(buf, ns, 0, -1, { details = true })
+      for _, m in ipairs(marks) do
+        local row, d = m[2], m[4]
+        if d.hl_group == "CodeDiffLineInsert" then
+          for r = row, (d.end_row or row + 1) - 1 do mark(r + 1, "add") end
+        elseif d.hl_group == "CodeDiffLineDelete" then
+          for r = row, (d.end_row or row + 1) - 1 do mark(r + 1, "delete") end
+        elseif d.virt_lines then
+          -- Inline layout: removed lines are virtual, anchored to the line below.
+          mark(row + 1, "delete")
+        end
+      end
+    end
+  end
+
+  local groups = { add = "GitSignsAdd", change = "GitSignsChange", delete = "GitSignsDelete" }
+  local res = {}
+  for line, kind in pairs(kinds) do
+    table.insert(res, { line = line, hl_group = groups[kind] })
+  end
+  return res
+end
+
 --------------------------------------------------------------------
 -- Bootstrap lazy.nvim
 --------------------------------------------------------------------
@@ -379,11 +417,23 @@ require("lazy").setup({
           vim.schedule(function() require("mini.map").open() end)
         end,
       })
+      -- CodeDiff paints its extmarks after these events fire.
+      vim.api.nvim_create_autocmd("User", {
+        pattern = { "CodeDiffOpen", "CodeDiffFileSelect" },
+        callback = function()
+          vim.defer_fn(function()
+            local minimap = package.loaded["mini.map"]
+            if minimap and minimap.current.win_data[vim.api.nvim_get_current_tabpage()] then
+              minimap.refresh({}, { integrations = true, lines = false, scrollbar = false })
+            end
+          end, 100)
+        end,
+      })
     end,
     config = function()
       local minimap = require("mini.map")
       minimap.setup({
-        integrations = { minimap.gen_integration.gitsigns() },
+        integrations = { minimap.gen_integration.gitsigns(), codediff_minimap_lines },
         symbols = {
           encode = minimap.gen_encode_symbols.dot("4x2"),
           scroll_line = "▐",

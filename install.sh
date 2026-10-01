@@ -16,6 +16,10 @@ BREW_PACKAGES=(
   tree-sitter-cli # nvim-treesitter's main branch compiles parsers with it
 )
 
+BREW_CASKS=(
+  font-meslo-lg-nerd-font # used by ghostty and cursor
+)
+
 # Run in order; the label shown is the function name.
 STEPS=(
   install_brew_packages
@@ -34,10 +38,8 @@ main() {
 }
 
 install_brew_packages() {
-  local pkg
-  for pkg in "${BREW_PACKAGES[@]}"; do
-    brew list --formula "$pkg" &>/dev/null || brew install "$pkg"
-  done
+  install_missing --formula "${BREW_PACKAGES[@]}"
+  install_missing --cask "${BREW_CASKS[@]}"
 }
 
 clone_dependencies() {
@@ -88,6 +90,15 @@ remove_drifted_targets() {
         rm -f "$target"
       fi
     done < <(find "packages/$pkg" -type f -print0)
+  done
+}
+
+install_missing() {
+  local kind=$1; shift
+  local installed pkg
+  installed=$(brew list "$kind")
+  for pkg in "$@"; do
+    grep -qx "$pkg" <<<"$installed" || brew install "$kind" "$pkg"
   done
 }
 

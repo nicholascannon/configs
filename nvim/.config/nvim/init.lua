@@ -555,23 +555,40 @@ require("lazy").setup({
   {
     "stevearc/conform.nvim",
     opts = {
+      -- biome only runs if the project actually has a biome config (checked
+      -- below); otherwise conform falls through to prettier. ESLint's own
+      -- fixAll runs separately through its language server (see LspAttach).
       formatters_by_ft = {
-        javascript = { "prettier" },
-        typescript = { "prettier" },
-        javascriptreact = { "prettier" },
-        typescriptreact = { "prettier" },
-        json = { "prettier" },
+        javascript = { "biome", "prettier", stop_after_first = true },
+        typescript = { "biome", "prettier", stop_after_first = true },
+        javascriptreact = { "biome", "prettier", stop_after_first = true },
+        typescriptreact = { "biome", "prettier", stop_after_first = true },
+        json = { "biome", "prettier", stop_after_first = true },
         yaml = { "prettier" },
         html = { "prettier" },
         css = { "prettier" },
         markdown = { "prettier" },
       },
+      formatters = {
+        biome = {
+          condition = function(_, ctx)
+            return vim.fs.find({ "biome.json", "biome.jsonc" }, { path = ctx.filename, upward = true })[1] ~= nil
+          end,
+        },
+      },
+      -- Falls back to LSP formatting for filetypes with no formatter above.
+      format_on_save = { timeout_ms = 1000, lsp_format = "fallback" },
     },
     config = function(_, opts)
       require("conform").setup(opts)
-      -- <leader>f formats buffer (replaces coc :Format)
+      -- <leader>f formats buffer (replaces coc :Format). Mirrors the
+      -- format-on-save order: conform's formatter first, then ESLint's own
+      -- fixAll — conform.format() only runs the formatters above, it doesn't
+      -- know about LspEslintFixAll.
       map({ "n", "v" }, "<leader>f", function()
-        require("conform").format({ async = true, lsp_format = "fallback" })
+        require("conform").format({ async = true, lsp_format = "fallback" }, function()
+          if #vim.lsp.get_clients({ bufnr = 0, name = "eslint" }) > 0 then vim.cmd("LspEslintFixAll") end
+        end)
       end, { silent = true })
     end,
   },
@@ -627,6 +644,16 @@ vim.api.nvim_create_autocmd("LspAttach", {
     end, o("quickfix"))
 
     local client = vim.lsp.get_client_by_id(args.data.client_id)
+
+    -- ESLint's own fixAll (import sort, etc.) runs through its language
+    -- server, not a CLI formatter — eslint_d would need a separate global
+    -- install most projects don't have. Runs after conform's prettier pass
+    -- (registered first, at startup); eslint-config-prettier disables the
+    -- stylistic rules that would otherwise fight it.
+    if client and client.name == "eslint" then
+      vim.api.nvim_create_autocmd("BufWritePre", { buffer = bufnr, command = "LspEslintFixAll" })
+    end
+
     if client and client:supports_method("textDocument/documentHighlight") then
       local group = vim.api.nvim_create_augroup("lsp-document-highlight", { clear = false })
       vim.api.nvim_clear_autocmds({ buffer = bufnr, group = group })

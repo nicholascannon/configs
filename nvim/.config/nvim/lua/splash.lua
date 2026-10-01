@@ -254,6 +254,11 @@ function close(state)
     state.timer:close()
   end
   restore_chrome(state.win, state.saved_win_opts)
+  -- mini.map's own startup open() runs on VeryLazy, which can fire while the
+  -- splash buffer (b:minimap_disable) is still current, silently skipping it
+  -- for the rest of the session. Retry once the splash buffer is gone;
+  -- scheduled because the caller swaps buffers (edit/enew) after close().
+  vim.schedule(function() pcall(function() require("mini.map").open() end) end)
 end
 
 function start_animation(state)

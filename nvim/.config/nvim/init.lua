@@ -630,7 +630,17 @@ vim.api.nvim_create_autocmd("LspAttach", {
   callback = function(args)
     local bufnr = args.buf
     local o = function(desc) return { buffer = bufnr, silent = true, desc = desc } end
-    map("n", "gd", vim.lsp.buf.definition, o("goto definition"))
+    -- definition commonly returns multiple locations for types (e.g. TS
+    -- declaration merging), which triggers Neovim's default loclist
+    -- panel; jump straight to the first match instead.
+    map("n", "gd", function()
+      vim.lsp.buf.definition({
+        on_list = function(list)
+          vim.fn.setloclist(0, list.items)
+          vim.cmd.lfirst()
+        end,
+      })
+    end, o("goto definition"))
     map("n", "K", function() vim.lsp.buf.hover({ border = "solid" }) end, o("hover"))
     map("n", "gy", vim.lsp.buf.type_definition, o("goto type definition"))
     map("n", "gi", vim.lsp.buf.implementation, o("goto implementation"))

@@ -1,12 +1,15 @@
--- Startup splash: a rotating, ordered-dithered skull above the recent files
+-- Startup splash: a rotating, ordered-dithered bust of David above the recent files
 -- under the launch directory. Shown only for a bare `nvim` (no args, no stdin).
 local M = {}
 
--- Skull canvas in Braille cells; each cell is 2x4 dots, so 64x64 dots.
-local SKULL_W, SKULL_H = 32, 16
-local DOTS_W, DOTS_H = SKULL_W * 2, SKULL_H * 4
+-- Bust canvas in Braille cells (2x4 dots each). Width is twice the height so the
+-- dots stay square; height shrinks to fit short windows.
+local MAX_BUST_H, MIN_BUST_H = 16, 10
+-- Blank lines between the bust and the build info below it.
+local BUST_GAP = 4
+local MESH_PATH = vim.fn.stdpath("config") .. "/assets/bust.bin"
 local FRAME_MS = 33
-local RADIANS_PER_FRAME = 0.04
+local RADIANS_PER_FRAME = 0.02
 local MAX_FILES = 8
 local FILES_TITLE = "Recent Files"
 local NS = vim.api.nvim_create_namespace("splash")
@@ -14,24 +17,19 @@ local NS = vim.api.nvim_create_namespace("splash")
 -- Fraction of the way from the comment grey to the background.
 local DIM_BLEND = 0.45
 -- Fraction of the way from the comment grey to the normal foreground.
-local SKULL_BLEND = 0.5
+local BUST_BLEND = 0.5
 -- Frames to wait for lazy.nvim's startup time before showing stats without it.
 local BOOT_WAIT_FRAMES = 60
 
-local CAMERA_DISTANCE = 4
--- Tangent of the half field of view; the skull spans about 2.5 units at distance 4.
-local FOCAL = 0.36
-local VIEW_LIFT = 0.03
-local BOUND_RADIUS = 1.6
-local MARCH_STEPS = 48
-local HIT_EPSILON = 0.003
-local STEP_SCALE = 0.8
-local AO_RADIUS = 0.2
-local AMBIENT = 0.12
+-- Far and narrow so the spinning head keeps a steady size instead of swelling
+-- as it turns toward the camera.
+local CAMERA_DISTANCE = 8
+-- Tangent of the half field of view; the bust spans about 2.6 units at distance 8.
+local FOCAL = 0.18
+local AMBIENT = 0.1
 -- Above 1 spreads midtones so the dither gradient shows instead of a solid fill.
-local TONE_GAMMA = 1.4
+local TONE_GAMMA = 1.7
 local RIM_STRENGTH = 0.5
-local TOOTH_PITCH = 0.14
 
 local HIDDEN_WIN_OPTS = {
   wrap = false,
@@ -46,7 +44,8 @@ local DOT_BITS = { { 0x01, 0x08 }, { 0x02, 0x10 }, { 0x04, 0x20 }, { 0x40, 0x80 
 local BRAILLE = { [0] = " " }
 for bits = 1, 255 do BRAILLE[bits] = vim.fn.nr2char(0x2800 + bits) end
 
-local sqrt, abs, min, max = math.sqrt, math.abs, math.min, math.max
+local ffi = require("ffi")
+local floor, sqrt, min, max = math.floor, math.sqrt, math.min, math.max
 
 -- Lua locals are lexically scoped; declared up front so callers can sit above
 -- the functions they call.
@@ -54,8 +53,8 @@ local define_highlights, blend, should_show, open, recent_files, file_labels
 local build_info, git_parts, refresh_boot
 local hide_chrome, restore_chrome
 local map_keys, open_file, dismiss, close, start_animation, render, build_lines
-local skull_lines, light_direction, render_dots, trace, shade, march
-local skull_sdf, skull_normal, ellipsoid, smooth_min, smooth_max
+local bust_lines, load_mesh, light_direction, new_buffers, project_vertices
+local fill_triangles, vertex_brightness, to_canvas
 local bayer_matrix, canvas_lines
 local center, first_entry_line
 
@@ -83,9 +82,9 @@ function define_highlights()
     vim.api.nvim_set_hl(0, "SplashDim", { link = "Comment" })
   end
   if fg and text then
-    vim.api.nvim_set_hl(0, "SplashSkull", { fg = blend(fg, text, SKULL_BLEND) })
+    vim.api.nvim_set_hl(0, "SplashBust", { fg = blend(fg, text, BUST_BLEND) })
   else
-    vim.api.nvim_set_hl(0, "SplashSkull", { link = "Comment" })
+    vim.api.nvim_set_hl(0, "SplashBust", { link = "Comment" })
   end
 end
 
@@ -101,6 +100,7 @@ end
 
 function should_show()
   if vim.fn.argc() > 0 or vim.g.splash_disabled then return false end
+  if vim.fn.filereadable(MESH_PATH) == 0 then return false end
   local buf = vim.api.nvim_get_current_buf()
   if vim.api.nvim_buf_get_name(buf) ~= "" or vim.bo[buf].modified then return false end
   return vim.api.nvim_buf_line_count(buf) == 1
@@ -109,6 +109,7 @@ end
 
 function open()
   local state = { win = vim.api.nvim_get_current_win(), angle = 0, frame = 0, entries = {} }
+  state.mesh = load_mesh()
   state.files = recent_files()
   state.labels = file_labels(state.files)
   state.info = build_info()
@@ -292,7 +293,9 @@ function build_lines(state, win)
   local width = vim.api.nvim_win_get_width(win)
   local height = vim.api.nvim_win_get_height(win)
   local file_rows = #state.files > 0 and #state.files + 2 or 0
-  local top_pad = center(SKULL_H + 1 + #state.info + file_rows, height)
+  local chrome = BUST_GAP + #state.info + file_rows
+  local bust_h = min(MAX_BUST_H, max(MIN_BUST_H, height - chrome))
+  local top_pad = center(bust_h + chrome, height)
 
   local lines, marks, entries = {}, {}, {}
   local function add_text(text, pad, hl)
@@ -306,15 +309,15 @@ function build_lines(state, win)
 
   for _ = 1, top_pad do lines[#lines + 1] = "" end
 
-  local indent = center(SKULL_W, width)
-  local skull = skull_lines(state.angle)
-  for _, text in ipairs(skull) do
+  local indent = center(bust_h * 2, width)
+  local bust = bust_lines(state, bust_h * 2, bust_h)
+  for _, text in ipairs(bust) do
     local line = string.rep(" ", indent) .. text
     lines[#lines + 1] = line
-    marks[#marks + 1] = { row = #lines, col = indent, end_col = #line, hl = "SplashSkull" }
+    marks[#marks + 1] = { row = #lines, col = indent, end_col = #line, hl = "SplashBust" }
   end
 
-  lines[#lines + 1] = ""
+  for _ = 1, BUST_GAP do lines[#lines + 1] = "" end
   for _, item in ipairs(state.info) do
     add_text(item.text, center(vim.fn.strdisplaywidth(item.text), width), item.hl)
   end
@@ -334,142 +337,142 @@ function build_lines(state, win)
   return lines, marks, entries
 end
 
-function skull_lines(angle)
-  return canvas_lines(render_dots(angle))
+function bust_lines(state, cells_w, cells_h)
+  local buf = new_buffers(state, cells_w * 2, cells_h * 4)
+  project_vertices(state.mesh, buf, state.angle)
+  fill_triangles(state.mesh, buf)
+  return canvas_lines(to_canvas(buf), cells_w, cells_h)
 end
 
-function render_dots(angle)
-  local yaw, pitch = angle, 0.12 * math.sin(angle * 0.6)
-  local cy, sy, cp, sp = math.cos(-yaw), math.sin(-yaw), math.cos(-pitch), math.sin(-pitch)
-  -- World -> object: undo the pitch about x, then the yaw about y.
-  local function to_object(x, y, z)
-    y, z = y * cp - z * sp, y * sp + z * cp
-    return x * cy + z * sy, y, -x * sy + z * cy
-  end
+-- Layout from scripts/bake-bust.py; `raw` is kept so the cdata views stay valid.
+function load_mesh()
+  local file = assert(io.open(MESH_PATH, "rb"))
+  local raw = file:read("*a")
+  file:close()
+  local bytes = ffi.cast("const uint8_t*", raw)
+  local header = ffi.cast("const uint32_t*", bytes)
+  local count, triangles = header[0], header[1]
+  local normals_at = 8 + count * 12
+  local indices_at = normals_at + count * 3 + (count * 3) % 2
+  return {
+    raw = raw,
+    count = count,
+    triangles = triangles,
+    positions = ffi.cast("const float*", bytes + 8),
+    normals = ffi.cast("const int8_t*", bytes + normals_at),
+    indices = ffi.cast("const uint16_t*", bytes + indices_at),
+  }
+end
 
+function new_buffers(state, dots_w, dots_h)
+  local buf = state.buffers
+  if buf and buf.w == dots_w and buf.h == dots_h then return buf end
+  local count = state.mesh.count
+  buf = {
+    w = dots_w,
+    h = dots_h,
+    sx = ffi.new("double[?]", count),
+    sy = ffi.new("double[?]", count),
+    sz = ffi.new("double[?]", count),
+    shade = ffi.new("double[?]", count),
+    depth = ffi.new("double[?]", dots_w * dots_h),
+    tone = ffi.new("double[?]", dots_w * dots_h),
+  }
+  state.buffers = buf
+  return buf
+end
+
+-- Spin about the vertical axis with the camera level, project to dot
+-- coordinates, and light each vertex; triangles interpolate the result.
+function project_vertices(mesh, buf, angle)
+  local cy, sy = math.cos(angle), math.sin(angle)
   local lx, ly, lz = light_direction(angle)
-  lx, ly, lz = to_object(lx, ly, lz)
-  local ox, oy, oz = to_object(0, 0, CAMERA_DISTANCE)
+  local pos, nrm = mesh.positions, mesh.normals
+  local half_w, half_h = buf.w / 2, buf.h / 2
+  local scale = 1 / FOCAL
 
-  local canvas = {}
-  for row = 1, SKULL_H do
-    canvas[row] = {}
-    for col = 1, SKULL_W do canvas[row][col] = 0 end
+  for i = 0, mesh.count - 1 do
+    local x, y, z = pos[i * 3], pos[i * 3 + 1], pos[i * 3 + 2]
+    x, z = x * cy + z * sy, -x * sy + z * cy
+    local w = CAMERA_DISTANCE - z
+    buf.sx[i] = half_w + x / w * scale * half_w
+    buf.sy[i] = half_h - y / w * scale * half_h
+    buf.sz[i] = z
+
+    local nx, ny, nz = nrm[i * 3] / 127, nrm[i * 3 + 1] / 127, nrm[i * 3 + 2] / 127
+    nx, nz = nx * cy + nz * sy, -nx * sy + nz * cy
+    buf.shade[i] = vertex_brightness(nx, ny, nz, lx, ly, lz)
   end
+end
 
-  for y = 0, DOTS_H - 1 do
-    for x = 0, DOTS_W - 1 do
-      local px = ((x + 0.5) / DOTS_W - 0.5) * 2 * FOCAL
-      local py = (0.5 - (y + 0.5) / DOTS_H) * 2 * FOCAL - VIEW_LIFT
-      local dx, dy, dz = to_object(px, py, -1)
-      local len = sqrt(dx * dx + dy * dy + dz * dz)
-      local brightness = trace(ox, oy, oz, dx / len, dy / len, dz / len, lx, ly, lz)
-      if brightness and brightness > BAYER[(y % 8) * 8 + x % 8 + 1] then
-        local row, col = math.floor(y / 4) + 1, math.floor(x / 2) + 1
+function vertex_brightness(nx, ny, nz, lx, ly, lz)
+  local lambert = max(0, nx * lx + ny * ly + nz * lz)
+  local rim = (1 - max(0, nz)) ^ 3 * RIM_STRENGTH
+  return min(1, AMBIENT + (1 - AMBIENT) * lambert + rim) ^ TONE_GAMMA
+end
+
+-- Upper-left key light that drifts across the face; straight-on light would
+-- flatten it, so it never reaches the camera axis.
+function light_direction(angle)
+  local x, y, z = -0.7 + 0.6 * math.sin(angle * 0.9), 0.35, 0.55
+  local len = sqrt(x * x + y * y + z * z)
+  return x / len, y / len, z / len
+end
+
+-- Z-buffered scanline fill sampling at dot centres. Front faces wind
+-- counter-clockwise on screen, which is negative area with y pointing down.
+function fill_triangles(mesh, buf)
+  local sx, sy, sz, shade = buf.sx, buf.sy, buf.sz, buf.shade
+  local depth, tone, w, h = buf.depth, buf.tone, buf.w, buf.h
+  local idx = mesh.indices
+  for i = 0, w * h - 1 do depth[i] = -1e9 end
+
+  for t = 0, mesh.triangles - 1 do
+    local a, b, c = idx[t * 3], idx[t * 3 + 1], idx[t * 3 + 2]
+    local x0, y0, x1, y1, x2, y2 = sx[a], sy[a], sx[b], sy[b], sx[c], sy[c]
+    local area = (x1 - x0) * (y2 - y0) - (x2 - x0) * (y1 - y0)
+    if area < 0 then
+      local inv = 1 / area
+      local min_x, max_x = max(0, floor(min(x0, x1, x2))), min(w - 1, floor(max(x0, x1, x2)))
+      local min_y, max_y = max(0, floor(min(y0, y1, y2))), min(h - 1, floor(max(y0, y1, y2)))
+      for y = min_y, max_y do
+        local py = y + 0.5
+        for x = min_x, max_x do
+          local px = x + 0.5
+          local w0 = ((x1 - px) * (y2 - py) - (x2 - px) * (y1 - py)) * inv
+          local w1 = ((x2 - px) * (y0 - py) - (x0 - px) * (y2 - py)) * inv
+          local w2 = 1 - w0 - w1
+          if w0 >= 0 and w1 >= 0 and w2 >= 0 then
+            local z = w0 * sz[a] + w1 * sz[b] + w2 * sz[c]
+            local cell = y * w + x
+            if z > depth[cell] then
+              depth[cell] = z
+              tone[cell] = w0 * shade[a] + w1 * shade[b] + w2 * shade[c]
+            end
+          end
+        end
+      end
+    end
+  end
+end
+
+-- Ordered dither: a dot is on when its tone beats the Bayer threshold.
+function to_canvas(buf)
+  local canvas = {}
+  for row = 1, buf.h / 4 do
+    canvas[row] = {}
+    for col = 1, buf.w / 2 do canvas[row][col] = 0 end
+  end
+  for y = 0, buf.h - 1 do
+    for x = 0, buf.w - 1 do
+      local cell = y * buf.w + x
+      if buf.depth[cell] > -1e8 and buf.tone[cell] > BAYER[(y % 8) * 8 + x % 8 + 1] then
+        local row, col = floor(y / 4) + 1, floor(x / 2) + 1
         canvas[row][col] = bit.bor(canvas[row][col], DOT_BITS[y % 4 + 1][x % 2 + 1])
       end
     end
   end
   return canvas
-end
-
--- Slow orbit that dips behind the skull so the face is rim-lit for a moment.
-function light_direction(angle)
-  local a = angle * 1.7
-  local x, y, z = math.sin(a) * 1.0, 0.6, 0.25 + 0.5 * math.cos(a)
-  local len = sqrt(x * x + y * y + z * z)
-  return x / len, y / len, z / len
-end
-
-function trace(ox, oy, oz, dx, dy, dz, lx, ly, lz)
-  local t = march(ox, oy, oz, dx, dy, dz)
-  if not t then return nil end
-  return shade(ox + dx * t, oy + dy * t, oz + dz * t, dx, dy, dz, lx, ly, lz)
-end
-
--- Sphere-trace inside a bounding sphere so rays that miss cost almost nothing.
-function march(ox, oy, oz, dx, dy, dz)
-  local b = ox * dx + oy * dy + oz * dz
-  local disc = b * b - (ox * ox + oy * oy + oz * oz - BOUND_RADIUS * BOUND_RADIUS)
-  if disc < 0 then return nil end
-  local root = sqrt(disc)
-  local t, t_exit = -b - root, -b + root
-  for _ = 1, MARCH_STEPS do
-    local d = skull_sdf(ox + dx * t, oy + dy * t, oz + dz * t)
-    if d < HIT_EPSILON then return t end
-    t = t + d * STEP_SCALE
-    if t > t_exit then return nil end
-  end
-  return nil
-end
-
-function shade(x, y, z, dx, dy, dz, lx, ly, lz)
-  local nx, ny, nz = skull_normal(x, y, z)
-  local lambert = max(0, nx * lx + ny * ly + nz * lz)
-  -- Distance field sampled just off the surface darkens sockets and crevices.
-  local occlusion = min(1, max(0, skull_sdf(x + nx * AO_RADIUS, y + ny * AO_RADIUS, z + nz * AO_RADIUS) / AO_RADIUS))
-  local facing = max(0, -(nx * dx + ny * dy + nz * dz))
-  local rim = (1 - facing) ^ 3 * RIM_STRENGTH
-  local light = (AMBIENT + (1 - AMBIENT) * lambert) * (0.3 + 0.7 * occlusion) + rim
-  return min(1, light) ^ TONE_GAMMA
-end
-
-function skull_normal(x, y, z)
-  local e = 0.002
-  local a = skull_sdf(x + e, y - e, z - e)
-  local b = skull_sdf(x - e, y - e, z + e)
-  local c = skull_sdf(x - e, y + e, z - e)
-  local d = skull_sdf(x + e, y + e, z + e)
-  local nx, ny, nz = a - b - c + d, -a - b + c + d, -a + b - c + d
-  local len = sqrt(nx * nx + ny * ny + nz * nz)
-  return nx / len, ny / len, nz / len
-end
-
--- Object space: y up, face toward +z, roughly unit-radius cranium.
-function skull_sdf(x, y, z)
-  local ax = abs(x)
-  local cranium = ellipsoid(x, y - 0.25, z + 0.1, 0.80, 0.85, 0.90)
-  local midface = ellipsoid(x, y + 0.5, z - 0.3, 0.5, 0.5, 0.5)
-  local d = smooth_min(cranium, midface, 0.25)
-
-  local cheek = sqrt((ax - 0.5) ^ 2 + (y + 0.2) ^ 2 + (z - 0.5) ^ 2) - 0.22
-  d = smooth_min(d, cheek, 0.15)
-
-  local jaw = ellipsoid(x, y + 1.0, z - 0.1, 0.42, 0.26, 0.5)
-  local ramus = ellipsoid(ax - 0.5, y + 0.7, z + 0.05, 0.1, 0.35, 0.2)
-  d = smooth_min(d, smooth_min(jaw, ramus, 0.1), 0.08)
-
-  local socket = sqrt((ax - 0.32) ^ 2 + (y - 0.05) ^ 2 + (z - 0.68) ^ 2) - 0.25
-  d = smooth_max(d, -socket, 0.06)
-
-  local nose = ellipsoid(x, y + 0.3, z - 0.85, 0.1, 0.17, 0.25)
-  d = smooth_max(d, -nose, 0.04)
-
-  local mouth = max(abs(y + 0.72) - 0.03, ax - 0.45, 0.2 - z)
-  d = max(d, -mouth)
-
-  local tooth_gap = abs((x + TOOTH_PITCH / 2) % TOOTH_PITCH - TOOTH_PITCH / 2)
-  local groove = max(tooth_gap - 0.012, abs(y + 0.82) - 0.14, 0.35 - z)
-  return max(d, -groove)
-end
-
--- Exact only near the surface, which is all the marcher needs.
-function ellipsoid(x, y, z, rx, ry, rz)
-  local ax, ay, az = x / rx, y / ry, z / rz
-  local k0 = sqrt(ax * ax + ay * ay + az * az)
-  local bx, by, bz = ax / rx, ay / ry, az / rz
-  local k1 = sqrt(bx * bx + by * by + bz * bz)
-  if k1 == 0 then return -min(rx, ry, rz) end
-  return k0 * (k0 - 1) / k1
-end
-
-function smooth_min(a, b, k)
-  local h = max(k - abs(a - b), 0) / k
-  return min(a, b) - h * h * k * 0.25
-end
-
-function smooth_max(a, b, k)
-  return -smooth_min(-a, -b, k)
 end
 
 -- Row-major 8x8 ordered-dither thresholds in (0, 1), 1-indexed.
@@ -490,11 +493,11 @@ function bayer_matrix()
   return m
 end
 
-function canvas_lines(canvas)
+function canvas_lines(canvas, cells_w, cells_h)
   local lines = {}
-  for row = 1, SKULL_H do
+  for row = 1, cells_h do
     local parts = {}
-    for col = 1, SKULL_W do parts[col] = BRAILLE[canvas[row][col]] end
+    for col = 1, cells_w do parts[col] = BRAILLE[canvas[row][col]] end
     lines[row] = table.concat(parts)
   end
   return lines

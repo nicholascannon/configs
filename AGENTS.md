@@ -17,6 +17,9 @@ stow --dir=packages --target="$HOME" --verbose --restow <package>
 
 # Ghostty config lives outside $HOME, symlinked separately
 ln -sf $(pwd)/packages/ghostty/config "$HOME/Library/Application Support/com.mitchellh.ghostty/config"
+
+# Legacy vim install (not run by install.sh; also bootstraps vim-plug)
+./scripts/vim-install.sh
 ```
 
 ## Stow Packages
@@ -27,7 +30,7 @@ ln -sf $(pwd)/packages/ghostty/config "$HOME/Library/Application Support/com.mit
 | `cursor`  | `~/Library/.../Cursor/` | Cursor editor (settings + keybindings)                        |
 | `nvim`    | `~/.config/nvim/`       | Neovim (native LSP, Treesitter, lazy.nvim)                    |
 | `zed`     | `~/.config/zed/`        | Zed editor (settings + keymap)                                |
-| `vim`     | `~/`                    | Classic vim (.vimrc, .coc.vim — legacy)                       |
+| `vim`     | `~/`                    | Classic vim (.vimrc, .coc.vim — legacy; installed via `scripts/vim-install.sh`, not `install.sh`) |
 | `tmux`    | `~/`                    | tmux config                                                   |
 | `zsh`     | `~/`                    | .zshrc (oh-my-zsh + p10k + fnm)                               |
 | `p10k`    | `~/`                    | Powerlevel10k prompt config                                   |
@@ -37,9 +40,13 @@ ln -sf $(pwd)/packages/ghostty/config "$HOME/Library/Application Support/com.mit
 
 ## Architecture Notes
 
-**Stow symlink drift:** `install.sh` force-removes `~/.claude/settings.json` before restowing because external tools (e.g. aicodemetricsd) atomically rewrite the file, replacing the symlink with a real file. This repo must stay source of truth.
+**Scripts:** `scripts/` holds standalone helpers that `install.sh` does not call. `vim-install.sh` is the legacy vim bootstrap, kept but unused. `bake-bust.py <model.glb> [out.bin]` bakes the mesh the nvim splash rasterizes (stdlib only). Scripts `cd` to the repo root before running stow.
 
-**omp config drift:** omp reads its config from `~/.omp/agent/config.yml`, which lives inside its runtime dir next to the session databases. `install.sh` removes it before restowing (same drift-repair pattern as Claude). Everything else under `~/.omp/` — `agent.db*`, `sessions/`, `logs/`, `natives/`, `run/`, `cache/`, `plugins/` (installed plugin content and registries), `marketplaces.json`, `terminal-sessions/` — is machine-local runtime state and must never be stowed. omp also discovers rules, skills, and commands from `.claude/` (toggle user scope with `skills.enableClaudeUser` / `commands.enableClaudeUser` in `~/.omp/agent/config.yml`), so the `claude` package feeds it too.
+**Stow symlink drift:** external tools (e.g. aicodemetricsd rewriting `~/.claude/settings.json`) atomically replace symlinks with real files, which makes stow fail. `install.sh` runs `remove_drifted_targets` before restowing: for every file tracked under `packages/<pkg>/`, it deletes whatever sits at the matching `$HOME` path unless it is the repo file. Untracked files are never touched. This repo must stay source of truth.
+
+**No folding:** `install.sh` stows with `--no-folding`, so stow always creates real directories and links individual files. Without it, a missing target dir (e.g. `~/.pi-lens`) would be folded into a symlink to the repo, and the tool's runtime logs and caches would land in the repo.
+
+**omp config drift:** omp reads its config from `~/.omp/agent/config.yml`, which lives inside its runtime dir next to the session databases. The drift repair above covers it. Everything else under `~/.omp/` — `agent.db*`, `sessions/`, `logs/`, `natives/`, `run/`, `cache/`, `plugins/` (installed plugin content and registries), `marketplaces.json`, `terminal-sessions/` — is machine-local runtime state and must never be stowed. omp also discovers rules, skills, and commands from `.claude/` (toggle user scope with `skills.enableClaudeUser` / `commands.enableClaudeUser` in `~/.omp/agent/config.yml`), so the `claude` package feeds it too.
 
 **omp shared context, skills, and MCP:** `packages/omp/.omp/agent/AGENTS.md` is a repo-internal symlink to `packages/claude/.claude/CLAUDE.md` — the same chain the `pi` package uses — so one tracked file feeds Claude Code, pi, and omp (omp loads it as the native user-level context file, highest priority). `packages/omp/.omp/agent/mcp.json` owns omp's user MCP servers (context7, sequential-thinking), migrated from pi's config; the github MCP server from `packages/pi/.pi/agent/mcp.json` is deliberately not carried over because omp ships a built-in `github` tool. Superpowers installs from the official obra marketplace: install.sh runs `omp plugin marketplace add obra/superpowers-marketplace` + `omp plugin install superpowers@superpowers-marketplace` (guarded by `node_modules/superpowers` presence). The marketplace registry and cache (`~/.omp/marketplaces.json`, `~/.omp/plugins/installed_plugins.json`, `cache/`) are runtime state, untracked. Upgrade with `omp plugin upgrade superpowers@superpowers-marketplace`; `marketplace.autoUpdate` in `config.yml` can auto-refresh. No dependency on the pi package and no bun requirement.
 

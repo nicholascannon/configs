@@ -3,6 +3,9 @@ font-family = "MesloLGS Nerd Font Mono"
 
 split-divider-color = #f0f0f0
 
+selection-background = #0c2a5b
+selection-foreground = #ffffff
+
 # Thicker glyph strokes: thin anti-aliased edges pick up tinted backgrounds
 # (e.g. nvim diff lines) and make syntax colors look shifted.
 font-thicken = true

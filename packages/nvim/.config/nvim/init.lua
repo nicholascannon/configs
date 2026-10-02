@@ -381,11 +381,24 @@ require("lazy").setup({
           end
         end
       end
+      -- CodeDiff's own <2-LeftMouse> handler skips folders; <CR> toggles them.
+      local function map_explorer_double_click(tab)
+        if not vim.api.nvim_tabpage_is_valid(tab) then return end
+        for _, win in ipairs(vim.api.nvim_tabpage_list_wins(tab)) do
+          local buf = vim.api.nvim_win_get_buf(win)
+          if vim.bo[buf].filetype == "codediff-explorer" then
+            vim.keymap.set("n", "<2-LeftMouse>", "<CR>", { buffer = buf, remap = true, nowait = true, silent = true })
+          end
+        end
+      end
       vim.api.nvim_create_autocmd("User", {
         pattern = "CodeDiffOpen",
         callback = function(args)
           codediff_tabs[args.data.tabpage] = true
-          vim.schedule(function() hide_nvim_tree(args.data.tabpage) end)
+          vim.schedule(function()
+            hide_nvim_tree(args.data.tabpage)
+            map_explorer_double_click(args.data.tabpage)
+          end)
         end,
       })
       vim.api.nvim_create_autocmd("User", {

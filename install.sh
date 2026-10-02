@@ -31,10 +31,12 @@ STEPS=(
 
 main() {
   local total=${#STEPS[@]} n=0 step
+  hide_cursor_while_running
   for step in "${STEPS[@]}"; do
     n=$((n + 1))
     run_step "$n" "$total" "$step"
   done
+  printf '✓ configs installed\n'
 }
 
 install_brew_packages() {
@@ -107,41 +109,58 @@ clone_if_missing() {
   [ -d "$dest" ] || git clone "$@" "$dest"
 }
 
-# Shows a live progress line, hides the step's output when it succeeds quietly,
-# and dumps it when the step fails or has something to report.
+# Shows one live spinner line that each step overwrites, keeping output only
+# when a step fails or has something to report.
 run_step() {
   local n=$1 total=$2 step=$3
-  local label="${step//_/ }" log status
+  local label="$n/$total ${step//_/ }" log pid status
 
   log=$(mktemp)
-  printf '%s %d/%d %s...' "$(progress_bar "$((n - 1))" "$total")" "$n" "$total" "$label"
 
   # `set -e` is ignored inside functions called from conditions, so the step
   # runs in a subshell that re-enables it and we read its status explicitly.
-  set +e
-  ( set -e; "$step" ) >"$log" 2>&1
-  status=$?
-  set -e
+  ( set -e; "$step" ) >"$log" 2>&1 &
+  pid=$!
+  spin "$pid" "$label"
+  wait "$pid" && status=0 || status=$?
 
-  printf '\r\033[K'
-  if [ "$status" -eq 0 ]; then
-    printf '%s %d/%d %s ✓\n' "$(progress_bar "$n" "$total")" "$n" "$total" "$label"
-    [ -s "$log" ] && sed 's/^/    /' "$log"
-  else
-    printf '%s %d/%d %s ✗\n' "$(progress_bar "$n" "$total")" "$n" "$total" "$label"
+  if [ "$status" -ne 0 ]; then
+    printf '✗ %s\n' "$label"
     sed 's/^/    /' "$log"
     rm -f "$log"
     exit "$status"
   fi
+
+  [ -t 1 ] || printf '✓ %s\n' "$label"
+  [ -s "$log" ] && sed 's/^/    /' "$log"
   rm -f "$log"
+  return 0
 }
 
-progress_bar() {
-  local done=$1 total=$2 i bar=""
-  for ((i = 1; i <= total; i++)); do
-    if ((i <= done)); then bar+="█"; else bar+="░"; fi
+spin() {
+  local pid=$1 label=$2 i=0
+  local frames=(⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏)
+
+  [ -t 1 ] || { wait_quietly "$pid"; return 0; }
+
+  while kill -0 "$pid" 2>/dev/null; do
+    printf '\r%s %s' "${frames[i++ % ${#frames[@]}]}" "$label"
+    sleep 0.1
   done
-  printf '%s' "$bar"
+  printf '\r\033[K'
+}
+
+# `wait` here would consume the status that run_step reads, so poll instead.
+wait_quietly() {
+  while kill -0 "$1" 2>/dev/null; do sleep 0.1; done
+}
+
+hide_cursor_while_running() {
+  [ -t 1 ] || return 0
+  printf '\033[?25l'
+  # Ctrl-C must also stop the backgrounded step, or it outlives the script.
+  trap 'printf "\033[?25h"; kill $(jobs -p) 2>/dev/null || true' EXIT
+  trap 'exit 130' INT TERM
 }
 
 main

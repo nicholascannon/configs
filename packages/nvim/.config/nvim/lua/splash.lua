@@ -5,8 +5,9 @@ local M = {}
 -- Bust canvas in Braille cells (2x4 dots each). Width is twice the height so the
 -- dots stay square; height shrinks to fit short windows.
 local MAX_BUST_H, MIN_BUST_H = 16, 10
--- Blank lines between the bust and the build info below it.
+-- Rows between the bust and the build info: blank, quote, source, blank.
 local BUST_GAP = 4
+local QUOTES = require("splash_quotes")
 local MESH_PATH = vim.fn.stdpath("config") .. "/assets/bust.bin"
 local FRAME_MS = 33
 local RADIANS_PER_FRAME = 0.02
@@ -50,7 +51,7 @@ local floor, sqrt, min, max = math.floor, math.sqrt, math.min, math.max
 -- Lua locals are lexically scoped; declared up front so callers can sit above
 -- the functions they call.
 local define_highlights, blend, should_show, open, recent_files, file_labels
-local build_info, git_parts, refresh_boot
+local random_quote, build_info, git_parts, refresh_boot
 local hide_chrome, restore_chrome
 local map_keys, open_file, dismiss, close, start_animation, render, build_lines
 local bust_lines, load_mesh, light_direction, new_buffers, project_vertices
@@ -112,6 +113,7 @@ function open()
   state.mesh = load_mesh()
   state.files = recent_files()
   state.labels = file_labels(state.files)
+  state.quote = random_quote()
   state.info = build_info()
   state.git = git_parts()
   state.buf = vim.api.nvim_create_buf(false, true)
@@ -156,6 +158,12 @@ function file_labels(files)
     labels[i] = string.format("%d  %s", i, vim.fn.fnamemodify(path, ":."))
   end
   return labels
+end
+
+-- LuaJIT's math.random is unseeded, so every launch would otherwise pick the same quote.
+function random_quote()
+  math.randomseed(vim.uv.hrtime())
+  return QUOTES[math.random(#QUOTES)]
 end
 
 function build_info()
@@ -322,7 +330,12 @@ function build_lines(state, win)
     marks[#marks + 1] = { row = #lines, col = indent, end_col = #line, hl = "SplashBust" }
   end
 
-  for _ = 1, BUST_GAP do lines[#lines + 1] = "" end
+  lines[#lines + 1] = ""
+  local quote = "“" .. state.quote.text .. "”"
+  add_text(quote, center(vim.fn.strdisplaywidth(quote), width), "Comment")
+  local source = "— " .. state.quote.source
+  add_text(source, center(vim.fn.strdisplaywidth(source), width), "SplashDim")
+  lines[#lines + 1] = ""
   for _, item in ipairs(state.info) do
     add_text(item.text, center(vim.fn.strdisplaywidth(item.text), width), item.hl)
   end

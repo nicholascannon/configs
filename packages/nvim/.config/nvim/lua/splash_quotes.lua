@@ -1,0 +1,17 @@
+return {
+  { text = "Wake up, Neo...", source = "The Matrix" },
+  { text = "There is no spoon.", source = "The Matrix" },
+  { text = "Free your mind.", source = "The Matrix" },
+  { text = "No fate but what we make.", source = "Terminator 2: Judgment Day" },
+  { text = "Fear is the mind-killer.", source = "Dune" },
+  { text = "Your effort to remain what you are is what limits you.", source = "Ghost in the Shell" },
+  { text = "All those moments will be lost in time, like tears in rain.", source = "Blade Runner" },
+  { text = "More human than human is our motto.", source = "Blade Runner" },
+  { text = "Quite an experience to live in fear, isn't it? That's what it is to be a slave.", source = "Blade Runner" },
+  { text = "What is real? How do you define real?", source = "The Matrix" },
+  { text = "Choice is an illusion created between those with power and those without.", source = "The Matrix Reloaded" },
+  { text = "Without change something sleeps inside us, and seldom awakens.", source = "Dune" },
+  { text = "Isn't it strange, to create something that hates you?", source = "Ex Machina" },
+  { text = "Hack the planet!", source = "Hackers (1995)" },
+  { text = "Mess with the best, die like the rest.", source = "Hackers (1995)" },
+}

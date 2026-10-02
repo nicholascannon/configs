@@ -15,7 +15,7 @@ local c = {
   bg_elevated = "#1e1e1e",
   -- Lighter than bg_elevated so LSP hover/diagnostic floats stand out from code.
   bg_float = "#262626",
-  bg_active_line = "#1d1d1d",
+  bg_active_line = "#262626",
   fg = "#e2e2e2",
   fg_muted = "#888888",
   fg_disabled = "#3a3a3a",

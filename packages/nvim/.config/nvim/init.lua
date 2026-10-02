@@ -392,6 +392,21 @@ require("lazy").setup({
         pattern = "CodeDiffClose",
         callback = function(args) codediff_tabs[args.data.tabpage] = nil end,
       })
+      -- layout.arrange() re-pins the explorer to config.options.explorer.width
+      -- on every file switch, discarding manual resizes. Persist them there.
+      vim.api.nvim_create_autocmd("WinResized", {
+        callback = function()
+          for _, win in ipairs(vim.v.event.windows) do
+            if vim.api.nvim_win_is_valid(win)
+              and vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "codediff-explorer" then
+              local explorer = require("codediff.config").options.explorer
+              if explorer.position ~= "bottom" then
+                explorer.width = vim.api.nvim_win_get_width(win)
+              end
+            end
+          end
+        end,
+      })
       vim.api.nvim_create_autocmd("TabEnter", {
         callback = function()
           local tab = vim.api.nvim_get_current_tabpage()

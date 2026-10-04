@@ -1,4 +1,3 @@
-docs/
 .DS_Store
 
 # Per-machine Neovim overrides (e.g. enabling Copilot where a seat exists)

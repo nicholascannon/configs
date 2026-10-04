@@ -14,6 +14,7 @@ BREW_PACKAGES=(
   stow            # symlinks packages/ into $HOME
   neovim
   tree-sitter-cli # nvim-treesitter's main branch compiles parsers with it
+  uv              # provides uvx, which launches the aws-core plugin's MCP server
 )
 
 BREW_CASKS=(

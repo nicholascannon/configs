@@ -74,6 +74,24 @@ map("i", "<C-j>", "<esc>:m .+1<CR>==", { silent = true })
 map("n", "<leader>j", ":m .+1<CR>==", { silent = true })
 map("n", "<leader>k", ":m .-2<CR>==", { silent = true })
 
+local function yank_reference(first, last)
+  local ref = vim.fn.expand("%:.") .. ":" .. first
+  if last ~= first then ref = ref .. "-" .. last end
+  vim.fn.setreg("+", ref)
+  vim.notify("Yanked " .. ref)
+end
+
+map("n", "<leader>yr", function()
+  local line = vim.fn.line(".")
+  yank_reference(line, line)
+end, { desc = "yank path:line reference" })
+
+map("x", "<leader>yr", function()
+  local a, b = vim.fn.line("v"), vim.fn.line(".")
+  vim.api.nvim_feedkeys(vim.keycode("<Esc>"), "nx", false)
+  yank_reference(math.min(a, b), math.max(a, b))
+end, { desc = "yank path:start-end reference" })
+
 -- Toggle mouse (click/scroll vs terminal select)
 local function toggle_mouse()
   if vim.o.mouse == "" then
@@ -280,6 +298,13 @@ require("lazy").setup({
         end,
       })
     end,
+  },
+
+  -- Pins the enclosing function/class header at the top of the window.
+  {
+    "nvim-treesitter/nvim-treesitter-context",
+    event = "VeryLazy",
+    opts = { max_lines = 3 },
   },
 
   -- In-buffer markdown rendering (headers, bold, lists, code blocks) — no

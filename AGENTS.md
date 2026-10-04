@@ -67,7 +67,7 @@ Levers to revisit if the style degrades:
 
 **Per-machine overrides:** Machine-specific config that shouldn't be committed:
 
-- `packages/nvim/.config/nvim/local.lua` — gitignored; set `vim.g.enable_copilot = true` on machines with a Copilot seat
+- `packages/nvim/.config/nvim/local.lua` — gitignored; sourced at the top of `init.lua` for per-machine overrides (absent file is a no-op)
 - `~/.zshrc.local` — sourced at end of .zshrc for machine-local env/aliases
 - MCP servers in `~/.claude.json` — registered per-machine via `claude mcp add`.
   `~/.claude.json` is runtime state (caches, counters, oauth, absolute paths) and

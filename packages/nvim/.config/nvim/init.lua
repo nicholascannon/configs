@@ -10,7 +10,6 @@ vim.g.maplocalleader = "\\"
 
 --------------------------------------------------------------------
 -- Machine-local overrides (gitignored, per-machine — not committed).
--- e.g. set `vim.g.enable_copilot = true` on machines with a Copilot seat.
 -- Absent file is a no-op.
 --------------------------------------------------------------------
 pcall(dofile, vim.fn.stdpath("config") .. "/local.lua")
@@ -486,13 +485,11 @@ require("lazy").setup({
     end,
   },
 
-  -- GitHub Copilot (inline ghost text). Gated on vim.g.enable_copilot, set in
-  -- the gitignored local.lua — so it only loads on machines with a seat.
-  -- <Tab> accepts the suggestion (cmp menu is on arrow keys). First use needs
-  -- `:Copilot auth` (device login; uses the Copilot seat, no API key).
+  -- GitHub Copilot (inline ghost text). <Tab> accepts the suggestion (cmp
+  -- menu is on arrow keys). First use needs `:Copilot auth` (device login;
+  -- uses the Copilot seat, no API key).
   {
     "zbirenbaum/copilot.lua",
-    cond = function() return vim.g.enable_copilot == true end,
     event = "InsertEnter",
     cmd = "Copilot",
     opts = {
@@ -519,7 +516,6 @@ require("lazy").setup({
   -- manual confirm, commits with it — same UX as Zed's commit-message button.
   {
     "CopilotC-Nvim/CopilotChat.nvim",
-    cond = function() return vim.g.enable_copilot == true end,
     branch = "main",
     dependencies = { "zbirenbaum/copilot.lua", "nvim-lua/plenary.nvim" },
     cmd = "CopilotChat",

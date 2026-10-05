@@ -310,26 +310,27 @@ require("lazy").setup({
   -- In-buffer markdown rendering (headers, bold, lists, code blocks) — no
   -- browser needed. \mr toggles it on the current buffer.
   {
-    "OXY2DEV/markview.nvim",
-    lazy = false, -- plugin lazy-loads itself; upstream advises against lazy.nvim's ft/event
-    dependencies = { "nvim-tree/nvim-web-devicons" },
+    "MeanderingProgrammer/render-markdown.nvim",
+    ft = { "markdown" },
+    dependencies = { "nvim-treesitter/nvim-treesitter", "nvim-tree/nvim-web-devicons" },
     keys = {
-      { "<leader>mr", "<cmd>Markview Toggle<cr>", desc = "Toggle markdown render" },
+      { "<leader>mr", "<cmd>RenderMarkdown toggle<cr>", desc = "Toggle markdown render" },
     },
     opts = {
-      preview = {
-        filetypes = { "markdown" },
-        icon_provider = "devicons",
-        -- Keep rendering through visual modes (so drag-selecting doesn't drop
-        -- to raw markdown); raw in insert. No hybrid_modes, so the cursor
-        -- line stays rendered too.
-        modes = { "n", "no", "c", "v", "V", "\22" },
-        hybrid_modes = {},
-        -- Above this (default 1000) markview only renders a window around the
-        -- cursor and re-renders after a 150ms debounce while scrolling, so new
-        -- sections pop in late. Below it the whole buffer is rendered once and
-        -- scrolling never triggers a redraw.
-        max_buf_lines = 10000,
+      -- Default reveals raw markdown on the cursor's line and re-renders it
+      -- on every cursor move, which reads as jank while scrolling. Keep
+      -- everything rendered, including the current line.
+      anti_conceal = { enabled = false },
+      -- Default excludes visual modes ("n", "c", "t" only), so click-and-drag
+      -- selection dropped the whole buffer to raw markdown mid-drag. Keep
+      -- rendering through visual/visual-line/visual-block; still raw in
+      -- insert, since editing needs the actual markdown syntax.
+      render_modes = { "n", "c", "t", "v", "V", "\22" },
+      -- LSP hover/diagnostic floats are nofile markdown buffers, usually one
+      -- big code block. Its darker code background and language header row
+      -- clash with NormalFloat; with no header, the fences are concealed.
+      overrides = {
+        buftype = { nofile = { code = { disable_background = true, language = false } } },
       },
     },
   },

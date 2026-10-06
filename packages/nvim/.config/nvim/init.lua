@@ -326,6 +326,7 @@ require("lazy").setup({
       -- rendering through visual/visual-line/visual-block; still raw in
       -- insert, since editing needs the actual markdown syntax.
       render_modes = { "n", "c", "t", "v", "V", "\22" },
+      pipe_table = { padding = 2 },
       -- LSP hover/diagnostic floats are nofile markdown buffers, usually one
       -- big code block. Its darker code background and language header row
       -- clash with NormalFloat; with no header, the fences are concealed.

@@ -729,6 +729,7 @@ require("lazy").setup({
 				html = { "prettier" },
 				css = { "prettier" },
 				markdown = { "prettier" },
+				go = { "goimports" },
 			},
 			formatters = {
 				biome = {
@@ -779,6 +780,7 @@ require("lazy").setup({
 				"dockerls",
 				"emmet_ls",
 				"prismals",
+				"gopls",
 			},
 		},
 	},

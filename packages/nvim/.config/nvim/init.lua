@@ -425,12 +425,13 @@ require("lazy").setup({
 				end
 				return "%#" .. group .. "#" .. icon .. tab_hl
 			end
-			local function tab_label(_, tab)
+			local function tab_label(label, tab)
 				local buf = vim.fn.tabpagebuflist(tab.tabnr)[vim.fn.tabpagewinnr(tab.tabnr)]
-				local name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t")
+				local path = vim.api.nvim_buf_get_name(buf)
+				local name = vim.fn.fnamemodify(path, ":t")
 				local devicons = require("nvim-web-devicons")
 				local icon, color = devicons.get_icon_color(name, vim.fn.fnamemodify(name, ":e"), { default = true })
-				return colored_icon(icon, color, tab) .. " " .. (name ~= "" and name or "[No Name]")
+				return colored_icon(icon, color, tab) .. " " .. label
 			end
 			local theme = require("lualine.themes.auto")
 			-- "auto" derives normal mode from Pmenu (dim gray, barely visible) and
@@ -446,7 +447,13 @@ require("lazy").setup({
 				theme.visual.b.fg = hex
 			end
 			require("lualine").setup({
-				options = { theme = theme, globalstatus = true, always_show_tabline = false },
+				options = {
+					theme = theme,
+					globalstatus = true,
+					always_show_tabline = false,
+					section_separators = "",
+					component_separators = "│",
+				},
 				-- path = 1: relative to cwd, so the statusline shows where a file
 				-- lives without the full absolute path eating the whole bar.
 				sections = { lualine_c = { { "filename", path = 1 } } },
@@ -454,7 +461,8 @@ require("lazy").setup({
 					lualine_a = {
 						{
 							"tabs",
-							mode = 1,
+							mode = 2,
+							path = 1,
 							fmt = tab_label,
 							-- lualine counts the icon's highlight markup (~70 chars per tab) as
 							-- visible width, so widen the limit to match.

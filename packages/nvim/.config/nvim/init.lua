@@ -73,6 +73,7 @@ map("i", "<C-k>", "<esc>:m .-2<CR>==", { silent = true })
 map("i", "<C-j>", "<esc>:m .+1<CR>==", { silent = true })
 map("n", "<leader>j", ":m .+1<CR>==", { silent = true })
 map("n", "<leader>k", ":m .-2<CR>==", { silent = true })
+map("n", "<leader>t", "<cmd>tabnew<CR>", { desc = "new tab" })
 
 local function yank_reference(first, last)
 	local ref = vim.fn.expand("%:.") .. ":" .. first

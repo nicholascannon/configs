@@ -26,6 +26,8 @@ opt.tabstop = 2
 opt.shiftwidth = 2
 opt.expandtab = true
 opt.swapfile = false
+opt.undofile = true
+opt.autoread = true
 opt.mouse = "a"
 -- Mouse-drag enters Visual mode (not the terminal's native selection), so
 -- macOS Cmd+C has nothing to copy. Use `y` after selecting instead — this
@@ -38,9 +40,10 @@ opt.title = true
 opt.titlestring = "nvim %{fnamemodify(getcwd(), ':t')}"
 
 -- Files can change on disk outside nvim (e.g. Claude Code editing them
--- directly). Check on refocus rather than nvim's own write events. (Not
--- CursorHold: it refires on every idle pause and was resetting the cursor.)
-vim.api.nvim_create_autocmd("FocusGained", {
+-- directly). Check on refocus, buffer switch and leaving a terminal rather
+-- than nvim's own write events. (Not CursorHold: it refires on every idle
+-- pause and was resetting the cursor.)
+vim.api.nvim_create_autocmd({ "FocusGained", "BufEnter", "TermLeave" }, {
 	command = "checktime",
 })
 
@@ -107,6 +110,10 @@ end
 
 map("n", "<leader>t", "<cmd>tabnew<CR>", { desc = "new tab" })
 map("n", "<leader>T", reopen_closed_tab, { desc = "reopen closed tab" })
+
+for n = 1, 9 do
+	map("n", "<leader>" .. n, n .. "gt", { desc = "go to tab " .. n })
+end
 
 local function yank_reference(first, last)
 	local ref = vim.fn.expand("%:.") .. ":" .. first
@@ -451,18 +458,22 @@ require("lazy").setup({
 					theme = theme,
 					globalstatus = true,
 					always_show_tabline = false,
-					section_separators = "",
-					component_separators = "│",
 				},
 				-- path = 1: relative to cwd, so the statusline shows where a file
 				-- lives without the full absolute path eating the whole bar.
-				sections = { lualine_c = { { "filename", path = 1 } } },
+				sections = {
+					lualine_c = { { "filename", path = 1 } },
+					lualine_b = { "branch" },
+					lualine_x = { "diagnostics", "diff", "encoding", "fileformat", "filetype" },
+				},
 				tabline = {
 					lualine_a = {
 						{
 							"tabs",
 							mode = 2,
 							path = 1,
+							section_separators = { left = "", right = "" },
+							component_separators = { left = "", right = "" },
 							fmt = tab_label,
 							-- lualine counts the icon's highlight markup (~70 chars per tab) as
 							-- visible width, so widen the limit to match.

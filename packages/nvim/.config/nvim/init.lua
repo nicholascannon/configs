@@ -440,22 +440,9 @@ require("lazy").setup({
 				local icon, color = devicons.get_icon_color(name, vim.fn.fnamemodify(name, ":e"), { default = true })
 				return colored_icon(icon, color, tab) .. " " .. label
 			end
-			local theme = require("lualine.themes.auto")
-			-- "auto" derives normal mode from Pmenu (dim gray, barely visible) and
-			-- command mode from Identifier (near-white, reads much better). Swap.
-			theme.normal, theme.command = theme.command, theme.normal
-			-- "auto" derives visual mode from Special, which aero.lua points at
-			-- the same green as String — colliding with insert mode. Pull it from
-			-- Keyword (purple) instead, an Aero color no other mode uses.
-			local keyword = vim.api.nvim_get_hl(0, { name = "Keyword", link = false }).fg
-			if keyword then
-				local hex = string.format("#%06x", keyword)
-				theme.visual.a.bg = hex
-				theme.visual.b.fg = hex
-			end
 			require("lualine").setup({
 				options = {
-					theme = theme,
+					theme = "aero",
 					globalstatus = true,
 					always_show_tabline = false,
 				},

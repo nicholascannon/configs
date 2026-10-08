@@ -21,11 +21,11 @@ local c = {
   fg_disabled = "#3a3a3a",
   border = "#222222",
   border_focused = "#333333",
-  line_nr = "#444444",
+  line_nr = "#5c5c5c",
   line_nr_active = "#888888",
   accent = "#3898e0",
-  comment = "#666672",
-  comment_doc = "#75758a",
+  comment = "#7a7a88",
+  comment_doc = "#8a8a9e",
   string = "#5cc191",
   constant = "#e0ab4f",
   keyword = "#b483e8",
@@ -38,15 +38,16 @@ local c = {
   attribute = "#e0ab4f",
   error = "#e0556e",
   warning = "#c79334",
-  info = "#3366ff",
-  hint = "#6e6e78",
+  info = "#5b8def",
+  hint = "#85858f",
   created = "#3fa372",
   deleted = "#e0556e",
   modified = "#c79334",
-  -- nvim_set_hl rejects alpha hex, so these are #3366ff pre-blended over
-  -- bg (#161616) at the source theme's alpha: selection 0x33/255, search 0x2e/255.
-  selection = "#1c2645",
-  search = "#1b2440",
+  -- Brighter than the source theme's #3366ff blends (#1c2645 / #1b2440),
+  -- which sat at ~1.2:1 against bg and were nearly invisible. Search is
+  -- warm so it reads differently from a selection.
+  selection = "#24345c",
+  search = "#3a3220",
 }
 
 local hl = vim.api.nvim_set_hl
@@ -68,8 +69,8 @@ hl(0, "IncSearch", { fg = c.bg, bg = c.accent })
 hl(0, "MatchParen", { fg = c.accent, bold = true })
 hl(0, "NonText", { fg = c.fg_disabled, bg = "NONE" })
 hl(0, "Whitespace", { fg = "#2a2a2a" })
-hl(0, "Pmenu", { fg = c.fg, bg = c.bg_elevated })
-hl(0, "PmenuSel", { fg = c.fg, bg = "#282828" })
+hl(0, "Pmenu", { fg = c.fg, bg = c.bg_float })
+hl(0, "PmenuSel", { fg = c.fg, bg = "#2c3a5a" })
 hl(0, "PmenuSbar", { bg = c.bg_dark })
 hl(0, "PmenuThumb", { bg = "#383838" })
 hl(0, "StatusLine", { fg = c.fg, bg = c.bg_dark })
@@ -77,7 +78,7 @@ hl(0, "StatusLineNC", { fg = c.fg_muted, bg = c.bg_dark })
 hl(0, "TabLine", { fg = c.fg_muted, bg = c.bg_dark })
 hl(0, "TabLineFill", { bg = c.bg_dark })
 hl(0, "TabLineSel", { fg = c.fg, bg = c.bg })
-hl(0, "WinSeparator", { fg = c.border })
+hl(0, "WinSeparator", { fg = "#3a3a3a" })
 hl(0, "Title", { fg = c.accent, bold = true })
 hl(0, "Directory", { fg = c.accent })
 
@@ -181,9 +182,9 @@ hl(0, "@lsp.type.variable", {})
 
 -- LSP document highlight — distinct from CursorLine/Visual/Search so
 -- same-symbol references stand out even when they overlap those.
-hl(0, "LspReferenceText", { bg = c.border_focused })
-hl(0, "LspReferenceRead", { bg = c.border_focused })
-hl(0, "LspReferenceWrite", { bg = c.border_focused, bold = true })
+hl(0, "LspReferenceText", { bg = "#34343f" })
+hl(0, "LspReferenceRead", { bg = "#34343f" })
+hl(0, "LspReferenceWrite", { bg = "#34343f", bold = true })
 
 -- Diagnostics
 hl(0, "DiagnosticError", { fg = c.error })
@@ -205,8 +206,8 @@ hl(0, "DiffDelete", { bg = "#2a1c1f" })
 hl(0, "DiffTextAdd", { bg = "#1f352a" })
 -- Not a built-in group; codediff's highlights.char_delete reads it.
 hl(0, "DiffTextDelete", { bg = "#422429" })
-hl(0, "DiffChange", { bg = "#2e3c52" })
-hl(0, "DiffText", { bg = "#36537a" })
+hl(0, "DiffChange", { bg = "#1e2636" })
+hl(0, "DiffText", { bg = "#2b3d5e" })
 
 -- codediff gutter bars and line numbers. Its defaults derive these from the
 -- faint fills above, which would make them near-invisible.

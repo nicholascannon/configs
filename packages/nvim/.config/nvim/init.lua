@@ -73,7 +73,40 @@ map("i", "<C-k>", "<esc>:m .-2<CR>==", { silent = true })
 map("i", "<C-j>", "<esc>:m .+1<CR>==", { silent = true })
 map("n", "<leader>j", ":m .+1<CR>==", { silent = true })
 map("n", "<leader>k", ":m .-2<CR>==", { silent = true })
+
+local tab_snapshot, closed_tabs = {}, {}
+
+-- TabClosed fires after the tab is gone, so the closed tab's file has to come
+-- from a snapshot taken while it still existed.
+local function snapshot_tabs()
+	tab_snapshot = {}
+	for i, tab in ipairs(vim.api.nvim_list_tabpages()) do
+		local buf = vim.api.nvim_win_get_buf(vim.api.nvim_tabpage_get_win(tab))
+		tab_snapshot[i] = vim.api.nvim_buf_get_name(buf)
+	end
+end
+
+vim.api.nvim_create_autocmd({ "BufEnter", "TabEnter", "TabNew" }, { callback = snapshot_tabs })
+vim.api.nvim_create_autocmd("TabClosed", {
+	callback = function(ev)
+		local path = tab_snapshot[tonumber(ev.file)]
+		if path and path ~= "" then
+			table.insert(closed_tabs, path)
+		end
+		snapshot_tabs()
+	end,
+})
+
+local function reopen_closed_tab()
+	local path = table.remove(closed_tabs)
+	if not path then
+		return vim.notify("No closed tab to reopen")
+	end
+	vim.cmd.tabnew(vim.fn.fnameescape(path))
+end
+
 map("n", "<leader>t", "<cmd>tabnew<CR>", { desc = "new tab" })
+map("n", "<leader>T", reopen_closed_tab, { desc = "reopen closed tab" })
 
 local function yank_reference(first, last)
 	local ref = vim.fn.expand("%:.") .. ":" .. first
@@ -369,7 +402,14 @@ require("lazy").setup({
 	-- Statusline (replaces vim-airline)
 	{
 		"nvim-lualine/lualine.nvim",
+		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
+			local function tab_label(_, context)
+				local buf = vim.fn.tabpagebuflist(context.tabnr)[vim.fn.tabpagewinnr(context.tabnr)]
+				local name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t")
+				local icon = require("nvim-web-devicons").get_icon(name, vim.fn.fnamemodify(name, ":e"), { default = true })
+				return icon .. " " .. (name ~= "" and name or "[No Name]")
+			end
 			local theme = require("lualine.themes.auto")
 			-- "auto" derives normal mode from Pmenu (dim gray, barely visible) and
 			-- command mode from Identifier (near-white, reads much better). Swap.
@@ -384,10 +424,23 @@ require("lazy").setup({
 				theme.visual.b.fg = hex
 			end
 			require("lualine").setup({
-				options = { theme = theme, globalstatus = true },
+				options = { theme = theme, globalstatus = true, always_show_tabline = false },
 				-- path = 1: relative to cwd, so the statusline shows where a file
 				-- lives without the full absolute path eating the whole bar.
 				sections = { lualine_c = { { "filename", path = 1 } } },
+				tabline = {
+					lualine_a = {
+						{
+							"tabs",
+							mode = 1,
+							fmt = tab_label,
+							max_length = function()
+								return vim.o.columns
+							end,
+							tab_max_length = 30,
+						},
+					},
+				},
 			})
 		end,
 	},

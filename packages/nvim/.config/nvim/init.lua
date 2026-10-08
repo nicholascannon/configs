@@ -404,11 +404,33 @@ require("lazy").setup({
 		"nvim-lualine/lualine.nvim",
 		dependencies = { "nvim-tree/nvim-web-devicons" },
 		config = function()
-			local function tab_label(_, context)
-				local buf = vim.fn.tabpagebuflist(context.tabnr)[vim.fn.tabpagewinnr(context.tabnr)]
+			-- Statusline highlights can't mix an icon fg with the tab's bg, so define
+			-- a group per (icon color, tab bg) pair and switch back after the icon.
+			local defined_icon_groups = {}
+			-- A colorscheme change wipes custom groups, so they must be redefined.
+			vim.api.nvim_create_autocmd("ColorScheme", {
+				callback = function()
+					defined_icon_groups = {}
+				end,
+			})
+			local function colored_icon(icon, color, tab)
+				local tab_hl = require("lualine.highlight").component_format_highlight(
+					tab.highlights[tab.current and "active" or "inactive"]
+				)
+				local bg = vim.api.nvim_get_hl(0, { name = tab_hl:match("%%#(.-)#"), link = false }).bg
+				local group = ("LualineTabIcon_%s_%s"):format(color:sub(2), bg or "none")
+				if not defined_icon_groups[group] then
+					vim.api.nvim_set_hl(0, group, { fg = color, bg = bg })
+					defined_icon_groups[group] = true
+				end
+				return "%#" .. group .. "#" .. icon .. tab_hl
+			end
+			local function tab_label(_, tab)
+				local buf = vim.fn.tabpagebuflist(tab.tabnr)[vim.fn.tabpagewinnr(tab.tabnr)]
 				local name = vim.fn.fnamemodify(vim.api.nvim_buf_get_name(buf), ":t")
-				local icon = require("nvim-web-devicons").get_icon(name, vim.fn.fnamemodify(name, ":e"), { default = true })
-				return icon .. " " .. (name ~= "" and name or "[No Name]")
+				local devicons = require("nvim-web-devicons")
+				local icon, color = devicons.get_icon_color(name, vim.fn.fnamemodify(name, ":e"), { default = true })
+				return colored_icon(icon, color, tab) .. " " .. (name ~= "" and name or "[No Name]")
 			end
 			local theme = require("lualine.themes.auto")
 			-- "auto" derives normal mode from Pmenu (dim gray, barely visible) and
@@ -434,8 +456,10 @@ require("lazy").setup({
 							"tabs",
 							mode = 1,
 							fmt = tab_label,
+							-- lualine counts the icon's highlight markup (~70 chars per tab) as
+							-- visible width, so widen the limit to match.
 							max_length = function()
-								return vim.o.columns
+								return vim.o.columns + vim.fn.tabpagenr("$") * 70
 							end,
 							tab_max_length = 30,
 						},

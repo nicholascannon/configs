@@ -1,6 +1,6 @@
 {
   "env": {
-    "EDITOR": "zed --wait"
+    "EDITOR": "nvim"
   },
   "attribution": {
     "commit": "",

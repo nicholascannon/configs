@@ -446,6 +446,66 @@ require("lazy").setup({
 				local icon, color = devicons.get_icon_color(name, vim.fn.fnamemodify(name, ":e"), { default = true })
 				return colored_icon(icon, color, tab) .. " " .. label
 			end
+			-- Branch-wide diff stat, cached and refreshed asynchronously so the
+			-- statusline redraw never waits on git.
+			local branch_stat = { files = "", added = "", removed = "" }
+			local stat_running = false
+			-- origin/HEAD resolves to origin/main or origin/master per repo; the
+			-- merge-base keeps commits that landed on main after branching out of the count.
+			local stat_script = [[
+				base=$(git symbolic-ref -q --short refs/remotes/origin/HEAD || echo origin/main)
+				mb=$(git merge-base "$base" HEAD 2>/dev/null) || exit 0
+				git diff --shortstat "$mb"
+			]]
+			-- Resolved here because vimscript functions can't run in the vim.system callback.
+			local file_icon = vim.fn.nr2char(0xf15b)
+			local function parse_stat(out)
+				local files = out:match("(%d+) files? changed")
+				if not files then
+					return { files = "", added = "", removed = "" }
+				end
+				return {
+					files = file_icon .. " " .. files,
+					added = "+" .. (out:match("(%d+) insertion") or "0"),
+					removed = "-" .. (out:match("(%d+) deletion") or "0"),
+				}
+			end
+			local function refresh_branch_stat()
+				if stat_running then
+					return
+				end
+				stat_running = true
+				vim.system({ "sh", "-c", stat_script }, { cwd = vim.fn.getcwd(), text = true }, function(res)
+					stat_running = false
+					local stat = parse_stat(res.stdout or "")
+					vim.schedule(function()
+						if not vim.deep_equal(stat, branch_stat) then
+							branch_stat = stat
+							require("lualine").refresh()
+						end
+					end)
+				end)
+			end
+			vim.api.nvim_create_autocmd(
+				{ "VimEnter", "BufWritePost", "FocusGained", "DirChanged", "TermClose" },
+				{ callback = refresh_branch_stat }
+			)
+			local function stat_component(field, hl_group)
+				return {
+					function()
+						return branch_stat[field]
+					end,
+					cond = function()
+						return branch_stat[field] ~= ""
+					end,
+					color = hl_group and function()
+						local fg = vim.api.nvim_get_hl(0, { name = hl_group, link = false }).fg
+						return { fg = fg and ("#%06x"):format(fg) }
+					end,
+					separator = { left = "", right = "" },
+					padding = { left = 0, right = 1 },
+				}
+			end
 			require("lualine").setup({
 				options = {
 					theme = "aero",
@@ -457,7 +517,15 @@ require("lazy").setup({
 				sections = {
 					lualine_c = { { "filename", path = 1 } },
 					lualine_b = { "branch" },
-					lualine_x = { "diagnostics", "diff", "encoding", "fileformat", "filetype" },
+					lualine_x = {
+						stat_component("files"),
+						stat_component("added", "GitSignsAdd"),
+						stat_component("removed", "GitSignsDelete"),
+						"diagnostics",
+						"encoding",
+						"fileformat",
+						"filetype",
+					},
 				},
 				tabline = {
 					lualine_a = {

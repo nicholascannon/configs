@@ -77,7 +77,10 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git docker aws vi-mode terraform)
+plugins=(git docker aws terraform)
+# Inside nvim's :terminal, nvim's own modal editing is enough; a second vi layer
+# in zsh just doubles up the Esc/normal-mode handling.
+[[ -z $NVIM ]] && plugins+=(vi-mode)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -110,7 +113,11 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
-bindkey -v # make vi-mode plugin work properly
+if [[ -z $NVIM ]]; then
+  bindkey -v # make vi-mode plugin work properly
+else
+  bindkey -e
+fi
 
 eval "$(fnm env --use-on-cd --log-level quiet)"
 

@@ -113,6 +113,8 @@ end
 
 map("n", "<leader>t", "<cmd>tabnew<CR>", { desc = "new tab" })
 map("n", "<leader>T", reopen_closed_tab, { desc = "reopen closed tab" })
+map("n", "<leader>q", "<cmd>q<CR>", { desc = "close window/tab" })
+map("n", [[<C-\>]], "<cmd>tab terminal<CR><cmd>startinsert<CR>", { desc = "terminal in new tab" })
 
 for n = 1, 9 do
 	map("n", "<leader>" .. n, n .. "gt", { desc = "go to tab " .. n })

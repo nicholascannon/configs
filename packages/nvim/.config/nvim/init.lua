@@ -984,10 +984,7 @@ vim.api.nvim_create_autocmd("LspAttach", {
 		-- prefix, so without it this waits out timeoutlen before firing.
 		map("n", "gr", vim.lsp.buf.references, vim.tbl_extend("force", o("references"), { nowait = true }))
 		map("n", "<leader>rn", vim.lsp.buf.rename, o("rename"))
-		map("n", "<leader>ac", vim.lsp.buf.code_action, o("code action"))
-		map("n", "<leader>qf", function()
-			vim.lsp.buf.code_action({ apply = true })
-		end, o("quickfix"))
+		map("n", "<leader>ca", vim.lsp.buf.code_action, o("code action"))
 
 		local client = vim.lsp.get_client_by_id(args.data.client_id)
 

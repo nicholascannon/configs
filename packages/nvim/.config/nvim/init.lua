@@ -77,6 +77,9 @@ map("i", "<C-j>", "<esc>:m .+1<CR>==", { silent = true })
 map("n", "<leader>j", ":m .+1<CR>==", { silent = true })
 map("n", "<leader>k", ":m .-2<CR>==", { silent = true })
 
+-- Single <Esc> must reach zsh vi-mode, so leaving terminal mode needs a double tap.
+map("t", "<Esc><Esc>", [[<C-\><C-n>]])
+
 local tab_snapshot, closed_tabs = {}, {}
 
 -- TabClosed fires after the tab is gone, so the closed tab's file has to come

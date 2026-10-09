@@ -450,6 +450,7 @@ require("lazy").setup({
 			-- statusline redraw never waits on git.
 			local branch_stat = { files = "", added = "", removed = "" }
 			local stat_running = false
+			local last_stat_run = 0
 			-- origin/HEAD resolves to origin/main or origin/master per repo; the
 			-- merge-base keeps commits that landed on main after branching out of the count.
 			local stat_script = [[
@@ -471,10 +472,12 @@ require("lazy").setup({
 				}
 			end
 			local function refresh_branch_stat()
-				if stat_running then
+				-- Throttled so rapid buffer switching doesn't spawn a git process each time.
+				if stat_running or vim.uv.now() - last_stat_run < 2000 then
 					return
 				end
 				stat_running = true
+				last_stat_run = vim.uv.now()
 				vim.system({ "sh", "-c", stat_script }, { cwd = vim.fn.getcwd(), text = true }, function(res)
 					stat_running = false
 					local stat = parse_stat(res.stdout or "")
@@ -487,7 +490,7 @@ require("lazy").setup({
 				end)
 			end
 			vim.api.nvim_create_autocmd(
-				{ "VimEnter", "BufWritePost", "FocusGained", "DirChanged", "TermClose" },
+				{ "VimEnter", "BufEnter", "BufWritePost", "FocusGained", "DirChanged", "TermClose" },
 				{ callback = refresh_branch_stat }
 			)
 			local function stat_component(field, hl_group)

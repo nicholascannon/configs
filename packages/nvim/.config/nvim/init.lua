@@ -785,6 +785,20 @@ require("lazy").setup({
 		config = function(_, opts)
 			require("nvim-tree").setup(opts)
 			map("n", "<C-n>", "<cmd>NvimTreeToggle<CR>", { silent = true })
+			-- tab.sync.open builds a fresh tree window per tab at the configured
+			-- width, discarding manual resizes. Persist them as the new width.
+			vim.api.nvim_create_autocmd("WinResized", {
+				callback = function()
+					for _, win in ipairs(vim.v.event.windows) do
+						if
+							vim.api.nvim_win_is_valid(win)
+							and vim.bo[vim.api.nvim_win_get_buf(win)].filetype == "NvimTree"
+						then
+							require("nvim-tree.api").tree.resize({ absolute = vim.api.nvim_win_get_width(win) })
+						end
+					end
+				end,
+			})
 		end,
 	},
 

@@ -15,6 +15,9 @@ BREW_PACKAGES=(
   neovim
   tree-sitter-cli # nvim-treesitter's main branch compiles parsers with it
   uv              # provides uvx, which launches the aws-core plugin's MCP server
+  ripgrep
+  jq
+  gh
 )
 
 BREW_CASKS=(

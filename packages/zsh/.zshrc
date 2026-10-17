@@ -150,9 +150,6 @@ alias n="nvim"
 alias sonnet="claude --model sonnet"
 alias opus="claude --model opus"
 
-alias cfgedit="nvim ~/configs"
-alias cfg="cd ~/configs"
-
 # Git aliases
 alias gaa="git add ."
 alias gs="git status"

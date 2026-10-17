@@ -137,6 +137,7 @@ bindkey -M viins '^ ' autosuggest-accept
 source <(fzf --zsh)
 export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
 export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
+export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-range=:200 {}'"
 
 eval "$(zoxide init zsh)"
 

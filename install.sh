@@ -13,6 +13,7 @@ STOW_PACKAGES=(claude cursor nvim omp p10k pi tmux zed zsh)
 BREW_PACKAGES=(
   stow            # symlinks packages/ into $HOME
   neovim
+  bat
   fzf
   zoxide
   tree-sitter-cli # nvim-treesitter's main branch compiles parsers with it

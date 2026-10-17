@@ -132,6 +132,7 @@ KEYTIMEOUT=1 # 10ms instead of 400ms wait after Esc
 
 # The default (ANSI 8) is bright in the Brogrammer theme; 244 is a dim grey.
 ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=244'
+ZSH_AUTOSUGGEST_STRATEGY=(history completion)
 bindkey -M viins '^ ' autosuggest-accept
 
 source <(fzf --zsh)

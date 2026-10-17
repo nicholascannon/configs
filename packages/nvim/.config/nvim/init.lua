@@ -556,7 +556,10 @@ require("lazy").setup({
 	{ "lewis6991/gitsigns.nvim", opts = { current_line_blame = true } },
 
 	-- Git commands (same as vim)
-	"tpope/vim-fugitive",
+	{
+		"tpope/vim-fugitive",
+		keys = { { "<leader>g", "<cmd>Git<cr>", desc = "Fugitive: status" } },
+	},
 
 	-- VSCode-style diff review in its own tab, live-refreshing as an agent
 	-- edits. \db branch + uncommitted vs origin default branch, \dv uncommitted
@@ -752,7 +755,7 @@ require("lazy").setup({
 		},
 	},
 
-	-- Copilot Chat: same seat as copilot.lua above. \gc generates a commit
+	-- Copilot Chat: same seat as copilot.lua above. :GenCommit generates a commit
 	-- message from the staged diff (see copilot_commit above) and, after a
 	-- manual confirm, commits with it — same UX as Zed's commit-message button.
 	{
@@ -760,9 +763,6 @@ require("lazy").setup({
 		branch = "main",
 		dependencies = { "zbirenbaum/copilot.lua", "nvim-lua/plenary.nvim" },
 		cmd = "CopilotChat",
-		keys = {
-			{ "<leader>gc", copilot_commit, desc = "Copilot: generate + confirm commit" },
-		},
 		opts = {},
 	},
 

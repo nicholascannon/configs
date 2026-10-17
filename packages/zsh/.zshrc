@@ -147,8 +147,10 @@ alias c="clear"
 alias tmux="tmux -2"
 alias n="nvim"
 
+# Claude aliases
 alias sonnet="claude --model sonnet"
 alias opus="claude --model opus"
+alias ask="claude --tools \"\" -p --model haiku"
 
 # Git aliases
 alias gaa="git add ."

@@ -13,6 +13,8 @@ STOW_PACKAGES=(claude cursor nvim omp p10k pi tmux zed zsh)
 BREW_PACKAGES=(
   stow            # symlinks packages/ into $HOME
   neovim
+  fzf
+  zoxide
   tree-sitter-cli # nvim-treesitter's main branch compiles parsers with it
   uv              # provides uvx, which launches the aws-core plugin's MCP server
   ripgrep
@@ -56,6 +58,13 @@ clone_dependencies() {
   # lazy.nvim plugin manager; nvim installs the plugins themselves on first launch.
   clone_if_missing "${XDG_DATA_HOME:-$HOME/.local/share}/nvim/lazy/lazy.nvim" \
     --filter=blob:none --branch=stable https://github.com/folke/lazy.nvim.git
+
+  # oh-my-zsh custom plugins, enabled in .zshrc.
+  local plugins="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}/plugins"
+  clone_if_missing "$plugins/zsh-autosuggestions" \
+    --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git
+  clone_if_missing "$plugins/zsh-syntax-highlighting" \
+    --depth=1 https://github.com/zsh-users/zsh-syntax-highlighting.git
 }
 
 link_configs() {

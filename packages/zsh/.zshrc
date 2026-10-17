@@ -77,7 +77,7 @@ ZSH_THEME="powerlevel10k/powerlevel10k"
 # Custom plugins may be added to $ZSH_CUSTOM/plugins/
 # Example format: plugins=(rails git textmate ruby lighthouse)
 # Add wisely, as too many plugins slow down shell startup.
-plugins=(git docker aws vi-mode terraform)
+plugins=(git docker aws vi-mode terraform zsh-autosuggestions zsh-syntax-highlighting)
 
 source $ZSH/oh-my-zsh.sh
 
@@ -110,14 +110,40 @@ fi
 # To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
 [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
+# History: shared across all open shells, deduplicated, kept for years.
+# Write each command to the history file immediately and import other shells'
+# new commands into this one, so every tab/window sees what the others ran.
+setopt SHARE_HISTORY
+# Record a timestamp and duration with each entry.
+setopt EXTENDED_HISTORY
+# Drop earlier copies of a command when it is run again.
+setopt HIST_IGNORE_ALL_DUPS
+# Don't record commands that start with a space (for secrets).
+setopt HIST_IGNORE_SPACE
+# Collapse runs of whitespace so near-duplicates dedupe.
+setopt HIST_REDUCE_BLANKS
+# Entries kept in memory per shell.
+HISTSIZE=100000
+# Entries kept in the history file.
+SAVEHIST=100000
+
 bindkey -v # make vi-mode plugin work properly
+KEYTIMEOUT=1 # 10ms instead of 400ms wait after Esc
+
+# The default (ANSI 8) is bright in the Brogrammer theme; 244 is a dim grey.
+ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=244'
+
+source <(fzf --zsh)
+export FZF_DEFAULT_COMMAND='rg --files --hidden --glob "!.git"'
+export FZF_CTRL_T_COMMAND=$FZF_DEFAULT_COMMAND
+
+eval "$(zoxide init zsh)"
 
 eval "$(fnm env --use-on-cd --log-level quiet)"
 
 # Aliases
 alias c="clear"
 alias tmux="tmux -2"
-alias z="zed"
 alias n="nvim"
 
 alias sonnet="claude --model sonnet"

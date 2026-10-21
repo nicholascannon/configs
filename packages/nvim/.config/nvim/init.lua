@@ -77,6 +77,10 @@ map("i", "<C-j>", "<esc>:m .+1<CR>==", { silent = true })
 map("n", "<leader>j", ":m .+1<CR>==", { silent = true })
 map("n", "<leader>k", ":m .-2<CR>==", { silent = true })
 
+map("n", "<leader>pr", function()
+	vim.system({ "gh", "pr", "view", "--web" })
+end, { desc = "Open branch PR on GitHub" })
+
 -- Single <Esc> must reach TUIs in the terminal (Claude Code, fzf), so leaving
 -- terminal mode needs a double tap.
 map("t", "<Esc><Esc>", [[<C-\><C-n>]])

@@ -78,7 +78,13 @@ map("n", "<leader>j", ":m .+1<CR>==", { silent = true })
 map("n", "<leader>k", ":m .-2<CR>==", { silent = true })
 
 map("n", "<leader>pr", function()
-	vim.system({ "gh", "pr", "view", "--web" })
+	vim.system({ "gh", "pr", "view", "--web" }, { text = true }, function(result)
+		if result.code ~= 0 then
+			vim.schedule(function()
+				vim.notify(vim.trim(result.stderr), vim.log.levels.WARN)
+			end)
+		end
+	end)
 end, { desc = "Open branch PR on GitHub" })
 
 -- Single <Esc> must reach TUIs in the terminal (Claude Code, fzf), so leaving

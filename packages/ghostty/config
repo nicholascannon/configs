@@ -1,6 +1,10 @@
 theme = Brogrammer
 font-family = "MesloLGS Nerd Font Mono"
 
+background-opacity = 0.6
+background-opacity-cells = true
+background-blur = macos-glass-regular
+
 split-divider-color = #f0f0f0
 
 selection-background = #0c2a5b

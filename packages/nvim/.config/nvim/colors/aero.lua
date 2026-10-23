@@ -15,7 +15,7 @@ local c = {
   bg_elevated = "#1e1e1e",
   -- Lighter than bg_elevated so LSP hover/diagnostic floats stand out from code.
   bg_float = "#262626",
-  bg_active_line = "#262626",
+  bg_active_line = "#4a5468",
   fg = "#e2e2e2",
   fg_muted = "#888888",
   fg_disabled = "#3a3a3a",
@@ -46,14 +46,14 @@ local c = {
   -- Brighter than the source theme's #3366ff blends (#1c2645 / #1b2440),
   -- which sat at ~1.2:1 against bg and were nearly invisible. Search is
   -- warm so it reads differently from a selection.
-  selection = "#24345c",
+  selection = "#0a4ab8",
   search = "#3a3220",
 }
 
 local hl = vim.api.nvim_set_hl
 
 -- Editor
-hl(0, "Normal", { fg = c.fg, bg = c.bg })
+hl(0, "Normal", { fg = c.fg, bg = "NONE" })
 hl(0, "NormalFloat", { fg = c.fg, bg = c.bg_float })
 hl(0, "FloatBorder", { fg = c.border_focused, bg = c.bg_float })
 hl(0, "EndOfBuffer", { fg = c.bg })
@@ -197,15 +197,15 @@ hl(0, "DiagnosticUnderlineInfo", { undercurl = true, sp = c.info })
 hl(0, "DiagnosticUnderlineHint", { undercurl = true, sp = c.hint })
 
 -- Diff — no `reverse`, so fugitive/vimdiff stay readable. Add/delete are
--- c.created / c.deleted pre-blended over bg: 10% for the line, 22% for
--- changed characters. Tinted backgrounds shift how syntax colors read (glyph
--- edges anti-alias into the tint), so the fill stays faint and the gutter
--- bar below carries the add/delete signal.
-hl(0, "DiffAdd", { bg = "#1a241f" })
-hl(0, "DiffDelete", { bg = "#2a1c1f" })
-hl(0, "DiffTextAdd", { bg = "#1f352a" })
+-- c.created / c.deleted, brightened well past a faint blend: Ghostty's
+-- background-opacity-cells makes explicit backgrounds translucent, so darker
+-- fills vanish into the glass. The gutter bar below also carries the
+-- add/delete signal.
+hl(0, "DiffAdd", { bg = "#1f4a33" })
+hl(0, "DiffDelete", { bg = "#4d2128" })
+hl(0, "DiffTextAdd", { bg = "#2b6b48" })
 -- Not a built-in group; codediff's highlights.char_delete reads it.
-hl(0, "DiffTextDelete", { bg = "#422429" })
+hl(0, "DiffTextDelete", { bg = "#7a2f3a" })
 hl(0, "DiffChange", { bg = "#1e2636" })
 hl(0, "DiffText", { bg = "#2b3d5e" })
 

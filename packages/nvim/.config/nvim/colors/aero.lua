@@ -180,11 +180,11 @@ hl(0, "@lsp.typemod.function.defaultLibrary", { fg = c.variable_special })
 -- capture (@constant or @variable) shows through underneath.
 hl(0, "@lsp.type.variable", {})
 
--- LSP document highlight — distinct from CursorLine/Visual/Search so
--- same-symbol references stand out even when they overlap those.
-hl(0, "LspReferenceText", { bg = "#34343f" })
-hl(0, "LspReferenceRead", { bg = "#34343f" })
-hl(0, "LspReferenceWrite", { bg = "#34343f", bold = true })
+-- LSP document highlight — a white underline (no background) so it stays
+-- distinct from CursorLine/Visual/Search when they overlap.
+hl(0, "LspReferenceText", { underline = true, sp = "#ffffff" })
+hl(0, "LspReferenceRead", { underline = true, sp = "#ffffff" })
+hl(0, "LspReferenceWrite", { underline = true, sp = "#ffffff", bold = true })
 
 -- Diagnostics
 hl(0, "DiagnosticError", { fg = c.error })

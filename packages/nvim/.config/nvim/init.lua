@@ -373,6 +373,8 @@ require("lazy").setup({
 				"lua",
 				"bash",
 				"prisma",
+				"terraform",
+				"hcl",
 			})
 			-- Highlighting/indent are enabled per-buffer (main-branch model).
 			-- Broad autocmd: start treesitter for any buffer whose language has a
@@ -976,6 +978,8 @@ require("lazy").setup({
 				"emmet_ls",
 				"prismals",
 				"gopls",
+				"terraformls",
+				"tflint",
 			},
 		},
 	},

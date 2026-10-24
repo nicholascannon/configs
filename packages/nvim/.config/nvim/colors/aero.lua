@@ -128,7 +128,7 @@ hl(0, "@string.special", { fg = c.string })
 -- Markdown inline code. Neovim's built-in default links @markup.raw to
 -- Special. Use a plain chip instead: fg on element.background (c.border),
 -- so code spans read as UI chrome rather than syntax-colored text. Blocks get
--- no bg: render-markdown paints their background, and in LSP hover floats a
+-- no bg: markview paints their background, and in LSP hover floats a
 -- bg here would shade the text rows differently from the float padding.
 hl(0, "@markup.raw", { fg = c.fg, bg = c.border })
 hl(0, "@markup.raw.block", { fg = c.fg })

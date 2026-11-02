@@ -21,7 +21,6 @@ BREW_PACKAGES=(
   ripgrep
   jq
   gh
-  fastfetch       # system info banner printed at the top of .zshrc
 )
 
 BREW_CASKS=(

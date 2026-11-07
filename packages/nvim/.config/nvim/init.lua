@@ -540,6 +540,18 @@ require("lazy").setup({
 				-- path = 1: relative to cwd, so the statusline shows where a file
 				-- lives without the full absolute path eating the whole bar.
 				sections = {
+					lualine_a = {
+						{
+							function()
+								return "󰙅"
+							end,
+							padding = { left = 1, right = 0 },
+							on_click = function()
+								vim.cmd("NvimTreeToggle")
+							end,
+						},
+						"mode",
+					},
 					lualine_c = { { "filename", path = 1 } },
 					lualine_b = { "branch" },
 					lualine_x = {
@@ -567,6 +579,20 @@ require("lazy").setup({
 								return vim.o.columns + vim.fn.tabpagenr("$") * 70
 							end,
 							tab_max_length = 30,
+						},
+					},
+					lualine_z = {
+						{
+							function()
+								return "󰅖"
+							end,
+							padding = { left = 1, right = 1 },
+							section_separators = { left = "", right = "" },
+							component_separators = { left = "", right = "" },
+							on_click = function()
+								-- E784 on the last tab; the button is a no-op there.
+								pcall(vim.cmd, "tabclose")
+							end,
 						},
 					},
 				},

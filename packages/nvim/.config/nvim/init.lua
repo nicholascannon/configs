@@ -396,42 +396,14 @@ require("lazy").setup({
 		opts = { max_lines = 3 },
 	},
 
-	-- In-buffer markdown rendering (headers, bold, lists, code blocks) — no
-	-- browser needed. \mr toggles it on the current buffer.
+	-- Live markdown preview (tables, mermaid/D2/KaTeX as images in Ghostty).
+	-- Markdown files open straight into the preview in its own tab; <leader>mp
+	-- (or q in the preview) drops back to the raw source tab.
 	{
-		"OXY2DEV/markview.nvim",
-		lazy = false, -- plugin lazy-loads itself; upstream advises against lazy.nvim's ft/event
-		dependencies = { "nvim-tree/nvim-web-devicons" },
-		keys = {
-			{ "<leader>mr", "<cmd>Markview Toggle<cr>", desc = "Toggle markdown render" },
-		},
-		init = function()
-			-- markview degrades table rendering when 'wrap' is on (upstream marks
-			-- it "BUG, wrap breaks table rendering"), which left wide tables raw.
-			-- Wide tables and the odd long paragraph scroll horizontally instead.
-			vim.api.nvim_create_autocmd("FileType", {
-				pattern = "markdown",
-				callback = function()
-					vim.opt_local.wrap = false
-				end,
-			})
-		end,
-		opts = {
-			preview = {
-				filetypes = { "markdown" },
-				icon_provider = "devicons",
-				-- Keep rendering through visual modes (so drag-selecting doesn't drop
-				-- to raw markdown); raw in insert. No hybrid_modes, so the cursor
-				-- line stays rendered too.
-				modes = { "n", "no", "c", "v", "V", "\22" },
-				hybrid_modes = {},
-				-- Above this (default 1000) markview only renders a window around the
-				-- cursor and re-renders after a 150ms debounce while scrolling, so new
-				-- sections pop in late. Below it the whole buffer is rendered once and
-				-- scrolling never triggers a redraw.
-				max_buf_lines = 10000,
-			},
-		},
+		"blackhat-7/vellum.nvim",
+		ft = "markdown",
+		keys = { { "<leader>mp", "<cmd>Vellum<cr>", desc = "Toggle markdown preview" } },
+		opts = { tab = true, auto_open = true },
 	},
 
 	-- Statusline (replaces vim-airline)

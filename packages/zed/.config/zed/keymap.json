@@ -43,6 +43,7 @@
       "\\ a enter": "editor::ToggleCodeActions",
       "\\ r n": "editor::Rename",
       "\\ y r": "editor::CopyFileLocation",
+      "\\ p r": ["task::Spawn", { "task_name": "Open branch PR on GitHub" }],
     },
   },
 ]

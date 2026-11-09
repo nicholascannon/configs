@@ -1,0 +1,9 @@
+[
+  {
+    "label": "Open branch PR on GitHub",
+    "command": "gh",
+    "args": ["pr", "view", "--web"],
+    "reveal": "never",
+    "hide": "on_success",
+  },
+]

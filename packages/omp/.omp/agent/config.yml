@@ -6,11 +6,11 @@ modelRoles:
 task:
   enableEffort: true
   agentModelOverrides:
-    reviewer: '@slow'
-    security-reviewer: '@slow'
+    reviewer: "@slow"
+    security-reviewer: "@slow"
 symbolPreset: nerd
 theme:
-  dark: titanium
+  dark: obsidian
 setupVersion: 2
 hideThinkingBlock: false
 composer:

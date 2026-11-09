@@ -42,6 +42,7 @@
       "\\ f enter": "editor::Format",
       "\\ a enter": "editor::ToggleCodeActions",
       "\\ r n": "editor::Rename",
+      "\\ y r": "editor::CopyFileLocation",
     },
   },
 ]

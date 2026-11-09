@@ -17,7 +17,6 @@
   "file_scan_inclusions": [".env", ".env.*", "docs/superpowers/*"],
   "format_on_save": "on",
   "icon_theme": "Material Icon Theme",
-  "markdown_preview_font_size": 14.0,
   "theme": "Aero",
   "ui_font_size": 14.0,
   "vim_mode": true,

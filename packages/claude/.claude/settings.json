@@ -67,5 +67,9 @@
   },
   "editorMode": "vim",
   "agentPushNotifEnabled": false,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "subagentStatusLine": {
+    "type": "command",
+    "command": "$HOME/.claude/subagent-statusline.sh"
+  }
 }

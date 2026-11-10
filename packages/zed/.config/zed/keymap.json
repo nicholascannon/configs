@@ -25,6 +25,10 @@
       "alt-cmd-s": "workspace::ToggleLeftDock",
       "cmd-g": "git_panel::ToggleFocus",
       "cmd-e": "project_panel::ToggleFocus",
+      "cmd-r": [
+        "action::Sequence",
+        ["git::BranchDiff", "outline_panel::ToggleFocus"],
+      ],
     },
   },
   {

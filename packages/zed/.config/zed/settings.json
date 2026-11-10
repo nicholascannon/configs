@@ -48,6 +48,11 @@
     "group_by": "staging",
     "tree_view": true,
   },
+  "outline_panel": {
+    "dock": "left",
+    "folder_indicator": "both",
+    "multi_buffer_hide_symbols": true,
+  },
   "git": {
     "diff_base": "default_branch",
   },

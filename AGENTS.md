@@ -9,7 +9,9 @@ Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/). E
 ## Commands
 
 ```sh
-# Install all configs (stows packages + symlinks ghostty config)
+# Install everything: brew formulae/casks, git-cloned deps (p10k, lazy.nvim,
+# zsh plugins), stows packages, links ghostty, installs the omp superpowers
+# plugin. Idempotent; safe to re-run.
 ./install.sh
 
 # Stow a single package manually
@@ -26,7 +28,7 @@ ln -sf $(pwd)/packages/ghostty/config "$HOME/Library/Application Support/com.mit
 
 | Package   | Target                  | What it configures                                            |
 | --------- | ----------------------- | ------------------------------------------------------------- |
-| `claude`  | `~/.claude/`            | Claude Code settings, statusline, output styles |
+| `claude`  | `~/.claude/`            | Claude Code settings, global CLAUDE.md, statusline, output styles, skills |
 | `cursor`  | `~/Library/.../Cursor/` | Cursor editor (settings + keybindings)                        |
 | `nvim`    | `~/.config/nvim/`       | Neovim (native LSP, Treesitter, lazy.nvim)                    |
 | `zed`     | `~/.config/zed/`        | Zed editor (settings + keymap)                                |
@@ -49,6 +51,10 @@ ln -sf $(pwd)/packages/ghostty/config "$HOME/Library/Application Support/com.mit
 **omp config drift:** omp reads its config from `~/.omp/agent/config.yml`, which lives inside its runtime dir next to the session databases. The drift repair above covers it. Everything else under `~/.omp/` — `agent.db*`, `sessions/`, `logs/`, `natives/`, `run/`, `cache/`, `plugins/` (installed plugin content and registries), `marketplaces.json`, `terminal-sessions/` — is machine-local runtime state and must never be stowed. omp also discovers rules, skills, and commands from `.claude/` (toggle user scope with `skills.enableClaudeUser` / `commands.enableClaudeUser` in `~/.omp/agent/config.yml`), so the `claude` package feeds it too.
 
 **omp shared context, skills, and MCP:** `packages/omp/.omp/agent/AGENTS.md` is a repo-internal symlink to `packages/claude/.claude/CLAUDE.md` — the same chain the `pi` package uses — so one tracked file feeds Claude Code, pi, and omp (omp loads it as the native user-level context file, highest priority). `packages/omp/.omp/agent/mcp.json` owns omp's user MCP servers (context7, sequential-thinking), migrated from pi's config; the github MCP server from `packages/pi/.pi/agent/mcp.json` is deliberately not carried over because omp ships a built-in `github` tool. Superpowers installs from the official obra marketplace: install.sh runs `omp plugin marketplace add obra/superpowers-marketplace` + `omp plugin install superpowers@superpowers-marketplace` (guarded by `node_modules/superpowers` presence). The marketplace registry and cache (`~/.omp/marketplaces.json`, `~/.omp/plugins/installed_plugins.json`, `cache/`) are runtime state, untracked. Upgrade with `omp plugin upgrade superpowers@superpowers-marketplace`; `marketplace.autoUpdate` in `config.yml` can auto-refresh. No dependency on the pi package and no bun requirement.
+
+**Claude skills:** `packages/claude/.claude/skills/` holds hand-written skills. `skills/synced/` is gitignored — it receives work-org skills synced onto the machine and must never be committed. omp loads this directory because `skills.enableClaudeUser: true` (while `commands.enableClaudeUser` is `false`).
+
+**Claude plugins:** `settings.json` enables `aws-core`, whose MCP server launches via `uvx`, so `uv` is in `BREW_PACKAGES`. If it fails to connect, check `uv` first.
 
 **Claude output style:** `outputStyle` is currently `Concise`. `packages/claude/.claude/output-styles/simplified-technical-english.md` is kept as an optional style (not active) that sets the response register to ASD-STE100 Simplified Technical English, with RFC-2119 keywords for requirements. `keep-coding-instructions: true` retains Claude Code's built-in software engineering instructions; without that field the style replaces them. The `caveman` plugin was uninstalled because its `SessionStart`/`UserPromptSubmit` hooks injected a competing register on every prompt.
 

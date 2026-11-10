@@ -48,6 +48,9 @@
     "group_by": "staging",
     "tree_view": true,
   },
+  "git": {
+    "diff_base": "default_branch",
+  },
   "tabs": {
     "file_icons": true,
     "git_status": true,

@@ -6,3 +6,6 @@ packages/nvim/.config/nvim/local.lua
 # Work-org-synced Claude skills (machine-local, not dotfiles)
 packages/claude/.claude/skills/synced/
 
+# omp's config-write lock: runtime state, recreated on demand
+packages/omp/.omp/agent/config.yml.lock
+

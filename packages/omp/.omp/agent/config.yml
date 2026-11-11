@@ -12,7 +12,7 @@ symbolPreset: nerd
 theme:
   dark: obsidian
 setupVersion: 2
-hideThinkingBlock: false
+hideThinkingBlock: true
 composer:
   shape: claude
 tui:
@@ -28,6 +28,8 @@ marketplace:
   autoUpdate: auto
 display:
   showTokenUsage: true
+  cacheMissMarker: true
+  shellVisualization: true
 statusLine:
   sessionAccent: true
   separator: powerline-thin

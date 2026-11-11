@@ -54,7 +54,8 @@
     "multi_buffer_hide_symbols": true,
   },
   "git": {
-    "diff_base": "default_branch",
+    // diffs from the remote branch (shows gitgutters when changes aren't pushed)
+    // "diff_base": "default_branch",
   },
   "tabs": {
     "file_icons": true,

@@ -13,5 +13,5 @@ font-thicken = true
 scrollback-limit = 100000000
 
 window-inherit-working-directory = false
-window-width = 128
+window-width = 95
 window-height = 45

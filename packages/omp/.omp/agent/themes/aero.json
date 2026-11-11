@@ -26,7 +26,7 @@
   "colors": {
     "accent": "accent",
     "border": "border",
-    "borderAccent": "accent",
+    "borderAccent": "#888888",
     "borderMuted": "#1a1a1a",
     "success": "created",
     "error": "error",

@@ -31,7 +31,7 @@ display:
   cacheMissMarker: true
   shellVisualization: true
 statusLine:
-  sessionAccent: true
+  sessionAccent: false
   separator: powerline-thin
 skills:
   enableClaudeUser: true

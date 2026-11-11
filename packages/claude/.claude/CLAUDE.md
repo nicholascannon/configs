@@ -20,25 +20,54 @@ password from the flow entirely for the majority of users.
 
 ## Code Style
 
-Order functions so a file reads as a top-down narrative: every function is
-followed by those at the next level of abstraction down. Callers above callees.
-A reader should be able to stop at any depth and still have understood the
-level above it.
+Optimise for code I can understand at a glance. The cost to minimise is
+complexity: how many things I hold in my head and how many places I jump to
+follow what runs (Ousterhout, *A Philosophy of Software Design*).
+
+### When to extract a function
+
+Write code inline in the function that uses it by default. Extract a function
+only when it is deep — its name and signature are simpler than the code it
+hides. That holds when at least one of these is true:
+
+- **The name says what the code cannot.** `isEdited(stream)` explains why
+  `stream.nameOverride !== null || stream.statusOverride !== null` matters;
+  the expression alone does not.
+- **It is reused**, including twice in one expression.
+- **It hides a mechanism the caller does not need**, such as update-or-create
+  logic, behind a signature made of existing domain types.
+
+Keep it inline when the function would be private, called once, and its body
+is already the clearest statement of what it does: a query, a mapping, a short
+loop. Name the result instead. A good variable name carries the intent, and I
+see the real code without jumping:
 
 ```ts
-export function publishPost(draft: Draft) {   // level 1
-  const post = renderPost(draft)
-  return savePost(post)
+// Prefer
+const eligibleTransactions = await prisma.$queryRaw<EligibleTransaction[]>`
+  SELECT ... FROM transactions WHERE user_id = ${userId} AND ...
+`
+
+// Over
+const eligible = await loadEligibleTransactions(userId, timezone)
+// ...further down the file
+function loadEligibleTransactions(userId: string, timezone: string) {
+  return prisma.$queryRaw<EligibleTransaction[]>`SELECT ...`
 }
-
-function renderPost(draft: Draft) {           // level 2 — called by publishPost
-  return { ...draft, html: toHtml(draft.body) }
-}
-
-function toHtml(body: string) { /* ... */ }   // level 3 — called by renderPost
-
-function savePost(post: Post) { /* ... */ }   // level 2
 ```
+
+Do not create a type, interface or arg-object only so a function can exist. If
+extracting needs a new type, that is a sign the code should stay inline. A long
+function that reads top to bottom is fine; a file of many shallow functions is
+not.
+
+### Ordering
+
+Order the functions that exist so the file reads top-down: callers above
+callees, each function followed by those it calls. A reader should be able to
+stop at any depth and still have understood the level above. This rule is
+about order, not decomposition — do not create functions to give a file more
+levels.
 
 Applies to new files and to files you are already restructuring. Do not reorder
 an existing file purely to satisfy this rule when the diff would drown the
@@ -88,9 +117,9 @@ DO comment:
 - Invariants and preconditions a caller could plausibly violate.
 - Genuinely subtle math, bit manipulation, or regex.
 
-Prefer clearer names and smaller functions over explanatory comments. If a
-comment is needed to explain *what* a block does, extract it into a well-named
-function instead.
+Prefer clear names over explanatory comments. If a block needs a comment to
+say *what* it does, first name its result with a well-chosen variable; extract
+a function only when it meets the bar in "When to extract a function".
 
 Docstrings/JSDoc: only on exported/public API surface, and only when they add
 something beyond the signature. Skip them on internal helpers.

@@ -1,7 +1,7 @@
 modelRoles:
-  default: openrouter/z-ai/glm-5.3-flash:high
+  default: openrouter/deepseek/deepseek-v4.1-flash-1017:high
   slow: openrouter/z-ai/glm-5.3:high
-  smol: openrouter/deepseek/deepseek-v4-flash-0731:low
+  smol: openrouter/deepseek/deepseek-v4.1-flash-1017:low
   vision: openrouter/z-ai/glm-5.3-flash:low
 task:
   enableEffort: true

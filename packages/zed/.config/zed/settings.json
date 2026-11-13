@@ -11,7 +11,7 @@
   "autosave": "on_focus_change",
   "base_keymap": "Cursor",
   "buffer_font_family": "Menlo",
-  "buffer_font_size": 12.0,
+  "buffer_font_size": 13.0,
   "cli_default_open_behavior": "new_window",
   "diff_view_style": "unified",
   "file_scan_inclusions": [".env", ".env.*", "docs/superpowers/*"],
@@ -20,7 +20,7 @@
   "on_new_window": "launchpad",
   "restore_on_startup": "launchpad",
   "theme": "Aero",
-  "ui_font_size": 14.0,
+  // "ui_font_size": 14.0,
   "vim_mode": true,
 
   // Extensions

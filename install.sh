@@ -87,11 +87,8 @@ install_omp_plugins() {
 
   add_omp_marketplace anthropics/claude-plugins-official
 
-  local plugin
-  for plugin in superpowers mattpocock-skills; do
-    [ -d "$HOME/.omp/plugins/node_modules/$plugin" ] \
-      || omp plugin install "$plugin@claude-plugins-official"
-  done
+  [ -d "$HOME/.omp/plugins/node_modules/superpowers" ] \
+    || omp plugin install superpowers@claude-plugins-official
 }
 
 # `marketplace add` exits 1 if the marketplace is already registered.

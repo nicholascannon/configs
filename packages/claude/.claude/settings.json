@@ -56,11 +56,9 @@
   },
   "enabledPlugins": {
     "claude-md-management@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": false,
+    "superpowers@claude-plugins-official": true,
     "typescript-lsp@claude-plugins-official": true,
-    "aws-core@claude-plugins-official": true,
-    "mattpocock-skills@claude-plugins-official": true,
-    "superpowers@synced": false
+    "aws-core@claude-plugins-official": true
   },
   "outputStyle": "Concise",
   "modelSettings": {

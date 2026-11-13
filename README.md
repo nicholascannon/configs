@@ -19,7 +19,7 @@ Safe to re-run whenever configs change. It runs these steps in order, with a pro
 2. Clones powerlevel10k and lazy.nvim if missing.
 3. Stows `claude`, `cursor`, `nvim`, `omp`, `p10k`, `pi`, `tmux`, `zed`, and `zsh` into `$HOME`.
 4. Symlinks `./packages/ghostty/config` to `~/Library/Application Support/com.mitchellh.ghostty/config`.
-5. Installs the omp plugins (superpowers and Matt Pocock's skills) if `omp` is present.
+5. Installs the omp superpowers plugin if `omp` is present.
 
 **This repo is the source of truth.** Before stowing, `install.sh` deletes any real file (or stray symlink) sitting where a tracked file should link, because tools such as aicodemetricsd replace symlinks with plain files and stow refuses to link over them. Local edits to such files are lost. Untracked files are never touched. Stow runs with `--no-folding`, so it links individual files and tools can't write runtime state into this repo through a directory symlink.
 
@@ -44,10 +44,10 @@ The package also wires omp into the existing shared config:
   symlink, same chain as the pi package) — omp loads it as its native user-level
   context file, so the global instructions already apply to every omp session.
 - `install.sh` registers Claude's official marketplace
-  (`anthropics/claude-plugins-official`) and installs `superpowers` and
-  `mattpocock-skills` from it into omp's own registry when missing from
-  `~/.omp/plugins/node_modules`. The Claude Code install alone is not enough:
-  both plugins' skills are only read through the manifest after omp installs them.
+  (`anthropics/claude-plugins-official`) and installs `superpowers`
+  from it into omp's own registry when missing from `~/.omp/plugins/node_modules`,
+  so omp and Claude Code share the same pinned version. The Claude Code install
+  alone is not enough: omp only reads the skills through its own plugin manifest.
   Marketplace state (`marketplaces.json`, `installed_plugins.json`, `cache/`) is
   runtime, untracked. No pi dependency, no bun.
 - `~/.omp/agent/mcp.json` is omp's user MCP config (context7, sequential-thinking),

@@ -17,6 +17,8 @@
   "file_scan_inclusions": [".env", ".env.*", "docs/superpowers/*"],
   "format_on_save": "on",
   "icon_theme": "Material Icon Theme",
+  "on_new_window": "launchpad",
+  "restore_on_startup": "launchpad",
   "theme": "Aero",
   "ui_font_size": 14.0,
   "vim_mode": true,

@@ -59,7 +59,8 @@
     "superpowers@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": true,
     "aws-core@claude-plugins-official": true,
-    "mattpocock-skills@claude-plugins-official": true
+    "mattpocock-skills@claude-plugins-official": true,
+    "superpowers@synced": false
   },
   "outputStyle": "Concise",
   "modelSettings": {

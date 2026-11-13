@@ -84,10 +84,20 @@ link_ghostty_config() {
 
 install_omp_plugins() {
   command -v omp &>/dev/null || return 0
-  [ -d "$HOME/.omp/plugins/node_modules/superpowers" ] && return 0
 
-  omp plugin marketplace add obra/superpowers-marketplace
-  omp plugin install superpowers@superpowers-marketplace
+  add_omp_marketplace anthropics/claude-plugins-official
+
+  local plugin
+  for plugin in superpowers mattpocock-skills; do
+    [ -d "$HOME/.omp/plugins/node_modules/$plugin" ] \
+      || omp plugin install "$plugin@claude-plugins-official"
+  done
+}
+
+# `marketplace add` exits 1 if the marketplace is already registered.
+add_omp_marketplace() {
+  omp plugin marketplace list 2>/dev/null | grep -q "$1" \
+    || omp plugin marketplace add "$1"
 }
 
 # Stow aborts if a real file sits where it wants a symlink. Tools do this to us:

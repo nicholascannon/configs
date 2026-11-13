@@ -50,11 +50,16 @@
     "type": "command",
     "command": "$HOME/.claude/statusline.sh"
   },
+  "subagentStatusLine": {
+    "type": "command",
+    "command": "$HOME/.claude/subagent-statusline.sh"
+  },
   "enabledPlugins": {
     "claude-md-management@claude-plugins-official": true,
-    "superpowers@claude-plugins-official": true,
+    "superpowers@claude-plugins-official": false,
     "typescript-lsp@claude-plugins-official": true,
-    "aws-core@claude-plugins-official": true
+    "aws-core@claude-plugins-official": true,
+    "mattpocock-skills@claude-plugins-official": true
   },
   "outputStyle": "Concise",
   "modelSettings": {
@@ -67,9 +72,5 @@
   },
   "editorMode": "vim",
   "agentPushNotifEnabled": false,
-  "skipAutoPermissionPrompt": true,
-  "subagentStatusLine": {
-    "type": "command",
-    "command": "$HOME/.claude/subagent-statusline.sh"
-  }
+  "skipAutoPermissionPrompt": true
 }

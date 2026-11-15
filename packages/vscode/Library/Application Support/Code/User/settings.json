@@ -25,7 +25,15 @@
   "workbench.tips.enabled": false,
 
   /* AI AND PROMPTS */
-  "chat.disableAIFeatures": true,
+  // Copilot stays on only for commit message generation; AI otherwise runs via the CLI.
+  "github.copilot.enable": { "*": false },
+  "github.copilot.nextEditSuggestions.enabled": false,
+  "workbench.secondarySideBar.defaultVisibility": "hidden",
+  "github.copilot.chat.commitMessageGeneration.instructions": [
+    {
+      "text": "Use Conventional Commits format: <type>(<scope>): <subject>. Types: feat, fix, refactor, chore, docs, test, style, perf. Keep the subject line under 72 characters, lowercase, no trailing period. Add a body only if the change needs more explanation.",
+    },
+  ],
   "extensions.ignoreRecommendations": true,
   "update.showReleaseNotes": false,
   "telemetry.telemetryLevel": "off",

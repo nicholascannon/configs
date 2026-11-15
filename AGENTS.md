@@ -11,7 +11,7 @@ Personal dotfiles managed with [GNU Stow](https://www.gnu.org/software/stow/). E
 ```sh
 # Install everything: brew formulae/casks, git-cloned deps (p10k, lazy.nvim,
 # zsh plugins), stows packages, links ghostty, installs the omp superpowers
-# plugin. Idempotent; safe to re-run.
+# plugin and missing VS Code extensions. Idempotent; safe to re-run.
 ./install.sh
 
 # Stow a single package manually
@@ -31,7 +31,7 @@ ln -sf $(pwd)/packages/ghostty/config "$HOME/Library/Application Support/com.mit
 | `claude`  | `~/.claude/`            | Claude Code settings, global CLAUDE.md, statusline, output styles, skills |
 | `cursor`  | `~/Library/.../Cursor/` | Cursor editor (settings + keybindings)                        |
 | `nvim`    | `~/.config/nvim/`       | Neovim (native LSP, Treesitter, lazy.nvim)                    |
-| `vscode`  | `~/.vscode/extensions/` | Aero color theme as an unpacked local extension (no marketplace) |
+| `vscode`  | `~/.vscode/extensions/`, `~/Library/.../Code/` | VS Code settings + keybindings, and the Aero color theme as an unpacked local extension (no marketplace) |
 | `zed`     | `~/.config/zed/`        | Zed editor (settings + keymap)                                |
 | `vim`     | `~/`                    | Classic vim (.vimrc, .coc.vim — legacy; installed via `scripts/vim-install.sh`, not `install.sh`) |
 | `tmux`    | `~/`                    | tmux config                                                   |
@@ -70,7 +70,7 @@ Levers to revisit if the style degrades:
 
 **Notifications:** Claude Code's built-in `preferredNotifChannel` (auto → Ghostty) handles them; there are no global hooks. Formatting hooks are per-repo, since tooling differs between repos.
 
-**Cursor package path:** `packages/cursor/` mirrors `~/Library/Application Support/Cursor/User/`, so stow descends into the existing Cursor dir and links only `settings.json` and `keybindings.json` — `History/`, `globalStorage/`, and `workspaceStorage/` stay untracked. Extensions and `~/.cursor/mcp.json` are deliberately not tracked.
+**Cursor and VS Code package paths:** `packages/cursor/` and `packages/vscode/` mirror `~/Library/Application Support/{Cursor,Code}/User/`, so stow descends into the existing app dir and links only `settings.json` and `keybindings.json` — `History/`, `globalStorage/`, and `workspaceStorage/` stay untracked. Extensions and `~/.cursor/mcp.json` are deliberately not tracked.
 
 **Per-machine overrides:** Machine-specific config that shouldn't be committed:
 

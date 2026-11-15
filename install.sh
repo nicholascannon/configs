@@ -27,6 +27,22 @@ BREW_CASKS=(
   font-meslo-lg-nerd-font # used by ghostty and cursor
 )
 
+# The Aero theme is not listed: it ships in packages/vscode as a local extension.
+VSCODE_EXTENSIONS=(
+  anthropic.claude-code
+  bradlc.vscode-tailwindcss
+  dbaeumer.vscode-eslint
+  esbenp.prettier-vscode
+  github.vscode-github-actions
+  github.vscode-pull-request-github
+  hashicorp.terraform
+  pkief.material-icon-theme
+  prisma.prisma
+  redhat.vscode-yaml
+  vitest.explorer
+  vscodevim.vim
+)
+
 # Run in order; the label shown is the function name.
 STEPS=(
   install_brew_packages
@@ -34,6 +50,7 @@ STEPS=(
   link_configs
   link_ghostty_config
   install_omp_plugins
+  install_vscode_extensions
 )
 
 main() {
@@ -89,6 +106,16 @@ install_omp_plugins() {
 
   [ -d "$HOME/.omp/plugins/node_modules/superpowers" ] \
     || omp plugin install superpowers@claude-plugins-official
+}
+
+install_vscode_extensions() {
+  command -v code &>/dev/null || return 0
+
+  local installed ext
+  installed=$(code --list-extensions)
+  for ext in "${VSCODE_EXTENSIONS[@]}"; do
+    grep -qix "$ext" <<<"$installed" || code --install-extension "$ext"
+  done
 }
 
 # `marketplace add` exits 1 if the marketplace is already registered.

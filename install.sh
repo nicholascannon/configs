@@ -7,7 +7,7 @@ cd "$REPO_DIR"
 
 # Packages under packages/ that get symlinked into $HOME. ghostty lives outside
 # $HOME and is linked separately; vim is legacy (see scripts/vim-install.sh).
-STOW_PACKAGES=(claude cursor nvim omp p10k pi tmux zed zsh)
+STOW_PACKAGES=(claude cursor nvim omp p10k pi tmux vscode zed zsh)
 
 # Homebrew formulae the configs depend on.
 BREW_PACKAGES=(

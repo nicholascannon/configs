@@ -31,6 +31,7 @@ ln -sf $(pwd)/packages/ghostty/config "$HOME/Library/Application Support/com.mit
 | `claude`  | `~/.claude/`            | Claude Code settings, global CLAUDE.md, statusline, output styles, skills |
 | `cursor`  | `~/Library/.../Cursor/` | Cursor editor (settings + keybindings)                        |
 | `nvim`    | `~/.config/nvim/`       | Neovim (native LSP, Treesitter, lazy.nvim)                    |
+| `vscode`  | `~/.vscode/extensions/` | Aero color theme as an unpacked local extension (no marketplace) |
 | `zed`     | `~/.config/zed/`        | Zed editor (settings + keymap)                                |
 | `vim`     | `~/`                    | Classic vim (.vimrc, .coc.vim — legacy; installed via `scripts/vim-install.sh`, not `install.sh`) |
 | `tmux`    | `~/`                    | tmux config                                                   |

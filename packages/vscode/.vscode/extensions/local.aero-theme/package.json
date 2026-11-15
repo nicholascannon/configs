@@ -1,0 +1,11 @@
+{
+  "name": "aero-theme",
+  "displayName": "Aero",
+  "version": "0.0.1",
+  "publisher": "local",
+  "engines": { "vscode": "^1.70.0" },
+  "categories": ["Themes"],
+  "contributes": {
+    "themes": [{ "label": "Aero", "uiTheme": "vs-dark", "path": "./themes/aero-color-theme.json" }]
+  }
+}

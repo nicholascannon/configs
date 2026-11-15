@@ -65,6 +65,12 @@
     "when": "terminalEditorFocus"
   },
 
+  {
+    "key": "cmd+t",
+    "command": "toggle.diff.renderSideBySide",
+    "when": "isInDiffEditor"
+  },
+
   // VS Code's terminal suggest widget claims ctrl+space; send the raw NUL
   // byte so zsh's `bindkey '^ ' autosuggest-accept` receives it.
   {

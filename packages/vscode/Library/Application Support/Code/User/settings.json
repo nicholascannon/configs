@@ -20,7 +20,6 @@
   "editor.folding": false,
   "editor.lightbulb.enabled": "off",
   "editor.formatOnSave": true,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.codeActionsOnSave": {
     "source.fixAll.eslint": "explicit",
   },

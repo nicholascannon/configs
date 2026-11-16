@@ -8,7 +8,7 @@
   "workbench.secondarySideBar.defaultVisibility": "hidden",
   "workbench.startupEditor": "welcomePageInEmptyWorkbench",
   "workbench.tips.enabled": false,
-  "breadcrumbs.enabled": false,
+  "breadcrumbs.enabled": true,
   "security.workspace.trust.untrustedFiles": "open",
 
   /* EDITOR */

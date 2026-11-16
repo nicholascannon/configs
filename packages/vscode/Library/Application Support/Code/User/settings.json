@@ -49,8 +49,9 @@
   "githubPullRequests.pullBranch": "always",
 
   /* AI */
-  // Copilot stays on only for commit message generation; AI otherwise runs via the CLI.
-  "github.copilot.enable": { "*": false },
+  // Copilot is limited to inline suggestions and commit message generation; other AI runs via the CLI.
+  "github.copilot.enable": { "*": true },
+  "editor.inlineSuggest.enabled": true,
   "github.copilot.nextEditSuggestions.enabled": false,
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {

@@ -33,9 +33,11 @@ VSCODE_EXTENSIONS=(
   bradlc.vscode-tailwindcss
   dbaeumer.vscode-eslint
   esbenp.prettier-vscode
+  ezforo.copy-relative-path-and-line-numbers
   github.vscode-github-actions
   github.vscode-pull-request-github
   hashicorp.terraform
+  mhutchie.git-graph
   pkief.material-icon-theme
   prisma.prisma
   redhat.vscode-yaml

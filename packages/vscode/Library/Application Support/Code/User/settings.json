@@ -48,6 +48,10 @@
   "git.blame.editorDecoration.enabled": true,
   "githubPullRequests.pullBranch": "always",
 
+  /* FILES */
+  // Agents rewrite files from the CLI; auto-save off keeps buffers clean so VS Code reloads them.
+  "files.autoSave": "off",
+
   /* AI */
   // Copilot is limited to inline suggestions and commit message generation; other AI runs via the CLI.
   "github.copilot.enable": { "*": true },
@@ -120,6 +124,10 @@
     {
       "before": ["<leader>", "r", "n"],
       "commands": [{ "command": "editor.action.rename" }],
+    },
+    {
+      "before": ["<leader>", "y", "r"],
+      "commands": [{ "command": "copy-relative-path-and-line-numbers.both" }],
     },
     {
       "before": ["g", "r"],

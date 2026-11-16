@@ -46,6 +46,7 @@
   /* GIT */
   "git.confirmSync": false,
   "git.blame.editorDecoration.enabled": true,
+  "githubPullRequests.pullBranch": "always",
 
   /* AI */
   // Copilot stays on only for commit message generation; AI otherwise runs via the CLI.

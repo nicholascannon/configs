@@ -6,7 +6,7 @@
   "workbench.iconTheme": "material-icon-theme",
   "workbench.layoutControl.enabled": false,
   "workbench.secondarySideBar.defaultVisibility": "hidden",
-  "workbench.startupEditor": "none",
+  "workbench.startupEditor": "welcomePageInEmptyWorkbench",
   "workbench.tips.enabled": false,
   "breadcrumbs.enabled": false,
   "security.workspace.trust.untrustedFiles": "open",

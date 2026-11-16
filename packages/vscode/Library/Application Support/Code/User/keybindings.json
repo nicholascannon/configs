@@ -71,6 +71,19 @@
     "when": "isInDiffEditor"
   },
 
+  {
+    "key": "cmd+e",
+    "command": "workbench.view.explorer"
+  },
+  {
+    "key": "cmd+g",
+    "command": "workbench.view.scm"
+  },
+  {
+    "key": "cmd+r",
+    "command": "workbench.view.extension.github-pull-request"
+  },
+
   // VS Code's terminal suggest widget claims ctrl+space; send the raw NUL
   // byte so zsh's `bindkey '^ ' autosuggest-accept` receives it.
   {

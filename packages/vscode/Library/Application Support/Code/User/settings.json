@@ -56,6 +56,7 @@
       "text": "Use Conventional Commits format: <type>(<scope>): <subject>. Types: feat, fix, refactor, chore, docs, test, style, perf. Keep the subject line under 72 characters, lowercase, no trailing period. Add a body only if the change needs more explanation.",
     },
   ],
+  "chat.titleBar.openInAgentsWindow.enabled": false,
 
   /* PROMPTS AND TELEMETRY */
   "extensions.ignoreRecommendations": true,

@@ -24,6 +24,11 @@
     "source.fixAll.eslint": "explicit",
   },
 
+  /* MARKDOWN */
+  "workbench.editorAssociations": {
+    "*.md": "vscode.markdown.preview.editor",
+  },
+
   /* DIFF EDITOR */
   "diffEditor.ignoreTrimWhitespace": false,
   "diffEditor.renderSideBySide": false,

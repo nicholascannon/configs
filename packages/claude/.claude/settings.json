@@ -50,10 +50,6 @@
     "type": "command",
     "command": "$HOME/.claude/statusline.sh"
   },
-  "subagentStatusLine": {
-    "type": "command",
-    "command": "$HOME/.claude/subagent-statusline.sh"
-  },
   "enabledPlugins": {
     "claude-md-management@claude-plugins-official": true,
     "superpowers@claude-plugins-official": true,

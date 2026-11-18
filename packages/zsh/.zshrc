@@ -186,5 +186,69 @@ EOF
 # Export every var in a .env-style file into the current shell
 dotenv() { set -a; source "$1"; set +a; }
 
+stop-all-docker() {
+  docker stop $(docker ps -q) && docker rm $(docker ps -aq)
+}
+
+# --- AWS profile switching ---
+AWS_PROFILE_FILE="$HOME/.aws/current_profile"
+
+# On shell startup, load the persisted profile (if any)
+if [[ -f "$AWS_PROFILE_FILE" ]]; then
+  export AWS_PROFILE="$(< "$AWS_PROFILE_FILE")"
+fi
+
+# Wrapper: login + persist + export in one command
+awsp() {
+  local profile="${1}"
+  if [[ -z "$profile" ]]; then
+    echo "Usage: awsp <profile-name>"
+    echo "Available profiles:"
+    aws configure list-profiles
+    return 1
+  fi
+  # Persist for new terminals
+  echo "$profile" > "$AWS_PROFILE_FILE"
+  # Set for the current shell
+  export AWS_PROFILE="$profile"
+  echo "AWS_PROFILE set to: $profile"
+}
+
+# Login + switch in one step
+awsl() {
+  local profile="${1}"
+  if [[ -z "$profile" ]]; then
+    echo "Usage: awsl <profile-name>"
+    return 1
+  fi
+  aws sso login --profile "$profile" && awsp "$profile"
+}
+
+# Clear the active profile
+awsc() {
+  rm -f "$AWS_PROFILE_FILE"
+  unset AWS_PROFILE
+  echo "AWS_PROFILE cleared"
+}
+
+# sync AWS profile before every command to ensure we apply the correct profile
+_aws_profile_sync() {
+  if [[ -f "$AWS_PROFILE_FILE" ]]; then
+    export AWS_PROFILE="$(< "$AWS_PROFILE_FILE")"
+  else
+    unset AWS_PROFILE
+  fi
+}
+precmd_functions+=(_aws_profile_sync)
+
+# Foundry (ETH cli)
+export PATH="$PATH:$HOME/.foundry/bin"
+export ETH_RPC_URL=https://ethereum-rpc.publicnode.com
+
+# BTC utils
+btc-get-tx() {
+  curl -s "https://blockstream.info/api/tx/$1" | jq
+}
+
 # load local machine config
 [[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

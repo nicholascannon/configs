@@ -23,7 +23,6 @@ BREW_PACKAGES=(
   gh
   fnm             # node version manager, initialised in .zshrc
   tfswitch        # downloads and switches terraform versions on demand
-  tflint
   awscli
   gnupg           # commit signing
   pinentry-mac    # passphrase prompt gpg-agent uses (see packages/gnupg)
@@ -74,6 +73,14 @@ main() {
 install_brew_packages() {
   install_missing --formula "${BREW_PACKAGES[@]}"
   install_missing --cask "${BREW_CASKS[@]}"
+
+  # tflint left homebrew-core; upstream ships it as a cask in its own tap. Brew 7
+  # refuses to load third-party taps until they are trusted.
+  if ! command -v tflint &>/dev/null; then
+    brew tap terraform-linters/tap
+    brew trust --tap terraform-linters/tap
+    brew install --cask tflint
+  fi
 }
 
 clone_dependencies() {

@@ -29,6 +29,8 @@ ln -sf $(pwd)/packages/ghostty/config "$HOME/Library/Application Support/com.mit
 | Package   | Target                  | What it configures                                            |
 | --------- | ----------------------- | ------------------------------------------------------------- |
 | `claude`  | `~/.claude/`            | Claude Code settings, global CLAUDE.md, statusline, output styles, skills |
+| `git`     | `~/.config/git/`        | Shared git settings + global ignore (identity/signing stay in untracked `~/.gitconfig`) |
+| `gnupg`   | `~/.gnupg/`             | gpg-agent.conf (pinentry-mac, long passphrase cache)          |
 | `cursor`  | `~/Library/.../Cursor/` | Cursor editor (settings + keybindings)                        |
 | `nvim`    | `~/.config/nvim/`       | Neovim (native LSP, Treesitter, lazy.nvim)                    |
 | `vscode`  | `~/.vscode/extensions/`, `~/Library/.../Code/` | VS Code settings + keybindings, and the Aero color theme as an unpacked local extension (no marketplace) |
@@ -71,6 +73,8 @@ Levers to revisit if the style degrades:
 **Notifications:** Claude Code's built-in `preferredNotifChannel` (auto → Ghostty) handles them; there are no global hooks. Formatting hooks are per-repo, since tooling differs between repos.
 
 **Cursor and VS Code package paths:** `packages/cursor/` and `packages/vscode/` mirror `~/Library/Application Support/{Cursor,Code}/User/`, so stow descends into the existing app dir and links only `settings.json` and `keybindings.json` — `History/`, `globalStorage/`, and `workspaceStorage/` stay untracked. Extensions and `~/.cursor/mcp.json` are deliberately not tracked.
+
+**Git identity and signing:** the repo is public, so `user.name`, `user.email`, `user.signingkey` and `commit.gpgsign` live in untracked `~/.gitconfig`, which git reads after the stowed `~/.config/git/config`. Always write it with `git config --file ~/.gitconfig`: `--global` writes into the stowed repo file when `~/.gitconfig` does not exist. `install.sh` creates `~/.gnupg` as 0700 before stowing because gpg rejects looser permissions.
 
 **Per-machine overrides:** Machine-specific config that shouldn't be committed:
 

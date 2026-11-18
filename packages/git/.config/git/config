@@ -1,0 +1,17 @@
+# Shared git settings. Identity (user.name, user.email) and signing
+# (user.signingkey, commit.gpgsign) are per-machine and live in ~/.gitconfig,
+# which git reads after this file. See README "Git identity and signing".
+[core]
+	pager = cat
+[push]
+	autoSetupRemote = true
+[fetch]
+	prune = true
+[gpg]
+	format = openpgp
+[credential "https://github.com"]
+	helper =
+	helper = !gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !gh auth git-credential

@@ -7,7 +7,7 @@ cd "$REPO_DIR"
 
 # Packages under packages/ that get symlinked into $HOME. ghostty lives outside
 # $HOME and is linked separately; vim is legacy (see scripts/vim-install.sh).
-STOW_PACKAGES=(claude cursor nvim omp p10k pi tmux vscode zed zsh)
+STOW_PACKAGES=(claude cursor git gnupg nvim omp p10k pi tmux vscode zed zsh)
 
 # Homebrew formulae the configs depend on.
 BREW_PACKAGES=(
@@ -25,6 +25,8 @@ BREW_PACKAGES=(
   tfswitch        # downloads and switches terraform versions on demand
   tflint
   awscli
+  gnupg           # commit signing
+  pinentry-mac    # passphrase prompt gpg-agent uses (see packages/gnupg)
 )
 
 BREW_CASKS=(
@@ -92,6 +94,8 @@ clone_dependencies() {
 }
 
 link_configs() {
+  # gpg refuses a ~/.gnupg that is not 0700, and stow would create it as 0755.
+  mkdir -p "$HOME/.gnupg" && chmod 700 "$HOME/.gnupg"
   remove_drifted_targets
   # --no-folding links files individually instead of linking whole directories,
   # so tools writing runtime state next to a config (logs, caches) don't write

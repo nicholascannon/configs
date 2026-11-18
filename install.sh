@@ -21,6 +21,10 @@ BREW_PACKAGES=(
   ripgrep
   jq
   gh
+  fnm             # node version manager, initialised in .zshrc
+  tfswitch        # downloads and switches terraform versions on demand
+  tflint
+  awscli
 )
 
 BREW_CASKS=(

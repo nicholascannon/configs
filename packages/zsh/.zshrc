@@ -142,6 +142,9 @@ export FZF_CTRL_T_OPTS="--preview 'bat --color=always --style=numbers --line-ran
 
 eval "$(zoxide init zsh)"
 
+# tfswitch installs terraform binaries in ~/bin; ~/.local/bin holds uv/pipx/claude executables
+export PATH="$HOME/.local/bin:$PATH:$HOME/bin"
+
 eval "$(fnm env --use-on-cd --log-level quiet)"
 
 # Aliases
@@ -184,4 +187,4 @@ EOF
 dotenv() { set -a; source "$1"; set +a; }
 
 # load local machine config
-source ~/.zshrc.local
+[[ -f ~/.zshrc.local ]] && source ~/.zshrc.local

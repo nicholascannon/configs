@@ -21,13 +21,13 @@
   "editor.lightbulb.enabled": "off",
   "editor.formatOnSave": true,
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit",
+    "source.fixAll.eslint": "explicit"
   },
-    "editor.defaultFormatter": "esbenp.prettier-vscode",
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
 
   /* MARKDOWN */
   "workbench.editorAssociations": {
-    "*.md": "vscode.markdown.preview.editor",
+    "*.md": "vscode.markdown.preview.editor"
   },
 
   /* DIFF EDITOR */
@@ -46,6 +46,7 @@
 
   /* GIT */
   "git.confirmSync": false,
+  "git.autofetch": true,
   "git.blame.editorDecoration.enabled": true,
   "githubPullRequests.pullBranch": "always",
 
@@ -60,8 +61,8 @@
   "github.copilot.nextEditSuggestions.enabled": false,
   "github.copilot.chat.commitMessageGeneration.instructions": [
     {
-      "text": "Use Conventional Commits format: <type>(<scope>): <subject>. Types: feat, fix, refactor, chore, docs, test, style, perf. Keep the subject line under 72 characters, lowercase, no trailing period. Add a body only if the change needs more explanation.",
-    },
+      "text": "Use Conventional Commits format: <type>(<scope>): <subject>. Types: feat, fix, refactor, chore, docs, test, style, perf. Keep the subject line under 72 characters, lowercase, no trailing period. Add a body only if the change needs more explanation."
+    }
   ],
   "chat.titleBar.openInAgentsWindow.enabled": false,
 
@@ -77,7 +78,7 @@
     "https://www.schemastore.org/": true,
     "https://json.schemastore.org/": true,
     "https://json-schema.org/": true,
-    "https://biomejs.dev": true,
+    "https://biomejs.dev": true
   },
 
   /* TERRAFORM */
@@ -85,12 +86,12 @@
     "editor.defaultFormatter": "hashicorp.terraform",
     "editor.formatOnSave": true,
     "editor.codeActionsOnSave": {
-      "source.formatAll.terraform": "explicit",
-    },
+      "source.formatAll.terraform": "explicit"
+    }
   },
   "[terraform-vars]": {
     "editor.defaultFormatter": "hashicorp.terraform",
-    "editor.formatOnSave": true,
+    "editor.formatOnSave": true
   },
   "terraform.experimentalFeatures.validateOnSave": true,
 
@@ -107,40 +108,40 @@
   "vim.normalModeKeyBindingsNonRecursive": [
     {
       "before": ["K"],
-      "commands": [{ "command": "editor.action.showHover" }],
+      "commands": [{ "command": "editor.action.showHover" }]
     },
     {
       "before": ["<leader>", "f", "\n"],
-      "commands": [{ "command": "editor.action.formatDocument" }],
+      "commands": [{ "command": "editor.action.formatDocument" }]
     },
     {
       "before": ["<leader>", "a", "\n"],
       "commands": [
         {
           "command": "editor.action.quickFix",
-          "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly",
-        },
-      ],
+          "when": "editorHasCodeActionsProvider && editorTextFocus && !editorReadonly"
+        }
+      ]
     },
     {
       "before": ["<leader>", "r", "n"],
-      "commands": [{ "command": "editor.action.rename" }],
+      "commands": [{ "command": "editor.action.rename" }]
     },
     {
       "before": ["<leader>", "y", "r"],
-      "commands": [{ "command": "copy-relative-path-and-line-numbers.both" }],
+      "commands": [{ "command": "copy-relative-path-and-line-numbers.both" }]
     },
     {
       "before": ["g", "r"],
-      "commands": [{ "command": "editor.action.goToReferences" }],
+      "commands": [{ "command": "editor.action.goToReferences" }]
     },
     {
       "before": ["g", "i"],
-      "commands": [{ "command": "editor.action.goToImplementation" }],
+      "commands": [{ "command": "editor.action.goToImplementation" }]
     },
     {
       "before": ["g", "p"],
-      "commands": [{ "command": "editor.action.peekDefinition" }],
-    },
-  ],
+      "commands": [{ "command": "editor.action.peekDefinition" }]
+    }
+  ]
 }

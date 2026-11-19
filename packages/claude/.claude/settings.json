@@ -67,5 +67,6 @@
   },
   "editorMode": "vim",
   "agentPushNotifEnabled": false,
-  "skipAutoPermissionPrompt": true
+  "skipAutoPermissionPrompt": true,
+  "tui": "default"
 }

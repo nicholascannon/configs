@@ -24,7 +24,8 @@ BREW_PACKAGES=(
   fnm             # node version manager, initialised in .zshrc
   tfswitch        # downloads and switches terraform versions on demand
   awscli
-  gnupg           # commit signing
+  typescript-language-server # required by Claude Code's typescript-lsp plugin
+  gnupg          # commit signing
   pinentry-mac    # passphrase prompt gpg-agent uses (see packages/gnupg)
 )
 

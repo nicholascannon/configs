@@ -10,7 +10,7 @@ task:
     security-reviewer: "@slow"
 symbolPreset: nerd
 theme:
-  dark: aero
+  dark: obsidian
 setupVersion: 2
 hideThinkingBlock: true
 composer:
